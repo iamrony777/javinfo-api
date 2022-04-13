@@ -1,0 +1,9 @@
+beautifulsoup4
+deep-translator
+dnspython
+fastapi
+httpx[http2]
+lxml
+motor
+nest-asyncio
+uvicorn

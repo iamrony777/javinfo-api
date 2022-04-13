@@ -1,0 +1,28 @@
+# Cached builds
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.dll
+*.egg
+*.egg-info/
+
+# Build directories
+docs/_build/
+build/
+dist/
+
+
+# IDEs
+.idea/
+
+# Testing and temporary files
+.tox/
+
+#Virtual Env
+venv
+#Testing
+test*
+#edit
+src/helper/crop.py
