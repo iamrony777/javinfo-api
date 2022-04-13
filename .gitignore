@@ -26,3 +26,6 @@ venv
 test*
 #edit
 src/helper/crop.py
+
+#ENV
+.env
