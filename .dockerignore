@@ -31,6 +31,7 @@ src/helper/crop.py
 #ENV
 .env
 .vscode
+.gitignore
 vars
 var.sh
 start.sh

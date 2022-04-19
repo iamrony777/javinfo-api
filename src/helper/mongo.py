@@ -1,23 +1,15 @@
-import asyncio
 from motor import motor_asyncio
-from bson.objectid import ObjectId
+import asyncio
 import os
 
-mongo_url = os.environ['MONGODB_URL']
-cluster = motor_asyncio.AsyncIOMotorClient(mongo_url)
-collection = cluster['ENV']['api-env']
+cluster = motor_asyncio.AsyncIOMotorClient(os.environ['MONGODB_URL']) # Connection to cluster
+cluster.get_io_loop = asyncio.get_running_loop
+db_name = os.environ['DB_NAME']
 
 
-async def get_env():
-    document = await collection.find_one({'_id': ObjectId('624882641e02c1efa353f564')})
-    document = dict(document)
-    return document
-
-async def main():
-    data = asyncio.get_event_loop().run_until_complete(get_env())
-    for key, value in data.items():
-        if key == 'JAVDB_COOKIES' or key == 'HEADERS':
-            os.environ[key] = str(value).replace("'", '"')
-        else:
-            continue
+async def insert_log(log, app):
+    collection = cluster[db_name][f'{app}-logs']
+    await collection.insert_one(log)
+    
+    return 
 

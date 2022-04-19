@@ -7,3 +7,5 @@ lxml
 motor
 nest-asyncio
 uvicorn
+pillow
+apscheduler

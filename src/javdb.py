@@ -1,4 +1,3 @@
-import json
 import os
 import re
 
@@ -6,17 +5,16 @@ import httpx
 from bs4 import BeautifulSoup
 from deep_translator import GoogleTranslator
 
-cookies = json.loads(os.environ['JAVDB_COOKIES'])
-headers = json.loads(os.environ['HEADERS'])
+
 client = httpx.AsyncClient(http2=True)
 
 
-async def fetch(id):
+async def fetch(id, headers, cookies):
     """Search by ID (filtered)\n
     returns  `id` = str, `url_id` = str | None as tuple"""
 
     response = await client.get(f'https://javdb.com/search?q={id}&f=1&locale=en&over18=1',
-                          headers=headers, cookies=cookies, follow_redirects=True)    # Search result page
+                                headers=headers, cookies=cookies, follow_redirects=True)    # Search result page
     soup = BeautifulSoup(response.text, 'lxml')
     try:
         url_id = soup.find('a', class_="box").get(
@@ -27,7 +25,22 @@ async def fetch(id):
 
 
 async def main(id):
-    data = await fetch(id)
+    cookies = {
+        "theme": "auto",
+        "locale": "en",
+        "over18": "1",
+        "remember_me_token": os.environ['REMEMBER_ME_TOKEN'],
+        "_jdb_session": os.environ['_JDB_SESSION'],
+        "redirect_to": "%2F"
+    }
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
+        "Accept": "*/*"
+    }
+
+
+    data = await fetch(id, headers, cookies)
 
     id = data[0]
     if data[1] is None:
@@ -68,6 +81,6 @@ async def main(id):
             # incase search  result contains some results but not that one you are looking for
             return None
 
-#Testing
+# Testing
 # if __name__ == "__main__":
-#      print(asyncio.run(main('PPZ-007')))
+#      print(asyncio.run(main('FOW-001')))
