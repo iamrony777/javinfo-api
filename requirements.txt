@@ -1,11 +1,12 @@
 beautifulsoup4
 deep-translator
-dnspython
 fastapi
 httpx[http2]
 lxml
 motor
+pymongo[srv]
 nest-asyncio
 uvicorn
 pillow
 apscheduler
+slowapi

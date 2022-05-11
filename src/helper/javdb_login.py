@@ -2,11 +2,13 @@ import asyncio
 import datetime
 import os
 import time
+from shutil import rmtree
 from io import BytesIO
+from json import JSONDecodeError
 
 import httpx
 from bs4 import BeautifulSoup
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 try:
     from mongo import insert_log
@@ -23,23 +25,34 @@ async def token(client: httpx.AsyncClient):
             'over18': 1,}
     login_page = await client.get('/login', params=params)
     soup = BeautifulSoup(login_page.text, 'lxml')
-    token = soup.find('meta', {'name': 'csrf-token'}).get('content')
-    return str(token)
+    try:
+        token = soup.find('meta', {'name': 'csrf-token'}).get('content')
+        return str(token)
+    except AttributeError:
+        return None
 
 
 async def get_captcha(root_path, client: httpx.AsyncClient) -> str:
     image_path = f'{root_path}/uploads/captcha_{int(time.time())}'
     captcha = await client.get('/rucaptcha/')
-    img = Image.open(BytesIO(captcha.content))
-    img.save(f'{image_path}.png', 'png', optimize=True)
-    return f'{image_path}.png'
+    try:
+        img = Image.open(BytesIO(captcha.content))
+        img.save(f'{image_path}.png', 'png', optimize=True)
+        return f'{image_path}.png'
+    except UnidentifiedImageError:
+        return None
+
 
 
 def captcha_solver(captcha: str) -> str:
     url = os.environ['CAPTCHA_SOLVER_URL']
-    file = {'file': open(captcha, 'rb')}
-    resp = httpx.post(url=url, files=file, timeout=120)
-    return resp.json()['solved']
+    try:
+        file = {'file': open(captcha, 'rb')}
+        resp = httpx.post(url=url, files=file, timeout=120)
+        return resp.json()['solved']
+    except:
+        return None
+    
 
 
 async def login(root_path, client: httpx.AsyncClient):
@@ -93,12 +106,14 @@ async def main(root_path):
                 print('INFO:\t [JAVDB]', 'retrying in 5 seconds...')
                 time.sleep(5)
                 try:
-                    os.remove(f'{root_path}/.env')
+                    rmtree(f'{root_path}/uploads')
+                    os.mkdir(f'{root_path}/uploads')
                 except FileNotFoundError:
                     continue
 
 
 if __name__ == '__main__':
-    asyncio.run(main('/app'))
+    import os
+    asyncio.run(main(os.getcwd()))
 
 

@@ -19,19 +19,14 @@ dist/
 
 # Testing and temporary files
 .tox/
-uploads
 
-#Virtual Env
+# Custom
 .venv
-#Testing
 test*
-#edit
-src/helper/crop.py
-
-#ENV
+uploads
 .env
 .vscode
-.gitignore
 vars
 var.sh
 start.sh
+src/helper/crop.py

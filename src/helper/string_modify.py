@@ -1,7 +1,7 @@
 import re
 
 
-def filter(name): # Filter the id and start search
+def filter(name):  # Filter the id and start search
     patterns = ['[@|-|_]?[a-zA-Z_0-9]+(\.com|\.net|\.tk)[_|-]?',
                 '^_',
                 '^[0-9]{4}',
@@ -9,6 +9,7 @@ def filter(name): # Filter the id and start search
                 'Watch18plus-',
                 '\[(.*?)\]',
                 '^@',
+                'hhd800@',
                 'FHD-',
                 'FHD_',
                 'fhd',
@@ -36,15 +37,19 @@ def filter(name): # Filter the id and start search
                 '\.HD',
                 '-HD',
                 '_']
-   
-    for pattern in patterns:
-        name = re.sub(pattern, '', name)
 
-    name = name.split()
+    for i in range(len(patterns)):
+        name = re.sub(patterns[i], '', name)
+
+    name = list(name)
     for x in name:
-        if x == int:
+        if not x.isalpha() \
+                and not x.isdigit() \
+                and x != '-':
             name.remove(x)
-        elif x == str:
-            break
-    return name[0]
 
+    return ''.join(name)
+
+
+if __name__ == '__main__':
+    print(filter('hhd800@EBOD-375'))
