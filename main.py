@@ -58,11 +58,11 @@ nest_asyncio.apply()
 
 @app.on_event('startup')
 async def startup_event():
-    await login(os.getcwd())
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(login, args=[os.getcwd()], trigger='interval', days=6)
-    scheduler.add_job(r18_db, trigger='interval', days=1)
-    scheduler.start()
+   await login(os.getcwd())
+   scheduler = AsyncIOScheduler()
+   scheduler.add_job(login, args=[os.getcwd()], trigger='interval', days=6)
+   scheduler.add_job(r18_db, trigger='interval', days=1)
+   scheduler.start()
 
 
 async def get_results(id, provider):
@@ -96,30 +96,16 @@ async def root(request: Request):
 
 @app.get('/search',)
 async def search(id: str, request: Request, hasaccess: bool = Depends(check_access), provider=None):
-
-    """
-    Search for a Movie by its ID. 
-
-    Required : `id` (str)\n
-    Optional : `provider` (str)\n\n
-
-    Returns : JSONResponse\n
-
-    Providers :
-        r18: https://r18.com \n
-        javlibrary : https://javlibrary.com/en \n
-        javdatabase : https://javdatabase.com \n
-        javdb : https://javdb.com \n
-
-
-    """
-    from src.helper.string_modify import filter
-    _id = filter(id.upper())
-    result = await get_results(id=_id, provider=provider)
-    if result != None:
-        return JSONResponse(status_code=status.HTTP_200_OK, content=result)
+    if hasaccess:
+        from src.helper.string_modify import filter
+        _id = filter(id.upper())
+        result = await get_results(id=_id, provider=provider)
+        if result != None:
+            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
+        else:
+            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Not Found'})
     else:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Not Found'})
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={'error': 'Access Denied'})
         
 @app.get('/demo/search',)
 @limiter.limit("5/minute")
@@ -149,5 +135,15 @@ async def search(id: str, request: Request, provider=None):
         return JSONResponse(status_code=status.HTTP_200_OK, content=result)
     else:
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Not Found'})
+
+@app.get('/version')
+async def version():
+    json_msg = { 'schemaVersion': 1,
+               'label': 'Version',
+               'message': '2.0',
+               'color': 'FF4489',
+               'style': 'for-the-badge' }  
+    return json_msg
+
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8000)
