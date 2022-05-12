@@ -1,5 +1,5 @@
 
-![Logo](./JAVINFO_API.png)
+![Logo](./src/logo.png)
 
 
 <b>JAVINFO API | Backend for JAVINFO CLI</b>
@@ -13,7 +13,9 @@
 | [r18](http://r18.com/)    (Default)             | Y      | Y               | Y           | Y           |  Y           |
 | [Boobpedia](https://www.boobpedia.com/)         | N      | Y               | N           | Y           |  N           |
 
+<br>
 
+## [Try Now!](https://javinfo-api.up.railway.app/demo)
 
 <!-- [![Codacy Badge](https://app.codacy.com/project/badge/Grade/6606c0b6f2c2407989b2628792de8060)](https://www.codacy.com/gh/iamrony777/JavInfo-api/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iamrony777/JavInfo-api&amp;utm_campaign=Badge_Grade) -->
 

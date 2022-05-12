@@ -28,7 +28,7 @@ from src.helper.javdb_login import main as login
 from src.helper.r18_db import main as r18_db
 
 limiter = Limiter(key_func=get_remote_address)
-app = FastAPI()
+app = FastAPI(docs_url='/demo', redoc_url=None, )
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
@@ -87,26 +87,11 @@ async def get_results(id, provider):
         return await r18.main(id)
 
 
-@app.get('/')
+@app.get('/', include_in_schema=False)
 async def root(request: Request):
-    async with httpx.AsyncClient() as client:
-        response = await client.get('https://http.cat/200')
-    return Response(status_code=status.HTTP_200_OK, content=response.content, media_type='image/png')
+    with open('./src/logo.png', 'rb') as image:
+        return Response(status_code=status.HTTP_200_OK, content=image.read(), media_type='image/png')
 
-
-@app.get('/search',)
-async def search(id: str, request: Request, hasaccess: bool = Depends(check_access), provider=None):
-    if hasaccess:
-        from src.helper.string_modify import filter
-        _id = filter(id.upper())
-        result = await get_results(id=_id, provider=provider)
-        if result != None:
-            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
-        else:
-            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Not Found'})
-    else:
-        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={'error': 'Access Denied'})
-        
 @app.get('/demo/search',)
 @limiter.limit("5/minute")
 async def search(id: str, request: Request, provider=None):
@@ -136,7 +121,22 @@ async def search(id: str, request: Request, provider=None):
     else:
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Not Found'})
 
-@app.get('/version')
+
+@app.get('/search', include_in_schema=False)
+async def search(id: str, request: Request, hasaccess: bool = Depends(check_access), provider=None):
+    if hasaccess:
+        from src.helper.string_modify import filter
+        _id = filter(id.upper())
+        result = await get_results(id=_id, provider=provider)
+        if result != None:
+            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
+        else:
+            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Not Found'})
+    else:
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={'error': 'Access Denied'})
+        
+
+@app.get('/version', include_in_schema=False)
 async def version():
     json_msg = { 'schemaVersion': 1,
                'label': 'Version',
