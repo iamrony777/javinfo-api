@@ -100,7 +100,7 @@ async def main(name: str):
     return data
 
 async def r18(name: str):
-    result = await query({'name': {"$regex": name}}, 'R18', 'actress')
+    result = await query({'name': {"$regex": name}}, 'actress')
     if result != []:
         for i in result:
             return ({ 'name': i['name'], 'image': i['image']})
@@ -108,7 +108,7 @@ async def r18(name: str):
         name = name.split(' ')
         name.reverse()
         name = ' '.join(name)
-        result = await query({'name': {"$regex": name}}, 'R18', 'actress')
+        result = await query({'name': {"$regex": name}}, 'actress')
         for i in result:
             return ({ 'name': i['name'], 'image': i['image']})
 

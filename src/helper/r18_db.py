@@ -56,7 +56,7 @@ async def main():
         print(f"INFO:\t [R18_DB] Scraped {total} Pages")
 
         # Try to drop previous collection
-        await drop('R18', 'actress')
+        await drop('actress')
         print(f"INFO:\t [R18_DB] Dropped previous collection")
 
 
@@ -66,7 +66,7 @@ async def main():
         for x, y in actress_dictionary.items():
             actress_list.append({'name': x, 'image': y})
 
-        await insert_bulk(actress_list, 'R18', 'actress')
+        await insert_bulk(actress_list, 'actress')
     print('INFO:\t [R18_DB] Actress DB updated')
 
 
