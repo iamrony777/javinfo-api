@@ -12,7 +12,9 @@ async def fetch(id, headers, cookies):
     """Search by ID (filtered)\n
     returns  `id` = str, `url_id` = str | None as tuple"""
 
-    response = await client.get(f'https://javdb.com/search?q={id}&f=1&locale=en&over18=1',
+    response = await client.get(f'https://javdb.com/search',
+                                params={'q': id, 'f': 1,
+                                        'locale': 'en', 'over18': 1},
                                 headers=headers, cookies=cookies, follow_redirects=True)    # Search result page
     soup = BeautifulSoup(response.text, 'lxml')
     try:
