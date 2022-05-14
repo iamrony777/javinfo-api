@@ -1,6 +1,8 @@
-from httpx import AsyncClient
-from bs4 import BeautifulSoup
 import asyncio
+
+from bs4 import BeautifulSoup
+from httpx import AsyncClient
+
 try:
     from mongo import *
 except ImportError:
@@ -33,7 +35,7 @@ async def main():
 
     # Get the number of total pages
     async with AsyncClient(base_url=URL, follow_redirects=True, timeout=None) as client:
-
+        print(f'INFO:\t [R18_DB] Getting the number of total pages')
         response = await client.get('/')
         soup = BeautifulSoup(response.text, 'lxml')
         total= soup.find('div', class_='cmn-list-pageNation02')
@@ -44,26 +46,30 @@ async def main():
         for i in range(1, total + 1):
             tasks.append(asyncio.create_task(get(i, client)))
         await asyncio.gather(*tasks)
+        print(f"INFO:\t [R18_DB] Fetched {total} Pages")
 
-    # Scrap all pages
-    tasks = []
-    for i in range(1, total + 1):
-        tasks.append(asyncio.create_task(scrap(i)))
-    await asyncio.gather(*tasks)
+        # Scrap all pages
+        tasks = []
+        for i in range(1, total + 1):
+            tasks.append(asyncio.create_task(scrap(i)))
+        await asyncio.gather(*tasks)
+        print(f"INFO:\t [R18_DB] Scraped {total} Pages")
 
-    # Try to drop previous collection
-    try:
+        # Try to drop previous collection
         await drop('R18', 'actress')
-    except Exception:
-        pass
+        print(f"INFO:\t [R18_DB] Dropped previous collection")
 
-    # Upload updated data to Database
-    actress_list = []
-    for x, y in actress_dictionary.items():
-        actress_list.append({'name': x, 'image': y})
 
-    await insert_bulk(actress_list, 'R18', 'actress')
+        # Upload updated data to Database
+        print(f"INFO:\t [R18_DB] Uploading total {len(actress_dictionary)} Actresses Data")
+        actress_list = []
+        for x, y in actress_dictionary.items():
+            actress_list.append({'name': x, 'image': y})
+
+        await insert_bulk(actress_list, 'R18', 'actress')
     print('INFO:\t [R18_DB] Actress DB updated')
 
 
 
+if __name__ == '__main__':
+    asyncio.run(main())

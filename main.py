@@ -7,7 +7,6 @@
 import asyncio
 import os
 
-import httpx
 import nest_asyncio
 import uvicorn
 import secrets
@@ -15,7 +14,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI, HTTPException, Request, status, Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, FileResponse,Response
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
@@ -58,11 +57,15 @@ nest_asyncio.apply()
 
 @app.on_event('startup')
 async def startup_event():
-   await login(os.getcwd())
-   scheduler = AsyncIOScheduler()
-   scheduler.add_job(login, args=[os.getcwd()], trigger='interval', days=6)
-   scheduler.add_job(r18_db, trigger='interval', days=1)
-   scheduler.start()
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(r18_db, trigger='interval', days=1)
+    if os.environ.get('CAPTCHA_SOLVER_URL') is not None:
+        await login(os.getcwd())
+        scheduler.add_job(login, args=[os.getcwd()], trigger='interval', days=6)
+    if os.environ.get('MONGO_URL') is not None:
+        await r18_db()
+        scheduler.add_job(r18_db, trigger='interval', days=1)
+    scheduler.start()
 
 
 async def get_results(id, provider):
@@ -92,10 +95,14 @@ async def root(request: Request):
     with open('./src/logo.png', 'rb') as image:
         return Response(status_code=status.HTTP_200_OK, content=image.read(), media_type='image/png')
 
-@app.get('/demo/search',)
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse(f'{os.getcwd()}/favicon.ico')
+
+
+@app.post('/demo',)
 @limiter.limit("5/minute")
 async def search(id: str, request: Request, provider=None):
-
     """
     [Demo] Limited to 10 requests per minute.
     Search for a Movie by its ID. 
@@ -106,11 +113,11 @@ async def search(id: str, request: Request, provider=None):
     Returns : JSONResponse\n
 
     Providers :
+    
         r18: https://r18.com \n
         javlibrary : https://javlibrary.com/en \n
         javdatabase : https://javdatabase.com \n
         javdb : https://javdb.com \n
-
 
     """
     from src.helper.string_modify import filter
@@ -122,7 +129,7 @@ async def search(id: str, request: Request, provider=None):
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Not Found'})
 
 
-@app.get('/search', include_in_schema=False)
+@app.post('/search', include_in_schema=False)
 async def search(id: str, request: Request, hasaccess: bool = Depends(check_access), provider=None):
     if hasaccess:
         from src.helper.string_modify import filter

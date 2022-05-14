@@ -28,8 +28,8 @@ async def main(id):
         "theme": "auto",
         "locale": "en",
         "over18": "1",
-        "remember_me_token": os.environ['REMEMBER_ME_TOKEN'],
-        "_jdb_session": os.environ['_JDB_SESSION'],
+        "remember_me_token": os.environ.get('REMEMBER_ME_TOKEN'),
+        "_jdb_session": os.environ.get('_JDB_SESSION'),
         "redirect_to": "%2F"
     }
 

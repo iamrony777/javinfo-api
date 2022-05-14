@@ -2,9 +2,9 @@ from motor import motor_asyncio
 import asyncio
 import os
 
-cluster = motor_asyncio.AsyncIOMotorClient(os.environ['MONGODB_URL']) # Connection to cluster
+cluster = motor_asyncio.AsyncIOMotorClient(os.environ.get('MONGO_URL')) # Connection to cluster
 cluster.get_io_loop = asyncio.get_running_loop
-db_name = os.environ['DB_NAME']
+db_name = os.environ.get('DB_NAME')
 
 
 async def insert_log(log, app):

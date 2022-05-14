@@ -134,18 +134,24 @@ async def actress_details(soup: BeautifulSoup):
     
     boobpedia_results = await asyncio.gather(*boobpedia_tasks)
     r18_results = await asyncio.gather(*r18_tasks)
-    for i in range(len(boobpedia_results)):
-        try:
-            if boobpedia_results[i] is not None:
-                actress_list[i] = boobpedia_results[i]
-                actress_list[i]['image2'] = r18_results[i]['image']
-            elif r18_results[i] is not None:
+    if len(boobpedia_results) != 0:
+        for i in range(len(boobpedia_results)):
+            try:
+                if boobpedia_results[i] is not None:
+                    actress_list[i] = boobpedia_results[i]
+                    actress_list[i]['image2'] = r18_results[i]['image']
+                elif r18_results[i] is not None:
+                    actress_list[i] = r18_results[i]
+                else:
+                    actress_list[i] = { 'name': actress_list[i] }
+            except KeyError:
+                actress_list[i].pop('image2', None)
+    else:
+        for i in range(len(r18_results)):
+            try:
                 actress_list[i] = r18_results[i]
-            else:
-                actress_list[i] = { 'name': actress_list[i] }
-        except:
-            actress_list[i].pop('image2', None)
-
+            except KeyError:
+                actress_list[i].pop('image2', None)
 
     return actress_list
 

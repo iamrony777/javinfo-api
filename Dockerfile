@@ -5,7 +5,7 @@ WORKDIR /app
 ARG DB_NAME='' \
     JAVDB_EMAIL='' \
     JAVDB_PASSWORD='' \
-    MONGODB_URL='' \
+    MONGO_URL='' \
     CAPTCHA_SOLVER_URL='' \
     API_USER='' \
     API_PASS=''
