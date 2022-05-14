@@ -147,7 +147,7 @@ async def search(id: str, request: Request, hasaccess: bool = Depends(check_acce
 async def version():
     json_msg = { 'schemaVersion': 1,
                'label': 'Version',
-               'message': '2.0',
+               'message': '2.1',
                'color': 'FF4489',
                'style': 'for-the-badge' }  
     return json_msg
