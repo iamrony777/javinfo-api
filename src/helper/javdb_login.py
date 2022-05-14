@@ -110,7 +110,7 @@ async def main(root_path):
             response = await login(root_path, client)
             if response == 403:
                 break
-            elif response == bool:
+            elif response == True:
                 print('INFO:\t [JAVDB] Successfully logged in')
                 rmtree(f'{root_path}/uploads')
                 break
