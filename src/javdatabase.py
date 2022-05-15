@@ -56,11 +56,12 @@ async def actress_data(raw_list: list):
         if boobpedia_results[i] is not None:
             actress_list[i] = boobpedia_results[i]
             try:
-                actress_list[i]['image2'] = r18_results[i]['image']
+                actress_list[i]['image2'] = r18_results[i]
             except:
                 actress_list[i]['image2'] = None
         elif r18_results[i] is not None:
-            actress_list[i] = r18_results[i]
+            actress_list[i] = {'name': actress_list[i], 
+                                    'image': r18_results[i] }
         else:
             actress_list[i] = {'name': actress_list[i]}
 

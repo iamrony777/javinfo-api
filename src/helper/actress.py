@@ -1,18 +1,16 @@
 import json
+import os
 
+import aioredis
 from bs4 import BeautifulSoup
 from httpx import AsyncClient
 
-try:
-    from helper.mongo import search as query 
-except ImportError:
-    from src.helper.mongo import search as query   
-  
+
 async def special_search(name: str, client: AsyncClient):
-    params = {  'title': 'Special:Search',
-                'search': name,
-                'profile': 'default',
-                'fulltext': '1' }
+    params = {'title': 'Special:Search',
+              'search': name,
+              'profile': 'default',
+              'fulltext': '1'}
     response = await client.get('/wiki/index.php', params=params)
     soup = BeautifulSoup(response.text, 'lxml')
     result_name = []
@@ -33,37 +31,42 @@ async def special_search(name: str, client: AsyncClient):
         return None
     except AttributeError:
         return None
-    
+
 
 async def search(name: str, client: AsyncClient):   # search for the actress
-    params = { 'action': 'opensearch',
-                'format': 'json',
-                'formatversion': '2',
-                'search': name,
-                'namespace': '0',
-                'limit': '10',
-                'suggest': 'true' }
+    params = {'action': 'opensearch',
+              'format': 'json',
+              'formatversion': '2',
+              'search': name,
+              'namespace': '0',
+              'limit': '10',
+              'suggest': 'true'}
     response = await client.get('/wiki/api.php', params=params)
     try:
         return response.json()[-1][0]
     except IndexError:
         return await special_search(name, client)
 
-async def fetch(url: str, client: AsyncClient): # fetch page, get soup
+
+async def fetch(url: str, client: AsyncClient):  # fetch page, get soup
     response = await client.get(url)
     soup = BeautifulSoup(response.text, 'lxml')
     return soup
 
+
 async def image(soup: BeautifulSoup, client: AsyncClient):
     try:
-        image = soup.find('td', {'colspan': '2', 'style': 'text-align:center;' }).find('a').get('href')
+        image = soup.find(
+            'td', {'colspan': '2', 'style': 'text-align:center;'}).find('a').get('href')
         response = await client.get(image)
         image_soup = BeautifulSoup(response.text, 'lxml')
-        image_link = image_soup.find('div', {'class': 'fullMedia'}).find('a').get('href')
+        image_link = image_soup.find(
+            'div', {'class': 'fullMedia'}).find('a').get('href')
         image_link = 'https://www.boobpedia.com' + image_link
         return image_link
     except:
         return None
+
 
 async def details(soup: BeautifulSoup, client: AsyncClient):
     details = {}
@@ -71,16 +74,18 @@ async def details(soup: BeautifulSoup, client: AsyncClient):
     for td in tr_list:
         result = ' '.join(td.text.split()).split(': ')
         details[result[0]] = result[1]
-        
+
     return details
 
+
 async def main(name: str):
-    client = AsyncClient(base_url='https://www.boobpedia.com',http2=True, follow_redirects=True, timeout=None)
+    client = AsyncClient(base_url='https://www.boobpedia.com',
+                         http2=True, follow_redirects=True, timeout=None)
     result = await search(name, client)
     data = {}
     if result is not None:
         soup = await fetch(result, client)
-        image_link =  await image(soup, client)
+        image_link = await image(soup, client)
     else:
         name_ = name.split(' ')
         name_.reverse()
@@ -88,7 +93,7 @@ async def main(name: str):
         result = await search(name_, client)
         if result is not None:
             soup = await fetch(result, client)
-            image_link =  await image(soup, client)
+            image_link = await image(soup, client)
         else:
             return None
 
@@ -99,21 +104,28 @@ async def main(name: str):
 
     return data
 
+
 async def r18(name: str):
-    result = await query({'name': {"$regex": name}}, 'actress')
-    if result != []:
-        for i in result:
-            return ({ 'name': i['name'], 'image': i['image']})
-    else:
+    async with aioredis.from_url(os.environ.get('REDIS_URL'), decode_responses=True, db=0) as redis_client:
         name = name.split(' ')
-        name.reverse()
-        name = ' '.join(name)
-        result = await query({'name': {"$regex": name}}, 'actress')
-        for i in result:
-            return ({ 'name': i['name'], 'image': i['image']})
+        # As some of Single names are in uppercase
+        if len(name) == 1:
+            name = str(name[0].upper())
+        else:
+            # While rest of them are in capitalized
+            for x in range(len(name)):
+                name[x] = name[x].capitalize()
+            name = ' '.join(name)
+        result = await redis_client.get(name)
+        if result == None:
+            name = name.split(' ')
+            name.reverse()
+            name = ' '.join(name)
+            return await redis_client.get(name)
+        else:
+            return result
 
 if __name__ == '__main__':
     import asyncio
     data = asyncio.run(main('Julia'))
     print(json.dumps(data, indent=4))
-    

@@ -139,9 +139,10 @@ async def actress_details(soup: BeautifulSoup):
             try:
                 if boobpedia_results[i] is not None:
                     actress_list[i] = boobpedia_results[i]
-                    actress_list[i]['image2'] = r18_results[i]['image']
+                    actress_list[i]['image2'] = r18_results[i]
                 elif r18_results[i] is not None:
-                    actress_list[i] = r18_results[i]
+                    actress_list[i] = {'name': actress_list[i], 
+                                    'image': r18_results[i] }
                 else:
                     actress_list[i] = { 'name': actress_list[i] }
             except KeyError:
@@ -149,7 +150,8 @@ async def actress_details(soup: BeautifulSoup):
     else:
         for i in range(len(r18_results)):
             try:
-                actress_list[i] = r18_results[i]
+                actress_list[i] = {'name': actress_list[i], 
+                                    'image': r18_results[i] }
             except KeyError:
                 actress_list[i].pop('image2', None)
 

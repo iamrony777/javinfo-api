@@ -1,12 +1,12 @@
 beautifulsoup4
 deep-translator
 fastapi
-httpx[http2]
 lxml
 motor
-pymongo[srv]
+Pillow
 nest-asyncio
+aioredis
 uvicorn
-pillow
 apscheduler
-slowapi
+httpx[http2]
+./src/wheels/fastapi_limiter-0.1.5-py3-none-any.whl

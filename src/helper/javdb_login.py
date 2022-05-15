@@ -9,11 +9,6 @@ import httpx
 from bs4 import BeautifulSoup
 from PIL import Image, UnidentifiedImageError
 
-try:
-    from mongo import insert_log
-except ImportError:
-    from src.helper.mongo import insert_log
-
 EMAIL = os.environ['JAVDB_EMAIL']
 PASSWORD = os.environ['JAVDB_PASSWORD']
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
@@ -77,12 +72,6 @@ async def login(root_path, client: httpx.AsyncClient):
                 'a', {'class': 'navbar-link', 'href': '/users/profile'})).text.strip()
             # print(profile_id)
             cookies = dict(client.cookies)
-            try:
-                log = {'timestamp': datetime.datetime.utcnow()}
-                await insert_log(log=log, app='javdb_login')
-            except:
-                pass
-
             for key, value in cookies.items():
                 if key == 'remember_me_token':
                     os.environ['REMEMBER_ME_TOKEN'] = value

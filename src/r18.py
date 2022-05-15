@@ -34,15 +34,15 @@ async def actress_data(actress_list: list):
 
     boobpedia_results = await asyncio.gather(*boobpedia_tasks)
     r18_results = await asyncio.gather(*r18_tasks)
-    for i in range(len(boobpedia_results)):
-        if boobpedia_results[i] is not None:
-            actress_list[i] = boobpedia_results[i]
-            actress_list[i]['image2'] = r18_results[i]['image']
-        elif r18_results[i] is not None:
-            actress_list[i] = r18_results[i]
+    for index_ in range(len(boobpedia_results)):
+        if boobpedia_results[index_] is not None:
+            actress_list[index_] = boobpedia_results[index_]
+            actress_list[index_]['image2'] = r18_results[index_]
+        elif r18_results[index_] is not None:
+            actress_list[index_] = {'name': actress_list[index_], 
+                                    'image': r18_results[index_] }
         else:
-            actress_list[i] = {'name': actress_list[i]}
-
+            actress_list[index_] = {'name': actress_list[index_]}
     return actress_list
 
 
@@ -61,8 +61,7 @@ async def movie_data(content_id: str, client: AsyncClient):
         base_details['poster'] = response['data']['images']['jacket_image']['large']
 
         extra_details['Director'] = response['data']['director']
-        extra_details['Release Date'] = response['data']['release_date'].split(' ')[
-            0]
+        extra_details['Release Date'] = response['data']['release_date'].split(' ')[0]
         extra_details['Runtime'] = response['data']['runtime_minutes']
         extra_details['Studio'] = response['data']['maker']['name']
 
@@ -74,9 +73,9 @@ async def movie_data(content_id: str, client: AsyncClient):
                     name = name.split(' ')
                     for x in range(2):
                         part = list(name[x])
-                        for i in part:
-                            if not i.isalpha():
-                                part.remove(i)
+                        for char in part:
+                            if not char.isalpha():
+                                part.remove(char)
                         name[x] = ''.join(part)
                     actress_list.append(' '.join(name))
                 except Exception:
@@ -87,7 +86,7 @@ async def movie_data(content_id: str, client: AsyncClient):
 
             base_details['actress'] = actress_list
 
-        except:
+        except AttributeError:
             # If actresses are not available
             pass
 
@@ -95,9 +94,10 @@ async def movie_data(content_id: str, client: AsyncClient):
             for item in range(len(response['data']['gallery'])):
                 for size in ['large', 'medium', 'small']:
                     try:
-                        screenshots.append(
-                            response['data']['gallery'][item][size])
-                        break
+                        if response['data']['gallery'][item][size] != None:
+                            screenshots.append(
+                                response['data']['gallery'][item][size])
+                            break
                     except:
                         pass
             base_details['screenshots'] = screenshots

@@ -1,17 +1,15 @@
 import asyncio
+import json
+import os
 
+import aioredis
 from bs4 import BeautifulSoup
 from httpx import AsyncClient
-
-try:
-    from mongo import *
-except ImportError:
-    from src.helper.mongo import *
 
 actress_dictionary = {}
 
 # Get All pages (popular)
-async def get(page: int, client: AsyncClient):
+async def get(page: int, client: AsyncClient) -> None:
 
     with open(f'/tmp/{page}.html', 'w') as output:
         response = await client.get('/', params={'page': page})
@@ -19,18 +17,27 @@ async def get(page: int, client: AsyncClient):
         soup = BeautifulSoup(response.text, 'lxml')
         output.write(soup.prettify())
 
+
 async def scrap(page: int) -> None:
     soup = BeautifulSoup(open(f'/tmp/{page}.html'), 'lxml')
     for x in soup.find_all('img', {'height': '135', 'width': '135'}):
         actress_name = list(x.get('alt'))
-        for i in range(len(actress_name)):
+        name_len = len(actress_name)
+        not_string = []
+        for i in range(name_len):
             if actress_name[i] == ' ':
-                pass
+                continue
             elif not str.isalpha(actress_name[i]):
-                actress_name[i] = ''
-        actress_dictionary[''.join(actress_name)] = x.get('src')
+                not_string.append(actress_name[i])
 
-async def main():
+        if len(not_string) != 0:
+            for y in not_string:
+                actress_name = list(filter((y).__ne__, actress_name))
+
+        actress_dictionary[''.join(actress_name).strip(' ')] = x.get('src')
+
+
+async def main() -> None:
     URL = 'https://www.r18.com/videos/vod/movies/actress'
 
     # Get the number of total pages
@@ -38,7 +45,7 @@ async def main():
         print(f'INFO:\t [R18_DB] Getting the number of total pages')
         response = await client.get('/')
         soup = BeautifulSoup(response.text, 'lxml')
-        total= soup.find('div', class_='cmn-list-pageNation02')
+        total = soup.find('div', class_='cmn-list-pageNation02')
         total = int(' '.join(total.text.split()).split(' ')[-1])
 
         # Save all pages as .html file
@@ -49,27 +56,20 @@ async def main():
         print(f"INFO:\t [R18_DB] Fetched {total} Pages")
 
         # Scrap all pages
+        total = 344
         tasks = []
         for i in range(1, total + 1):
             tasks.append(asyncio.create_task(scrap(i)))
         await asyncio.gather(*tasks)
         print(f"INFO:\t [R18_DB] Scraped {total} Pages")
 
-        # Try to drop previous collection
-        await drop('actress')
-        print(f"INFO:\t [R18_DB] Dropped previous collection")
-
-
         # Upload updated data to Database
-        print(f"INFO:\t [R18_DB] Uploading total {len(actress_dictionary)} Actresses Data")
-        actress_list = []
-        for x, y in actress_dictionary.items():
-            actress_list.append({'name': x, 'image': y})
+        print(
+            f"INFO:\t [R18_DB] saving total {len(actress_dictionary)} Actresses Data")
+        async with aioredis.from_url(os.environ.get('REDIS_URL'), decode_responses=True, db=0) as redis_client:
+            await redis_client.mset(actress_dictionary)
 
-        await insert_bulk(actress_list, 'actress')
     print('INFO:\t [R18_DB] Actress DB updated')
-
-
 
 if __name__ == '__main__':
     asyncio.run(main())
