@@ -24,7 +24,7 @@ ___
 
 ___
 ### Demo
-[![DEMO/MONITOR](https://img.shields.io/website?down_color=red&down_message=API%20IS%20DOWN&label=JAVINFO-API&logo=railway&style=for-the-badge&up_color=darkviolet&up_message=TRY%20DEMO%20%21&url=https%3A%2F%2F5c24-103-220-210-250.in.ngrok.io%2Fcheck)](https://javinfo-api.up.railway.app/demo)
+[![DEMO/MONITOR](https://img.shields.io/website?down_color=red&down_message=API%20IS%20DOWN&label=JAVINFO-API&logo=railway&style=for-the-badge&up_color=darkviolet&up_message=TRY%20DEMO%20%21&url=https://javinfo-api.up.railway.app%2Fcheck)](https://javinfo-api.up.railway.app/demo)
 ![VERSION](https://img.shields.io/endpoint?url=https://javinfo-api.up.railway.app/version)
 
 <br>
