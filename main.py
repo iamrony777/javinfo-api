@@ -145,8 +145,11 @@ async def search(id: str, hasaccess: bool = Depends(check_access), provider=None
     else:
         return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={'error': 'Access Denied'})
 
+@app.head('/check', include_in_schema=False)
+async def check():
+    return JSONResponse(status_code=status.HTTP_200_OK, content={'status': 'OK'})
 
-@app.get('/version')
+@app.get('/version', include_in_schema=False)
 async def version():
     json_msg = {'schemaVersion': 1,
                 'label': 'Version',

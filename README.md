@@ -15,14 +15,19 @@
 
 <br>
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/FtYd5M?referralCode=8NonTm)
+___
+### Deploy 
 
-<!-- [![Codacy Badge](https://app.codacy.com/project/badge/Grade/6606c0b6f2c2407989b2628792de8060)](https://www.codacy.com/gh/iamrony777/JavInfo-api/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=iamrony777/JavInfo-api&amp;utm_campaign=Badge_Grade) -->
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/T55Se3?referralCode=8NonTm)
 
 <br>
 
-[![Try Online!](https://img.shields.io/static/v1?label=TRY&message=Online%20Now&color=brightgreen&style=for-the-badge)](https://javinfo-api.up.railway.app/demo)
-![version](https://img.shields.io/endpoint?url=https://javinfo-api.up.railway.app/version)
+___
+### Demo
+[![DEMO/MONITOR](https://img.shields.io/website?down_color=red&down_message=API%20IS%20DOWN&label=JAVINFO-API&logo=railway&style=for-the-badge&up_color=darkviolet&up_message=TRY%20DEMO%20%21&url=https%3A%2F%2F5c24-103-220-210-250.in.ngrok.io%2Fcheck)](https://javinfo-api.up.railway.app/demo)
+![VERSION](https://img.shields.io/endpoint?url=https://javinfo-api.up.railway.app/version)
+
+<br>
 
 ---
 [![wakatime](https://wakatime.com/badge/user/b5fd871e-e348-4c6e-9ae5-306590243750/project/5ccc4d18-5f78-4674-bd77-57a94ae53215.svg?style=for-the-badge)](https://wakatime.com/badge/user/b5fd871e-e348-4c6e-9ae5-306590243750/project/5ccc4d18-5f78-4674-bd77-57a94ae53215)
