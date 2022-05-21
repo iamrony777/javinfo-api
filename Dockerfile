@@ -12,7 +12,7 @@ ARG API_USER='' \
     # NOT USABLE FOR NOW 
     CAPTCHA_SOLVER_URL='' \
     JAVDB_EMAIL='' \
-    JAVDB_PASSWORD='' \
+    JAVDB_PASSWORD=''
 
 ADD ./ /app/
 
