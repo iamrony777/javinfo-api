@@ -2,12 +2,17 @@ FROM python:alpine3.15
 
 WORKDIR /app
 
-ARG JAVDB_EMAIL='' \
-    JAVDB_PASSWORD='' \
-    CAPTCHA_SOLVER_URL='' \
-    API_USER='' \
+ARG API_USER='' \
     API_PASS='' \
-    REDIS_URL=''
+    REMEMBER_ME_TOKEN='' \
+    JDB_SESSION='' \
+    REDIS_URL='' \
+
+
+    # NOT USABLE FOR NOW 
+    CAPTCHA_SOLVER_URL='' \
+    JAVDB_EMAIL='' \
+    JAVDB_PASSWORD='' \
 
 ADD ./ /app/
 

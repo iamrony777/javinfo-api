@@ -29,7 +29,7 @@ async def main(id):
         "locale": "en",
         "over18": "1",
         "remember_me_token": os.environ.get('REMEMBER_ME_TOKEN'),
-        "_jdb_session": os.environ.get('_JDB_SESSION'),
+        "_jdb_session": os.environ.get('JDB_SESSION'),
         "redirect_to": "%2F"
     }
 
@@ -49,8 +49,6 @@ async def main(id):
             response = await client.get(
                 f'https://javdb.com{data[1]}', headers=headers, cookies=cookies, follow_redirects=True)
             soup = BeautifulSoup(response.text, 'lxml')
-            with open('./javdb.html', 'w') as f:
-                f.write(soup.prettify())
             jav_id = soup.title.text.split()[0]  # Get the jav_id
 
             if jav_id == id:
@@ -112,4 +110,4 @@ async def main(id):
 # Testing
 if __name__ == "__main__":
     import asyncio
-    print(asyncio.run(main('EBOD-375')))
+    print(asyncio.run(main('MKCK-274')))

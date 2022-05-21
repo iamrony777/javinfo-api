@@ -1,5 +1,5 @@
 
-![Logo](./src/logo.png)
+![Logo](./src/img/logo.png)
 
 
 <b>JAVINFO API | Backend for JAVINFO CLI</b>
@@ -7,9 +7,9 @@
 
 | Provider                                        | Query  | Actress Data    | Movie Data  | Image Data  | Screenshots  |
 |------------------------------------------------ |------- |---------------- |------------ |------------ |------------  |
-| [Javdb.com](https://javdb.com/)                 | Y      | N               | Y           | Y           |  N           |
-| [Javlibrary.com](https://www.javdatabase.com/)  | Y      | Y               | Y           | N           |  N           |
-| [Javdatabase.com](https://www.javlibrary.com/)  | Y      | Y               | Y           | Y           |  N           |
+| [Javdb](https://javdb.com/)                     | Y      | N               | Y           | Y           |  N           |
+| [Javlibrary](https://www.javdatabase.com/)      | Y      | Y               | Y           | N           |  N           |
+| [Javdatabase](https://www.javlibrary.com/)      | Y      | Y               | Y           | Y           |  N           |
 | [r18](http://r18.com/)    (Default)             | Y      | Y               | Y           | Y           |  Y           |
 | [Boobpedia](https://www.boobpedia.com/)         | N      | Y               | N           | Y           |  N           |
 

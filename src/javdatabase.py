@@ -109,7 +109,16 @@ async def search(id: str, client: AsyncClient):
             actress_list.append(''.join(idol))
         actress_data_ = await actress_data(actress_list)
 
-        return {'id': id, 'title': title, 'poster': poster, 'extra_details': details, 'actress': actress_data_, 'tags': list_tags}
+
+        # Remove empty values
+        data = {}
+        for key, items in zip(['id', 'title', 'poster', 'extra_details', 'actress', 'tags'], [id, title, poster, details, actress_data_, list_tags]):
+            if len(items) > 0:
+                data[key] = items
+            else:
+                pass
+            
+        return data
 
 
 async def actress_details(web_id: str, client: AsyncClient):
@@ -167,7 +176,10 @@ async def extra_details(soup: BeautifulSoup):
 
     extra_details = {}
     for i in sorted(detail.keys()):
-        extra_details[i] = detail[i]
+        if len(detail[i]) > 0:
+            extra_details[i] = detail[i]
+        else:
+            extra_details[i] = None
     return extra_details
 
 
@@ -177,4 +189,4 @@ async def main(id: str):
     return await search(id=id, client=client)
 
 if __name__ == '__main__':
-    print(json.dumps(asyncio.run(main('ebod-391')), ensure_ascii=False, indent=4))
+    print(json.dumps(asyncio.run(main('DOA-017')), ensure_ascii=False, indent=4))

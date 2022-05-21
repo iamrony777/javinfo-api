@@ -10,6 +10,7 @@ import secrets
 
 import aioredis
 import nest_asyncio
+from typing import Optional
 import uvicorn
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -54,7 +55,7 @@ def check_access(credentials: HTTPBasicCredentials = Depends(security)):
     return True
 
 
-async def get_results(id, provider):
+async def get_results(id: str, provider: Optional[str] = None):
 
     if provider == None:
         tasks = []
@@ -88,7 +89,7 @@ async def startup_event():
         await r18_db()
         scheduler.add_job(r18_db, trigger='interval', days=1)
     scheduler.start()
-    redis = await aioredis.from_url(os.environ.get('REDIS_URL'), encoding='utf-8', decode_responses=True)
+    redis = await aioredis.from_url(os.environ.get('REDIS_URL'), encoding='utf-8', decode_responses=True, db=1)
     await FastAPILimiter.init(redis)
     if await redis.ping():
         print('INFO:\t  [REDIS] Connection established')
@@ -98,7 +99,7 @@ async def startup_event():
 
 @app.get('/', include_in_schema=False)
 async def root():
-    with open('./src/logo.png', 'rb') as image:
+    with open('./src/img/logo.png', 'rb') as image:
         return Response(status_code=status.HTTP_200_OK, content=image.read(), media_type='image/png')
 
 
@@ -125,23 +126,23 @@ Search for a Movie by its ID.
 
 
     """
-    _id = filter(id.upper())
+    _id = filter(id).upper()
     result = await get_results(id=_id, provider=provider)
     if result != None:
         return JSONResponse(status_code=status.HTTP_200_OK, content=result)
     else:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Not Found'})
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': f'{_id} Not Found'})
 
 
 @app.post('/search', include_in_schema=False)
 async def search(id: str, hasaccess: bool = Depends(check_access), provider=None):
     if hasaccess:
-        _id = filter(id.upper())
+        _id = filter(id).upper()
         result = await get_results(id=_id, provider=provider)
         if result != None:
             return JSONResponse(status_code=status.HTTP_200_OK, content=result)
         else:
-            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Not Found'})
+            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': f'{_id} Not Found'})
     else:
         return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={'error': 'Access Denied'})
 
@@ -153,7 +154,7 @@ async def check():
 async def version():
     json_msg = {'schemaVersion': 1,
                 'label': 'Version',
-                'message': '2.2',
+                'message': '2.3',
                 'color': 'FF4489',
                 'style': 'for-the-badge'}
     return json_msg

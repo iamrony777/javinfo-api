@@ -1,5 +1,6 @@
 import asyncio
 import json
+import re
 
 from httpx import AsyncClient
 from bs4 import BeautifulSoup
@@ -67,27 +68,42 @@ async def movie_data(content_id: str, client: AsyncClient):
 
         base_details['extra_details'] = extra_details
         try:
-            for actress_ in response['data']['actresses']:
+            for actress_count in range(len(response['data']['actresses'])):
+                actress_name = list(response['data']['actresses'][actress_count]['name'])
+                not_string = []
                 try:
-                    name = ' '.join(actress_['name'].split(' ')[0:2])
-                    name = name.split(' ')
-                    for x in range(2):
-                        part = list(name[x])
-                        for char in part:
-                            if not char.isalpha():
-                                part.remove(char)
-                        name[x] = ''.join(part)
-                    actress_list.append(' '.join(name))
-                except Exception:
-                    defective_list.append({'name': actress_['name'],
-                                           'image': actress_['image_url']})
+                    for i in range(len(actress_name)):
+                        if actress_name[i] == ' ':
+                            continue
+                        elif actress_name[i] == '(' or actress_name[i] == ')': # alias = [Name (2nd name)]
+                            actress_alias = re.split(r'[()]', ''.join(actress_name))[0:2]
+                            if re.search(',', actress_alias[1]) == None:
+                                if len(actress_alias[0].split(' ')[-1]) > 0:
+                                    actress_name = list(actress_alias[0]) 
+                                else:
+                                    raise ValueError()  # Includes ony name, no surname                
+                            else:
+                                actress_name = list(actress_alias[0]) if len(actress_alias[0]) >= len(actress_alias[1].split(',')[0]) else list(actress_alias[1].split(',')[0])
+                                break
+                        elif not str.isalpha(actress_name[i]):
+                            not_string.append(actress_name[i])
+
+                    if len(not_string) != 0:
+                        for y in not_string:
+                            actress_name = list(filter((y).__ne__, actress_name))
+                    actress_list.append(''.join(actress_name).strip())
+                except:
+                    actress_alias = re.split(r'[()]', ''.join(actress_name))[1] # alias = 2nd name
+                    image_url = response['data']['actresses'][actress_count]['image_url']
+                    defective_list.append({'name': actress_alias.strip(),
+                                            'image': image_url})
             actress_list = await actress_data(actress_list)
             actress_list.extend(defective_list)
 
             base_details['actress'] = actress_list
-
-        except AttributeError:
+        except Exception as exception:
             # If actresses are not available
+            # print(exception)
             pass
 
         try:
@@ -119,4 +135,4 @@ async def main(id: str):
         return await movie_data(content_id, client)
 
 if __name__ == '__main__':
-    print(json.dumps(asyncio.run(main('PPBD-205')), indent=4, ensure_ascii=False))
+    print(json.dumps(asyncio.run(main('DOA-017')), indent=4, ensure_ascii=False))

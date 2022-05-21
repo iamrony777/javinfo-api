@@ -1,6 +1,6 @@
 import json
 import os
-
+import asyncio
 import aioredis
 from bs4 import BeautifulSoup
 from httpx import AsyncClient
@@ -107,25 +107,31 @@ async def main(name: str):
 
 async def r18(name: str):
     async with aioredis.from_url(os.environ.get('REDIS_URL'), decode_responses=True, db=0) as redis_client:
-        name = name.split(' ')
-        # As some of Single names are in uppercase
-        if len(name) == 1:
-            name = str(name[0].upper())
-        else:
-            # While rest of them are in capitalized
+        tasks = []
+
+        # case 1: name is a single word
+        if len(name.split(' ')) == 1:
+            tasks.append(asyncio.create_task(redis_client.get(name)))
+
+            # case 1.2: name is full captalized
+            tasks.append(asyncio.create_task(redis_client.get(name.upper())))
+        # case 2: name is a multi-word
+        elif len(name.split(' ')) > 1:
+            name = name.split(' ')
             for x in range(len(name)):
                 name[x] = name[x].capitalize()
-            name = ' '.join(name)
-        result = await redis_client.get(name)
-        if result == None:
-            name = name.split(' ')
+            tasks.append(asyncio.create_task(redis_client.get(' '.join(name))))
+
+            # case 2.2: some names have surname before name
             name.reverse()
-            name = ' '.join(name)
-            return await redis_client.get(name)
-        else:
-            return result
+            tasks.append(asyncio.create_task(redis_client.get(' '.join(name))))
+
+        tasks_results = await asyncio.gather(*tasks)
+        for result in tasks_results:
+            if result is not None:
+                return result
 
 if __name__ == '__main__':
     import asyncio
-    data = asyncio.run(main('Julia'))
+    data = asyncio.run(r18('Kuroe'))
     print(json.dumps(data, indent=4))

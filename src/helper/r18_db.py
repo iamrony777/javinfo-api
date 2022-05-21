@@ -1,5 +1,4 @@
 import asyncio
-import json
 import os
 
 import aioredis
@@ -56,7 +55,6 @@ async def main() -> None:
         print(f"INFO:\t [R18_DB] Fetched {total} Pages")
 
         # Scrap all pages
-        total = 344
         tasks = []
         for i in range(1, total + 1):
             tasks.append(asyncio.create_task(scrap(i)))

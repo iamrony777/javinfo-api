@@ -76,7 +76,7 @@ async def login(root_path, client: httpx.AsyncClient):
                 if key == 'remember_me_token':
                     os.environ['REMEMBER_ME_TOKEN'] = value
                 elif key == '_jdb_session':
-                    os.environ['_JDB_SESSION'] = value
+                    os.environ['JDB_SESSION'] = value
                 else:
                     pass
             return True

@@ -9,9 +9,12 @@ def filter(name):  # Filter the id and start search
                 'Watch18plus-',
                 '\[(.*?)\]',
                 '^@',
+                '[a-zA-Z]$',
+                '-[a-zA-Z]$',
                 'hhd800@',
                 'FHD-',
                 'FHD_',
+                'HD_',
                 'fhd',
                 'Watch ',
                 '-h264',
@@ -52,4 +55,4 @@ def filter(name):  # Filter the id and start search
 
 
 if __name__ == '__main__':
-    print(filter('hhd800@EBOD-375'))
+    print(filter('kpkp3.com-IPX796C'))
