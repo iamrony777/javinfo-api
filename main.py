@@ -7,10 +7,10 @@
 import asyncio
 import os
 import secrets
+from typing import Optional
 
 import aioredis
 import nest_asyncio
-from typing import Optional
 import uvicorn
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -102,7 +102,6 @@ async def root():
     with open('./src/img/logo.png', 'rb') as image:
         return Response(status_code=status.HTTP_200_OK, content=image.read(), media_type='image/png')
 
-
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
     return FileResponse(f'{os.getcwd()}/favicon.ico')
@@ -160,4 +159,4 @@ async def version():
     return json_msg
 
 if __name__ == '__main__':
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get('PORT', 8000)))
