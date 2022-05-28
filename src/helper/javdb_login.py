@@ -1,11 +1,12 @@
 import asyncio
-import datetime
-import os
 import time
+import os
 from io import BytesIO
 from shutil import rmtree
+from typing import Optional
 
 import httpx
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from bs4 import BeautifulSoup
 from PIL import Image, UnidentifiedImageError
 
@@ -25,7 +26,7 @@ async def token(client: httpx.AsyncClient):
         return str(token)
     except AttributeError:
         if login_page.status_code == 403:
-            print('INFO:\t [JAVDB] Login Failed, IP Adress was banned')
+            print('INFO:\t     [JAVDB] Login Failed, IP Adress was banned')
             return 403
         return None
 
@@ -66,7 +67,7 @@ async def login(root_path, client: httpx.AsyncClient):
         try:
             signin_msg = (
                 soup.find('div', {'class': 'message-header'})).text.strip()
-            print('INFO:\t [JAVDB]', signin_msg)
+            print('INFO:\t     [JAVDB]', signin_msg)
 
             profile_id = (soup.find(
                 'a', {'class': 'navbar-link', 'href': '/users/profile'})).text.strip()
@@ -86,26 +87,34 @@ async def login(root_path, client: httpx.AsyncClient):
         return 403
 
 
-async def main(root_path):
+async def main(root_path: str):
+       
     try:
         os.mkdir(f'{root_path}/uploads')
     except FileExistsError:
         pass
-
+    
+    try_count = 0
     while True:
-        client = httpx.AsyncClient(
-            http2=True, follow_redirects=True, base_url='https://javdb.com', headers={'User-Agent': USER_AGENT})
-        async with client:
-            response = await login(root_path, client)
-            if response == 403:
-                break
-            elif response == True:
-                print('INFO:\t [JAVDB] Successfully logged in')
-                rmtree(f'{root_path}/uploads')
-                break
-            else:
-                print('INFO:\t [JAVDB] Login Failed, retrying in 10 seconds')
-                time.sleep(10)
+        if try_count < 10:
+            client = httpx.AsyncClient(
+                http2=True, follow_redirects=True, base_url='https://javdb.com', headers={'User-Agent': USER_AGENT})
+            async with client:
+                response = await login(root_path, client)
+                if response == 403:
+                    break
+                elif response == True:
+                    print('INFO:\t     [JAVDB] Successfully logged in')
+                    rmtree(f'{root_path}/uploads')
+                    break
+                else:
+                    print('INFO:\t     [JAVDB] Login Failed, retrying in 10 seconds')
+                    try_count += 1
+                    await asyncio.sleep(10)
+        else:
+            print('INFO:\t     [JAVDB] Login Failed, retrying in 10 minutes')
+            try_count = 0
+            await asyncio.sleep(600)
 
 
 if __name__ == '__main__':

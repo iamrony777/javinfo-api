@@ -5,8 +5,9 @@ lxml
 motor
 Pillow
 nest-asyncio
-aioredis
+redis
 uvicorn
 apscheduler
 httpx[http2]
+honcho
 ./src/wheels/fastapi_limiter-0.1.5-py3-none-any.whl

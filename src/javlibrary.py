@@ -160,28 +160,31 @@ async def actress_details(soup: BeautifulSoup):
     
 
 async def scrap(soup: BeautifulSoup):
-    # Scrap the data
-    id = soup.find('div', {'id': 'video_id'}).find('td', class_='text').text.strip()
-    title = ' '.join(soup.find('h3', class_='post-title text').text.split()[1:-1])
-    poster = 'https://' + soup.find('img', {'id':'video_jacket_img'}).get('src').strip().split('//')[-1]
-    extra_details_ = await extra_details(soup)
-    actress_details_ = await actress_details(soup)
+    try:
+        # Scrap the data
+        id = soup.find('div', {'id': 'video_id'}).find('td', class_='text').text.strip()
+        title = ' '.join(soup.find('h3', class_='post-title text').text.split()[1:-1])
+        poster = 'https://' + soup.find('img', {'id':'video_jacket_img'}).get('src').strip().split('//')[-1]
+        extra_details_ = await extra_details(soup)
+        actress_details_ = await actress_details(soup)
 
-    tags = soup.find_all('a', rel='category tag')
-    jav_tags = []
-    for tag in tags:
-        jav_tags.append(tag.text)
+        tags = soup.find_all('a', rel='category tag')
+        jav_tags = []
+        for tag in tags:
+            jav_tags.append(tag.text)
 
-    base_details = {
-        'id': id,
-        'title': title,
-        'poster': poster,
-        'extra_details': extra_details_,
-        'actress' : actress_details_,
-        'tags': jav_tags
-    }
+        base_details = {
+            'id': id,
+            'title': title,
+            'poster': poster,
+            'extra_details': extra_details_,
+            'actress' : actress_details_,
+            'tags': jav_tags
+        }
 
-    return base_details
+        return base_details
+    except AttributeError:
+        return None
 
 
 async def main(id: str):

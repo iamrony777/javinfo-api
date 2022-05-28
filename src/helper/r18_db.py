@@ -1,7 +1,9 @@
 import asyncio
 import os
+from typing import Optional
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-import aioredis
+from redis import asyncio as aioredis
 from bs4 import BeautifulSoup
 from httpx import AsyncClient
 
@@ -41,7 +43,7 @@ async def main() -> None:
 
     # Get the number of total pages
     async with AsyncClient(base_url=URL, follow_redirects=True, timeout=None) as client:
-        print(f'INFO:\t [R18_DB] Getting the number of total pages')
+        print(f'INFO:\t    [R18_DB] Getting the number of total pages')
         response = await client.get('/')
         soup = BeautifulSoup(response.text, 'lxml')
         total = soup.find('div', class_='cmn-list-pageNation02')
@@ -52,22 +54,22 @@ async def main() -> None:
         for i in range(1, total + 1):
             tasks.append(asyncio.create_task(get(i, client)))
         await asyncio.gather(*tasks)
-        print(f"INFO:\t [R18_DB] Fetched {total} Pages")
+        print(f"INFO:\t    [R18_DB] Fetched {total} Pages")
 
         # Scrap all pages
         tasks = []
         for i in range(1, total + 1):
             tasks.append(asyncio.create_task(scrap(i)))
         await asyncio.gather(*tasks)
-        print(f"INFO:\t [R18_DB] Scraped {total} Pages")
+        print(f"INFO:\t    [R18_DB] Scraped {total} Pages")
 
-        # Upload updated data to Database
+        # Upload updated data to Database 0
         print(
-            f"INFO:\t [R18_DB] saving total {len(actress_dictionary)} Actresses Data")
-        async with aioredis.from_url(os.environ.get('REDIS_URL'), decode_responses=True, db=0) as redis_client:
+            f"INFO:\t    [R18_DB] saving total {len(actress_dictionary)} Actresses Data")
+        async with aioredis.Redis.from_url(os.environ.get('REDIS_URL'), decode_responses=True, db=0) as redis_client:
             await redis_client.mset(actress_dictionary)
 
-    print('INFO:\t [R18_DB] Actress DB updated')
+    print('INFO:\t    [R18_DB] Actress DB updated')
 
 if __name__ == '__main__':
     asyncio.run(main())

@@ -1,0 +1,45 @@
+site_name: Documentation
+repo_url: "https://github.com/iamrony777/javinfo-api"
+repo_name: "JavInfo API"
+docs_dir: docs
+edit_uri: ""
+theme:
+  favicon: "images/favicon.ico"
+  icon:
+    repo: fontawesome/brands/github-alt
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      primary: deep purple
+      accent: purple
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      primary: deep purple
+      accent: purple
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  name: material
+  font:
+    text: Roboto
+    code: Fira Code
+  features:
+    - content.code.annotate
+markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - tables
+  - admonition
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
