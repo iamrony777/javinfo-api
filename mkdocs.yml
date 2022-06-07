@@ -1,0 +1,54 @@
+site_name: Documentation
+repo_url: "https://github.com/iamrony777/javinfo-api"
+repo_name: "JavInfo API"
+docs_dir: docs
+edit_uri: ""
+theme:
+  favicon: "images/favicon.ico"
+  icon:
+    logo: material/api
+    repo: fontawesome/brands/github-alt
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      primary: deep purple
+      accent: purple
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      primary: deep purple
+      accent: purple
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  name: material
+  font:
+    text: Noto Sans
+    code: Fira Code
+  features:
+    - content.code.annotate
+markdown_extensions:
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - attr_list
+  - tables
+  - admonition
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+extra:
+  social:
+    - icon: fontawesome/brands/python
+      link: https://python.org/
+      name: "Written In Python"
+    - icon: fontawesome/brands/github
+      link: https://github.com/iamrony777
+      name: rony?

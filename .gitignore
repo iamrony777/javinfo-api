@@ -1,0 +1,32 @@
+# Cached builds
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.dll
+*.egg
+*.egg-info/
+
+# Build directories
+docs/_build/
+build/
+dist/
+
+
+# IDEs
+.idea/
+
+# Testing and temporary files
+.tox/
+
+# Custom
+.venv
+.env
+.vscode
+test*
+var*
+
+# Dev
+test_*
+old_*
