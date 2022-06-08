@@ -20,6 +20,7 @@ if [[ ${CREATE_REDIS} == 'true' ]]; then
 			echo "[INFO] Database Restored"
 		else
 			echo "[ERROR] Failed to restore database"
+			rm -rf /app/src/database.rdb
 		fi
 	fi
 
