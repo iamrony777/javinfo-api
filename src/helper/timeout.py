@@ -5,6 +5,7 @@ import time
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from redis import asyncio as aioredis
 TIMEOUT = int(os.getenv('INACTIVITY_TIMEOUT', '300'))
+FILE_TO_CHECK = 'timeout.json'
 
 # After 5min , worker will restart
 async def set_timeout(timeout_scheduler: AsyncIOScheduler) -> None:
@@ -26,10 +27,8 @@ async def manager(timeout_scheduler: AsyncIOScheduler) -> None:
 async def check_timeout(timeout_scheduler: AsyncIOScheduler) -> None:
     """Check if worker is still active."""
     async with aioredis.Redis.from_url(os.getenv('REDIS_URL'), decode_responses=True, db=3) as redis:
-        if await redis.get('active') == 'true':
-            pass
-        else:
+        if await redis.get('active') != 'true':
             timeout_scheduler.remove_job('check_timeout')
-            with open('timeout.json', 'w', encoding='UTF-8') as f:
+            with open(FILE_TO_CHECK, 'w', encoding='UTF-8') as output:
                 # quick hack just to reload worker
-                f.write(json.dumps({'time': round(time.time())}))
+                output.write(json.dumps({'time': round(time.time())}))

@@ -35,29 +35,25 @@ async def additional_details(tree: html.HtmlElement) -> dict[str, str | None]:
         key = str(data.xpath('td[@class="header"]/text()')
                   [0].split(':')[0].strip())
         if key == 'Director':
-            try:
-                details['director'] = data.xpath(
-                    'td/span[@class="director"]/a/text()')[0].strip()
-            except IndexError:
-                details['director'] = None
+            director = data.xpath(
+                'td/span[@class="director"]/a/text()')
+            details['director'] = director[0].strip() if len(director) > 0 else None
+            del director
         elif key == 'Release Date':
-            try:
-                details['release_date'] = data.xpath(
-                    'td[@class="text"]/text()')[0].strip()
-            except IndexError:
-                details['release_date'] = None
+            release_date = data.xpath(
+                    'td[@class="text"]/text()')
+            details['release_date'] = release_date[0].strip() if len(release_date) > 0 else None
+            del release_date  
         elif key == 'Length':
-            try:
-                details['runtime'] = data.xpath(
-                    'td/span[@class="text"]/text()')[0].strip()
-            except IndexError:
-                details['runtime'] = None
+            runtime =  data.xpath(
+                    'td/span[@class="text"]/text()')
+            details['runtime'] = runtime[0].strip() if len(runtime) > 0 else None
+            del runtime
         elif key == 'Maker':
-            try:
-                details['studio'] = data.xpath(
-                    'td/span[@class="maker"]/a/text()')[0].strip()
-            except IndexError:
-                details['studio'] = None
+            studio =  data.xpath(
+                    'td/span[@class="maker"]/a/text()')
+            details['studio'] = studio[0].strip().upper() if len(studio) > 0 else None
+            del studio
         elif key == 'User Rating':
             try:
                 value = str(data.xpath(
@@ -77,10 +73,10 @@ async def parse_details(tree: html.HtmlElement, only_r18: bool) -> dict[str] | N
     """Parse in details from the page."""
     # get movie code, title and poster
     movie_dictionary = {}
-    movie_dictionary['id'] = str(tree.xpath(
-        '//h3[@class="post-title text"]/a/text()')[0].strip()).split(' ', maxsplit=1)[0]
-    movie_dictionary['title'] = str(tree.xpath(
-        '//h3[@class="post-title text"]/a/text()')[0].strip()).split(movie_dictionary['id'])[1].strip()
+    raw_title = str(tree.xpath(
+        '//h3[@class="post-title text"]/a/text()')[0].strip())
+    movie_dictionary['id'] = raw_title.split(' ', maxsplit=1)[0]
+    movie_dictionary['title'] = raw_title.split(movie_dictionary['id'])[1].strip()
     movie_dictionary['poster'] = 'https:' + \
         str(tree.xpath('//div[@id="video_jacket"]/img')[0].get('src'))
     movie_dictionary['page'] = 'https:' + \
@@ -96,7 +92,6 @@ async def parse_details(tree: html.HtmlElement, only_r18: bool) -> dict[str] | N
         movie_dictionary['tags'] = data.xpath(
             'td[@class="text"]/span/a/text()')
 
-    # return movie_dictionary
     return movie_dictionary
 
 
@@ -144,6 +139,6 @@ if __name__ == '__main__':
     # Actressc count > 1
     # print(json.dumps(asyncio.run(main('STSK-032')), indent=4, ensure_ascii=False))
     # Single Test
-    print(json.dumps(asyncio.run(main('EBOD-391', True)), indent=4, ensure_ascii=False))
+    print(json.dumps(asyncio.run(main('MKCK-274', True)), indent=4, ensure_ascii=False))
     # No result
     # print(json.dumps(asyncio.run(main('TEST-123')), indent=4, ensure_ascii=False))

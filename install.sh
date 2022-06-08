@@ -1,7 +1,7 @@
 #!/bin/bash
 
 download_database() {
-	wget --quiet --user "${API_USER}" --password "${API_PASS}" -O /app/src/database.rdb "$1" ; return $?
+	wget --quiet --timeout 30 --user "${API_USER}" --password "${API_PASS}" -O /app/src/database.rdb "$1" ; return $?
 }
 
 if [[ ${CREATE_REDIS} == 'true' ]]; then

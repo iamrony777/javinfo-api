@@ -19,14 +19,13 @@ async def fetch(name: str, url: str, client: AsyncClient):
             if name == item.find('img')['alt'].strip():
                 return item.get('data-content_id').strip()
 
-
 async def movie_data(client: AsyncClient, content_id: str, only_r18: bool) -> dict[str] | None:
     """Fetch data from r18.com's api."""
     response = await client.get(url=f'/api/v4f/contents/{content_id}', params={'lang': 'en'})
     if response.status_code == 200:
         response = response.json()['data']
         base_details, extra_details = {}, {}
-        actress_list, screenshots = [], []
+        actress_list = []
 
         base_details['id'] = response.get('dvd_id')
         base_details['title'] = response.get('title')
@@ -49,18 +48,15 @@ async def movie_data(client: AsyncClient, content_id: str, only_r18: bool) -> di
                     name = actresses['name'].replace(' (', ', ')
                     name = name.replace(')', '')
                     [actress_list.append(name) for name in name.split(', ')]
-                else:
-                    actress_list.append(actresses['name'].strip())
+                actress_list.append(actresses['name'].strip())
 
             base_details['actress'] = await actress_search(actress_list, only_r18)
 
         temp_screenshots = response.get('gallery')
         if temp_screenshots is not None:
-            for screenshot in temp_screenshots:
-                for size in ['large', 'medium', 'small']:
-                    if screenshot.get(size) is not None:
-                        screenshots.append(screenshot[size])
-                        break
+            screenshots = [ screenshot[list(screenshot.keys())[0]] \
+                for screenshot in temp_screenshots \
+                        if screenshot.get(list(screenshot.keys())[0]) is not None ]
             base_details['screenshots'] = screenshots
 
         return base_details
@@ -74,9 +70,6 @@ async def main(name: str, only_r18: bool = False) -> dict[str]:
             return await movie_data(client, contentname, only_r18)
 
 if __name__ == '__main__':
-    # import time
-    # start = time.perf_counter()
     # print(json.dumps(asyncio.run(main('DOA-017')), indent=4, ensure_ascii=False))
     print(json.dumps(asyncio.run(main('SSIS-391', False)), indent=4, ensure_ascii=False))
     # print(json.dumps(asyncio.run(main('MKCK-274')), indent=4, ensure_ascii=False))
-    # print(time.perf_counter() - start)

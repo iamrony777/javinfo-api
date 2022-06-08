@@ -10,7 +10,7 @@ from redis import asyncio as aioredis
 BASE_URL = 'https://www.boobpedia.com'
 
 
-async def boobpedia_special_query(client: AsyncClient, name: str) -> str:
+async def boobpedia_special_query(client: AsyncClient, name: str) -> str | None:
     """Fulltext search on boobpedia"""
     # this is a search page scrap
     params = {'title': 'Special:Search',
@@ -35,65 +35,60 @@ async def get_page_content(client: AsyncClient, url: str, **kwargs) -> html.Html
     """Get the page content as bytes, takes url as optional argument"""
     return html.fromstring((await client.get(url, **kwargs)).content)
 
+async def filter_actress_details(tree: html.HtmlElement) -> dict[str] | None:
+    """Handle filter and parsing info-panel"""
+            # Test 3 passed
+    details = {}
+    for result in tree.findall('.//tr[@valign="top"]'):
+        match = result.find('td/b').text.strip()
+        if bool(re.search('Also', match)):
+            details['also_known_as'] = result.find(
+                'td[2]').text.strip()
+        elif bool(re.search('Born', match)):
+            details['born'] = result.find(
+                'td/span/span[@class="bday"]').text.strip()
+        elif bool(re.search('Measurements', match)):
+            details['measurements'] = result.find(
+                'td[2]').text.strip()
+        elif bool(re.search('Bra', match)):
+            details['cup_size'] = result.find(
+                'td/a').text.replace(' metric', '').strip()
+        elif bool(re.search('Boobs', match)):
+            details['boob_type'] = result.find('td/a').text.strip()
 
-async def parse_actress_details(tree: html.HtmlElement, name: Optional[str] = None) -> dict | None:
+    # Social Media Links / External Links
+    for result in tree.findall('.//tr/td/b/a[@class="external text"]'):
+        details[result.text.strip().lower()] = result.get('href')
+    return details
+
+
+async def parse_actress_details(tree: html.HtmlElement) -> dict[str] | None:
     """Parse actress details from given page (also search in database for r18 actress links)"""
 
     details = {}
-    details['name'] = tree.findall('.//h1[@class="firstHeading"]')[0].text
-    if details['name'] is not None:
-        details['name'] = details['name'].strip()
-        if bool(re.search('(disambiguation)', details['name'])):
-            pass
-        elif details['name'] is not bool(re.search('(disambiguation)', details['name'])):
+    try:
+        details['name'] = tree.findall('.//h1[@class="firstHeading"]')[0].text.strip()
+        if details['name'] is not None and not bool(re.search(r'\(disambiguation\)', details['name'])):
             try:
-                try:
-                    details['image'] = BASE_URL + '/'.join(tree.findall
-                                                           (f'.//a[@title="{details["name"]}"]/img')[
-                                                               0]
-                                                           .get('src').replace('/thumb', '').split('/')[0:-1])
-                except IndexError:
-                    details['image'] = BASE_URL + '/'.join(tree.findall
-                                                           ('.//td[@colspan="2"]/a/img')[0]
-                                                           .get('src').replace('/thumb', '').split('/')[0:-1])
-
+                details['image'] = BASE_URL + '/'.join(tree.findall
+                                                    (f'.//a[@title="{details["name"]}"]/img')[
+                                                        0]
+                                                    .get('src').replace('/thumb', '').split('/')[0:-1])
+            except IndexError:
+                details['image'] = BASE_URL + '/'.join(tree.findall
+                                                    ('.//td[@colspan="2"]/a/img')[0]
+                                                    .get('src').replace('/thumb', '').split('/')[0:-1])
+            finally:                                      
                 r18_image = await r18_database(details['name'])
                 if r18_image is not None:
                     details['image2'] = r18_image
+                information = await filter_actress_details(tree)
+                if information is not None:
+                    details.update(information)
 
-                # Test 3 passed
-                for result in tree.findall('.//tr[@valign="top"]'):
-                    match = result.find('td/b').text.strip()
-                    if bool(re.search('Also', match)):
-                        details['also_known_as'] = result.find(
-                            'td[2]').text.strip()
-                    elif bool(re.search('Born', match)):
-                        details['born'] = result.find(
-                            'td/span/span[@class="bday"]').text.strip()
-                    elif bool(re.search('Measurements', match)):
-                        details['measurements'] = result.find(
-                            'td[2]').text.strip()
-                    elif bool(re.search('Bra', match)):
-                        details['cup_size'] = result.find(
-                            'td/a').text.replace(' metric', '').strip()
-                    elif bool(re.search('Boobs', match)):
-                        details['boob_type'] = result.find('td/a').text.strip()
-
-                # Social Media Links / External Links
-                for result in tree.findall('.//tr/td/b/a[@class="external text"]'):
-                    details[result.text.strip().lower()] = result.get('href')
-
-                return details
-            # If line 70 raises an IndexError , then details['name'] is not an actress's name
-            except IndexError:
-                pass
-        if len(details) < 2 and name is not None:
-            r18_image = await r18_database(details['name'])
-            if r18_image is not None:
-                details['name'] = name
-                details['image'] = r18_image
-                return details
-
+            return details
+    except (IndexError, TypeError, AttributeError):
+        return None
 
 async def r18_database(name: str) -> (str | None):
     """Search from redis-r18 database"""
@@ -104,11 +99,10 @@ async def r18_database(name: str) -> (str | None):
         name = list(name.split(' '))
         # case 1: name is a single word
         if len(name) == 1:
-            name = name[0]  # selecting 1st word
-            tasks.append(asyncio.create_task(redis.get(name)))
+            tasks.append(asyncio.create_task(redis.get(name[0])))
 
             # case 1.2: name is full captalized
-            tasks.append(asyncio.create_task(redis.get(name.upper())))
+            tasks.append(asyncio.create_task(redis.get(name[0].upper())))
         # case 2: name is a multi-word
         elif len(name) > 1:
             for pos, alias in enumerate(name):
@@ -135,28 +129,27 @@ async def actress_handler(client: AsyncClient, actress_name: str) -> dict[str] |
     for pos, result in enumerate(await asyncio.gather(*actress_search_task)):
         if result is not None and pos == 0:
             tree = await get_page_content(client, result)
-            return await parse_actress_details(tree, actress_name)
+            result = await parse_actress_details(tree)
+            if result is not None:
+                return result
+            continue
         if result is not None and pos == 1:
             return {'name': actress_name, 'image': result}
 
 
 async def actress_search(actress_list: list[str], only_r18: bool = False) -> list[dict]:
     """Takes actress name list (raw) as input, return a dictionary filled with details [boobpedia + r18]"""
-    actress_details = []
-    boobpedia_search_task = []
+    actress_details, boobpedia_search_task = [], []
     async with AsyncClient(base_url=BASE_URL, http2=True, follow_redirects=True, timeout=None) as client:
         for actress_name in actress_list:
-            # Convertion of single word name to Full capitalized name
-            # if len(actress_name.split(' ')) == 1:
-            #     actress_name = actress_name.upper()
-
             if not only_r18:
                 boobpedia_search_task.append(asyncio.create_task(
                     actress_handler(client, actress_name)))
             else:
                 actress_url = await r18_database(actress_name)
                 if actress_url is not None:
-                    actress_details.append({'name': actress_name, 'image': actress_url})
+                    actress_details.append(
+                        {'name': actress_name, 'image': actress_url})
 
         if not only_r18:
             results = await asyncio.gather(*boobpedia_search_task)
@@ -168,6 +161,8 @@ async def actress_search(actress_list: list[str], only_r18: bool = False) -> lis
 
 if __name__ == '__main__':
     import json
+    import uvloop
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     print(json.dumps(asyncio.run(actress_search(
         ['Ema Kisaki'], only_r18=False)), indent=2, ensure_ascii=False))
     # # with open('./boobpedia_search_result.html', 'rb') as _input:

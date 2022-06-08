@@ -24,9 +24,8 @@ dist/
 .venv
 .env
 .vscode
-test*
 var*
 
 # Dev
-test_*
+test*
 old_*

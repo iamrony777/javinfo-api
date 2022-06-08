@@ -3,7 +3,6 @@ import gc
 import os
 import secrets
 from enum import Enum
-from typing import Optional
 
 import uvicorn
 import uvloop
@@ -17,6 +16,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from redis import asyncio as aioredis
+
 import src.javdatabase as jdtb
 import src.javdb as jdb
 import src.javlibrary as jlb
@@ -26,6 +26,7 @@ from src.helper.r18_db import main as r18_db
 from src.helper.redis_log import logger as request_logger
 from src.helper.redis_log import manage
 from src.helper.string_modify import filter_string
+from src.helper.timeout import FILE_TO_CHECK
 from src.helper.timeout import set_timeout as timeout
 
 gc.enable()
@@ -42,7 +43,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-if not os.getenv('ENV') == 'DEV':
+if os.getenv('ENV') == 'PROD':
     app.mount("/docs", StaticFiles(directory="site", html=True),
               name="docs")
 
@@ -53,7 +54,7 @@ async_scheduler = AsyncIOScheduler()
 class Tags(Enum):
     """Set tags for each endpoint."""
     DEMO = 'demo'
-    DOCS = 'secured_endpoints'
+    DOCS = 'secured endpoints'
     BADGE = 'shields.io badge'
 
 
@@ -101,7 +102,7 @@ async def startup():
     async_scheduler.add_job(r18_db, trigger='interval', days=1)
     if os.environ.get('CAPTCHA_SOLVER_URL') is not None and len(os.environ.get('CAPTCHA_SOLVER_URL')) > 5:
         if not os.path.exists(
-            'timeout.json') and not os.getenv('ENV') == 'DEV':
+            FILE_TO_CHECK):
             async_scheduler.add_job(login, args=[os.getcwd()])
         async_scheduler.add_job(
             login, args=[os.getcwd()], trigger='interval', days=6)
@@ -110,7 +111,7 @@ async def startup():
         await FastAPILimiter.init(redis)
         print([('INFO:\t    [REDIS] Connection established') if await redis.ping() else ('ERROR:\t    [REDIS] Authentication failed')][0])
         if not os.path.exists(
-            'timeout.json') and not os.getenv('ENV') == 'DEV':
+            FILE_TO_CHECK):
             async_scheduler.add_job(r18_db)
         async_scheduler.add_job(r18_db, trigger='interval', days=1)
     else:
@@ -122,8 +123,7 @@ async def startup():
 @app.get('/', include_in_schema=False)
 async def root(request: Request, background_tasks: BackgroundTasks):
     """Root endpoint."""
-    if not os.getenv('ENV') == 'DEV':
-        background_tasks.add_task(request_logger, request)
+    background_tasks.add_task(request_logger, request)
     with open('./src/img/logo.png', 'rb') as image:
         return Response(status_code=status.HTTP_200_OK, content=image.read(), media_type='image/png')
 
@@ -139,39 +139,37 @@ async def check():
     """(Uptime) Monitor endpoint."""
     return {'status': 'OK'}
 
+if os.environ.get('ENV') != 'PROD':
+    @app.post('/demo/search', dependencies=[Depends(RateLimiter(times=1, seconds=10))], summary='Search for a video by DVD ID / Content ID', tags=[Tags.DEMO])
+    async def demo_search(request: Request, background_tasks: BackgroundTasks, name: str, provider: str | None = 'all', only_r18: bool | None = False):
+        """
+    ### [Demo] Limited to (1 requests/10 seconds)
 
-@app.post('/demo/search', dependencies=[Depends(RateLimiter(times=1, seconds=10))], summary='Search for a video by DVD ID / Content ID', tags=[Tags.DEMO])
-async def demo_search(request: Request, background_tasks: BackgroundTasks, name: str, provider: Optional[str] = 'all', only_r18: Optional[bool] = False):
-    """
-### [Demo] Limited to (1 requests/10 seconds)
-
-Search for a Movie by its ID. 
+    Search for a Movie by its ID.
 
 
-|       Provider      | Query | Actress Data | Movie Data | Screenshots |
-|:-------------------:|:-----:|:------------:|:----------:|:-----------:|
-|       `javdb`       |   Y   |       N      |      Y     |      N      |
-|     `javlibrary`    |   Y   |       Y      |      Y     |      N      |
-|    `javdatabase`    |   Y   |       Y      |      Y     |      N      |
-| `r18` (default)     |   Y   |       Y      |      Y     |      Y      |
-|      Boobpedia      |   N   |       Y      |      N     |      N      |
-    """
-    if not os.getenv('ENV') == 'DEV':
+    |       Provider      | Query | Actress Data | Movie Data | Screenshots |
+    |:-------------------:|:-----:|:------------:|:----------:|:-----------:|
+    |       `javdb`       |   Y   |       N      |      Y     |      N      |
+    |     `javlibrary`    |   Y   |       Y      |      Y     |      N      |
+    |    `javdatabase`    |   Y   |       Y      |      Y     |      N      |
+    |        `r18`        |   Y   |       Y      |      Y     |      Y      |
+    |      Boobpedia      |   N   |       Y      |      N     |      N      |
+        """
         background_tasks.add_task(request_logger, request)
         background_tasks.add_task(timeout, async_scheduler)
 
-    name = filter_string(name).upper()
-    result = await get_results(name=name, provider=provider, only_r18=only_r18)
-    if result is not None:
-        return JSONResponse(status_code=status.HTTP_200_OK, content=result)
-    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': f'{name} Not Found'})
+        name = filter_string(name).upper()
+        result = await get_results(name=name, provider=provider, only_r18=only_r18)
+        if result is not None:
+            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': f'{name} Not Found'})
 
 
 @app.get('/database', tags=[Tags.DOCS])
 async def logs(request: Request, background_tasks: BackgroundTasks, hasaccess: bool = Depends(check_access)):
     """Get a copy of current database (.rdb file) if using non-plugin redis server"""
-    if not os.getenv('ENV') == 'DEV':
-        background_tasks.add_task(request_logger, request)
+    background_tasks.add_task(request_logger, request)
     if hasaccess:
         if os.environ.get('CREATE_REDIS') == 'true':
             try:
@@ -190,18 +188,17 @@ async def version():
     """Get the current version of the API."""
     json_msg = {'schemaVersion': 1,
                 'label': 'Version',
-                'message': 'STABLE v1.0',
+                'message': 'v1.1',
                 'color': 'informational',
                 'style': 'for-the-badge'}
     return json_msg
 
 
 @app.post('/search', tags=[Tags.DOCS])
-async def search(request: Request, background_tasks: BackgroundTasks, name: str, hasaccess: bool = Depends(check_access), provider: Optional[str] = 'all', only_r18: Optional[bool] = False):
+async def search(request: Request, background_tasks: BackgroundTasks, name: str, hasaccess: bool = Depends(check_access), provider: str | None = 'all', only_r18: bool | None = False):
     """Protected search endpoint."""
-    if not os.getenv('ENV') == 'DEV':
-        background_tasks.add_task(request_logger, request)
-        background_tasks.add_task(timeout, async_scheduler)
+    background_tasks.add_task(request_logger, request)
+    background_tasks.add_task(timeout, async_scheduler)
     if hasaccess:
         name = filter_string(name).upper()
         result = await get_results(name=name, provider=provider, only_r18=only_r18)
@@ -212,9 +209,5 @@ async def search(request: Request, background_tasks: BackgroundTasks, name: str,
 
 
 if __name__ == '__main__':
-    if os.getenv('ENV') == 'DEV':
-        print('[INFO]   DEV Environment')
-        uvicorn.run(app, host='0.0.0.0', port=int(os.environ.get(
-            'PORT', 8000)), loop='uvloop', http='httptools', debug=True)
     uvicorn.run('main:app', host='0.0.0.0', port=int(os.environ.get('PORT', 8000)), http='httptools', loop='uvloop',
-                    proxy_headers=True, server_header=True, reload=True, reload_dirs=['.'], reload_includes=['timeout.json'])
+                    proxy_headers=True, server_header=True, reload=True, reload_dirs=['.'], reload_includes=[FILE_TO_CHECK])
