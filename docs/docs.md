@@ -7,7 +7,7 @@
 |     `javdb`     | :material-check: | :material-close: | :material-check: | :material-close: |
 |   `javlibrary`  | :material-check: | :material-check: | :material-check: | :material-close: |
 |  `javdatabase`  | :material-check: | :material-check: | :material-check: | :material-close: |
-| `r18` (default) | :material-check: | :material-check: | :material-check: | :material-check: |
+|      `r18`      | :material-check: | :material-check: | :material-check: | :material-check: |
 |    Boobpedia    | :material-close: | :material-check: | :material-close: | :material-close: |
 |Actress image data from r18| :material-close: | :material-check: | :material-close: | :material-close: |
 
