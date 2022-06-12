@@ -114,9 +114,3 @@ async def main(name: str) -> dict[str]:
                 movie_dictionary["tags"] = tags
 
                 return movie_dictionary
-
-
-# Testing
-if __name__ == "__main__":
-    import json
-    print(json.dumps(asyncio.run(main("FOW-001")), indent=4, ensure_ascii=False))

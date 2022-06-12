@@ -19,6 +19,7 @@ async def fetch(name: str, url: str, client: AsyncClient):
             if name == item.find('img')['alt'].strip():
                 return item.get('data-content_id').strip()
 
+
 async def movie_data(client: AsyncClient, content_id: str, only_r18: bool) -> dict[str] | None:
     """Fetch data from r18.com's api."""
     response = await client.get(url=f'/api/v4f/contents/{content_id}', params={'lang': 'en'})
@@ -54,9 +55,9 @@ async def movie_data(client: AsyncClient, content_id: str, only_r18: bool) -> di
 
         temp_screenshots = response.get('gallery')
         if temp_screenshots is not None:
-            screenshots = [ screenshot[list(screenshot.keys())[0]] \
-                for screenshot in temp_screenshots \
-                        if screenshot.get(list(screenshot.keys())[0]) is not None ]
+            screenshots = [screenshot[list(screenshot.keys())[0]]
+                           for screenshot in temp_screenshots
+                           if screenshot.get(list(screenshot.keys())[0]) is not None]
             base_details['screenshots'] = screenshots
 
         return base_details
@@ -68,8 +69,3 @@ async def main(name: str, only_r18: bool = False) -> dict[str]:
         contentname = await fetch(name=name, url=f'/common/search/searchword={name}', client=client)
         if contentname is not None:
             return await movie_data(client, contentname, only_r18)
-
-if __name__ == '__main__':
-    # print(json.dumps(asyncio.run(main('DOA-017')), indent=4, ensure_ascii=False))
-    print(json.dumps(asyncio.run(main('SSIS-391', False)), indent=4, ensure_ascii=False))
-    # print(json.dumps(asyncio.run(main('MKCK-274')), indent=4, ensure_ascii=False))

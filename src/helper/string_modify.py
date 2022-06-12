@@ -52,7 +52,3 @@ def filter_string(name):
             name.remove(char)
 
     return ''.join(name)
-
-
-if __name__ == '__main__':
-    print(filter_string('EBOD-304-C'))

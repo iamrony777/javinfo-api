@@ -158,13 +158,3 @@ async def actress_search(actress_list: list[str], only_r18: bool = False) -> lis
                         result['name'] not in set(actress['name'] for actress in actress_details):
                     actress_details.append(result)
         return actress_details
-
-if __name__ == '__main__':
-    import json
-    import uvloop
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    print(json.dumps(asyncio.run(actress_search(
-        ['Ema Kisaki'], only_r18=False)), indent=2, ensure_ascii=False))
-    # # with open('./boobpedia_search_result.html', 'rb') as _input:
-    #     tree = html.fromstring(_input.read())
-    # print(json.dumps(asyncio.run(actress_search(['Ema Kisaki'])), indent=2, ensure_ascii=False))

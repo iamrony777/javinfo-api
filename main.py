@@ -10,7 +10,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import (BackgroundTasks, Depends, FastAPI, HTTPException, Request,
                      status)
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi_limiter import FastAPILimiter
@@ -43,13 +43,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-if os.getenv('ENV') == 'PROD':
-    app.mount("/docs", StaticFiles(directory="site", html=True),
+app.mount("/docs", StaticFiles(directory="site", html=True),
               name="docs")
+
+app.mount("/readme", StaticFiles(directory="src/root", html=True), name="root")
+
 
 security = HTTPBasic()
 async_scheduler = AsyncIOScheduler()
-
+ 
 
 class Tags(Enum):
     """Set tags for each endpoint."""
@@ -119,14 +121,10 @@ async def startup():
 
     async_scheduler.start()
 
-
 @app.get('/', include_in_schema=False)
-async def root(request: Request, background_tasks: BackgroundTasks):
-    """Root endpoint."""
-    background_tasks.add_task(request_logger, request)
-    with open('./src/img/logo.png', 'rb') as image:
-        return Response(status_code=status.HTTP_200_OK, content=image.read(), media_type='image/png')
-
+async def root():
+    """Redirect to readme."""
+    return RedirectResponse('/readme')
 
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
@@ -139,31 +137,30 @@ async def check():
     """(Uptime) Monitor endpoint."""
     return {'status': 'OK'}
 
-if os.environ.get('ENV') != 'PROD':
-    @app.post('/demo/search', dependencies=[Depends(RateLimiter(times=1, seconds=10))], summary='Search for a video by DVD ID / Content ID', tags=[Tags.DEMO])
-    async def demo_search(request: Request, background_tasks: BackgroundTasks, name: str, provider: str | None = 'all', only_r18: bool | None = False):
-        """
-    ### [Demo] Limited to (1 requests/10 seconds)
+@app.post('/demo/search', dependencies=[Depends(RateLimiter(times=1, seconds=10))], summary='Search for a video by DVD ID / Content ID', tags=[Tags.DEMO])
+async def demo_search(request: Request, background_tasks: BackgroundTasks, name: str, provider: str | None = 'all', only_r18: bool | None = False):
+    """
+### [Demo] Limited to (1 requests/10 seconds)
 
-    Search for a Movie by its ID.
+Search for a Movie by its ID.
 
 
-    |       Provider      | Query | Actress Data | Movie Data | Screenshots |
-    |:-------------------:|:-----:|:------------:|:----------:|:-----------:|
-    |       `javdb`       |   Y   |       N      |      Y     |      N      |
-    |     `javlibrary`    |   Y   |       Y      |      Y     |      N      |
-    |    `javdatabase`    |   Y   |       Y      |      Y     |      N      |
-    |        `r18`        |   Y   |       Y      |      Y     |      Y      |
-    |      Boobpedia      |   N   |       Y      |      N     |      N      |
-        """
-        background_tasks.add_task(request_logger, request)
-        background_tasks.add_task(timeout, async_scheduler)
+|       Provider      | Query | Actress Data | Movie Data | Screenshots |
+|:-------------------:|:-----:|:------------:|:----------:|:-----------:|
+|       `javdb`       |   Y   |       N      |      Y     |      N      |
+|     `javlibrary`    |   Y   |       Y      |      Y     |      N      |
+|    `javdatabase`    |   Y   |       Y      |      Y     |      N      |
+|        `r18`        |   Y   |       Y      |      Y     |      Y      |
+|      Boobpedia      |   N   |       Y      |      N     |      N      |
+    """
+    background_tasks.add_task(request_logger, request)
+    background_tasks.add_task(timeout, async_scheduler)
 
-        name = filter_string(name).upper()
-        result = await get_results(name=name, provider=provider, only_r18=only_r18)
-        if result is not None:
-            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': f'{name} Not Found'})
+    name = filter_string(name).upper()
+    result = await get_results(name=name, provider=provider, only_r18=only_r18)
+    if result is not None:
+        return JSONResponse(status_code=status.HTTP_200_OK, content=result)
+    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': f'{name} Not Found'})
 
 
 @app.get('/database', tags=[Tags.DOCS])
@@ -188,7 +185,7 @@ async def version():
     """Get the current version of the API."""
     json_msg = {'schemaVersion': 1,
                 'label': 'Version',
-                'message': 'v1.1',
+                'message': '1.2',
                 'color': 'informational',
                 'style': 'for-the-badge'}
     return json_msg

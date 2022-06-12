@@ -45,7 +45,7 @@ async def additional_details(tree: html.HtmlElement) -> dict[str, str | None]:
             details['release_date'] = release_date[0].strip() if len(release_date) > 0 else None
             del release_date  
         elif key == 'Length':
-            runtime =  data.xpath(
+            runtime = data.xpath(
                     'td/span[@class="text"]/text()')
             details['runtime'] = runtime[0].strip() if len(runtime) > 0 else None
             del runtime
@@ -126,19 +126,3 @@ async def main(name: str, only_r18: bool = False):
             result = await filter_results(await get_page_content(client,
                                                                  url=result.replace('.', '')), name)
             return await parse_details(result, only_r18)
-
-if __name__ == '__main__':
-    import asyncio
-    import json
-
-    import uvloop
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-    # Duplicate test
-    # print(json.dumps(asyncio.run(main('SSIS-304')), indent=4, ensure_ascii=False))
-    # Actressc count > 1
-    # print(json.dumps(asyncio.run(main('STSK-032')), indent=4, ensure_ascii=False))
-    # Single Test
-    print(json.dumps(asyncio.run(main('MKCK-274', True)), indent=4, ensure_ascii=False))
-    # No result
-    # print(json.dumps(asyncio.run(main('TEST-123')), indent=4, ensure_ascii=False))

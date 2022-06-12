@@ -8,10 +8,6 @@ from redis import asyncio as aioredis
 
 ACTRESS_DICTIONARY = {}
 
-# logging.basicConfig(
-#     format='%(levelname)s: File "%(pathname)s", line %(lineno)d - %(message)s')
-
-
 async def get_total_pages(client: httpx.AsyncClient) -> int:
     """Get the number of total pages"""
     tree = html.fromstring((await client.get('/')).content)

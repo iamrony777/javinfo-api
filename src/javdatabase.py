@@ -82,8 +82,3 @@ async def main(name: str, only_r18: bool = False) -> dict[str] | None:
             details = await parse_details(tree, only_r18)
             if details is not None:
                 return details
-
-if __name__ == '__main__':
-    import json
-    print(json.dumps(asyncio.run(main('EBOD-391', True)),
-          ensure_ascii=False, indent=4))
