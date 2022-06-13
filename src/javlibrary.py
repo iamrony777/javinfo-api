@@ -50,7 +50,7 @@ async def additional_details(tree: html.HtmlElement) -> dict[str, str | None]:
             details['runtime'] = runtime[0].strip() if len(runtime) > 0 else None
             del runtime
         elif key == 'Maker':
-            studio =  data.xpath(
+            studio = data.xpath(
                     'td/span[@class="maker"]/a/text()')
             details['studio'] = studio[0].strip().upper() if len(studio) > 0 else None
             del studio

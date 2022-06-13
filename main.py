@@ -207,4 +207,4 @@ async def search(request: Request, background_tasks: BackgroundTasks, name: str,
 
 if __name__ == '__main__':
     uvicorn.run('main:app', host='0.0.0.0', port=int(os.environ.get('PORT', 8000)), http='httptools', loop='uvloop',
-                    proxy_headers=True, server_header=True, reload=True, reload_dirs=['.'], reload_includes=[FILE_TO_CHECK])
+                    proxy_headers=True, reload=True, reload_dirs=['.'], reload_includes=[FILE_TO_CHECK])
