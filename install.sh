@@ -9,11 +9,11 @@ if [[ ${CREATE_REDIS} == 'true' ]]; then
 	apk add --no-cache redis &&
 		sed -i 's/PASSWORD/'"$(echo "${API_PASS}" | base64)"'/g' src/conf/redis.conf
 	echo -e "[INFO] Adding redis-server to Procfile..."
-	echo "db: redis-server ./src/conf/redis.conf" >> Procfile
+	echo "database: redis-server ./src/conf/redis.conf" >> Procfile
 
 	if [[ -n ${RAILWAY_STATIC_URL} ]]; then
 		echo -e "[INFO] Restoring database from ${RAILWAY_STATIC_URL}/database"
-		URL="${RAILWAY_STATIC_URL}/database"
+		URL="https://${RAILWAY_STATIC_URL}/database"
 		apk add --no-cache wget && \
 		mkdir -p /app/src && \
 		if download_database "${URL}"; then

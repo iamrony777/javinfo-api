@@ -44,14 +44,14 @@ app.add_middleware(
 )
 
 app.mount("/docs", StaticFiles(directory="site", html=True),
-              name="docs")
+          name="docs")
 
 app.mount("/readme", StaticFiles(directory="src/root", html=True), name="root")
 
 
 security = HTTPBasic()
 async_scheduler = AsyncIOScheduler()
- 
+
 
 class Tags(Enum):
     """Set tags for each endpoint."""
@@ -75,7 +75,7 @@ def check_access(credentials: HTTPBasicCredentials = Depends(security)):
     return True
 
 
-async def get_results(name: str, provider:str, only_r18: bool):
+async def get_results(name: str, provider: str, only_r18: bool):
     """Search function."""
 
     if provider == 'all':
@@ -104,27 +104,26 @@ async def startup():
     async_scheduler.add_job(r18_db, trigger='interval', days=1)
     if os.environ.get('CAPTCHA_SOLVER_URL') is not None and len(os.environ.get('CAPTCHA_SOLVER_URL')) > 5:
         if not os.path.exists(
-            FILE_TO_CHECK):
+                FILE_TO_CHECK):
             async_scheduler.add_job(login, args=[os.getcwd()])
-        async_scheduler.add_job(
-            login, args=[os.getcwd()], trigger='interval', days=6)
     if os.environ.get('REDIS_URL') is not None and len(os.environ.get('REDIS_URL')) > 5:
         redis = await aioredis.Redis.from_url(os.environ.get('REDIS_URL'), encoding='utf-8', decode_responses=True, db=2)
         await FastAPILimiter.init(redis)
         print([('INFO:\t    [REDIS] Connection established') if await redis.ping() else ('ERROR:\t    [REDIS] Authentication failed')][0])
         if not os.path.exists(
-            FILE_TO_CHECK):
+                FILE_TO_CHECK):
             async_scheduler.add_job(r18_db)
-        async_scheduler.add_job(r18_db, trigger='interval', days=1)
     else:
         print('ERROR:\t    [REDIS] Connection failed')
 
     async_scheduler.start()
 
+
 @app.get('/', include_in_schema=False)
 async def root():
     """Redirect to readme."""
     return RedirectResponse('/readme')
+
 
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
@@ -136,6 +135,7 @@ async def favicon():
 async def check():
     """(Uptime) Monitor endpoint."""
     return {'status': 'OK'}
+
 
 @app.post('/demo/search', dependencies=[Depends(RateLimiter(times=1, seconds=10))], summary='Search for a video by DVD ID / Content ID', tags=[Tags.DEMO])
 async def demo_search(request: Request, background_tasks: BackgroundTasks, name: str, provider: str | None = 'all', only_r18: bool | None = False):
@@ -207,4 +207,4 @@ async def search(request: Request, background_tasks: BackgroundTasks, name: str,
 
 if __name__ == '__main__':
     uvicorn.run('main:app', host='0.0.0.0', port=int(os.environ.get('PORT', 8000)), http='httptools', loop='uvloop',
-                    proxy_headers=True, reload=True, reload_dirs=['.'], reload_includes=[FILE_TO_CHECK])
+                proxy_headers=True, reload=True, reload_dirs=['.'], reload_includes=[FILE_TO_CHECK])
