@@ -1,13 +1,17 @@
+from redis import asyncio as aioredis
+from PIL import Image, UnidentifiedImageError
+from bs4 import BeautifulSoup
+import httpx
 import asyncio
-import time
 import os
+import time
 from io import BytesIO
 from shutil import rmtree
 
-import httpx
-from redis import asyncio as aioredis
-from bs4 import BeautifulSoup
-from PIL import Image, UnidentifiedImageError
+import uvloop
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
 EMAIL = os.getenv('JAVDB_EMAIL')
 PASSWORD = os.getenv('JAVDB_PASSWORD')

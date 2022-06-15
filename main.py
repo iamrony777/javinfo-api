@@ -106,8 +106,6 @@ async def startup():
         if not os.path.exists(
             FILE_TO_CHECK):
             async_scheduler.add_job(login, args=[os.getcwd()])
-        async_scheduler.add_job(
-            login, args=[os.getcwd()], trigger='interval', days=6)
     if os.environ.get('REDIS_URL') is not None and len(os.environ.get('REDIS_URL')) > 5:
         redis = await aioredis.Redis.from_url(os.environ.get('REDIS_URL'), encoding='utf-8', decode_responses=True, db=2)
         await FastAPILimiter.init(redis)
@@ -115,7 +113,6 @@ async def startup():
         if not os.path.exists(
             FILE_TO_CHECK):
             async_scheduler.add_job(r18_db)
-        async_scheduler.add_job(r18_db, trigger='interval', minutes=10)
     else:
         print('ERROR:\t    [REDIS] Connection failed')
 
