@@ -6,7 +6,7 @@ else
 	echo
 fi
 
-if [ -n ${CAPTCHA_SOLVER_URL} ] && [ ${CAPTCHA_SOLVER_URL} != 'None' ]; then
+if [ -n "${CAPTCHA_SOLVER_URL}" ] && [ "${CAPTCHA_SOLVER_URL}" != 'None' ]; then
 	echo "* * * * 6 python /app/src/helper/javdb_login.py" > /var/spool/cron/crontabs/root
 fi
 
