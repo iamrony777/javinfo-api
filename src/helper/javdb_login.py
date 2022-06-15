@@ -1,16 +1,19 @@
-from redis import asyncio as aioredis
-from PIL import Image, UnidentifiedImageError
-from bs4 import BeautifulSoup
-import httpx
 import asyncio
+import json
 import os
 import time
+from datetime import datetime
 from io import BytesIO
 from shutil import rmtree
 
+import httpx
 import uvloop
+from bs4 import BeautifulSoup
+from PIL import Image, UnidentifiedImageError
+from redis import asyncio as aioredis
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+start_time = time.perf_counter()
 
 
 EMAIL = os.getenv('JAVDB_EMAIL')
@@ -103,27 +106,29 @@ async def main(root_path: str):
     try_count = 0
     while True:
         if try_count < 10:
-            client = httpx.AsyncClient(
-                http2=True,
-                follow_redirects=True,
-                base_url='https://javdb.com',
-                headers={'User-Agent': USER_AGENT})
-            async with client:
+            async with httpx.AsyncClient(
+                    http2=True,
+                    follow_redirects=True,
+                    base_url='https://javdb.com',
+                    headers={'User-Agent': USER_AGENT}) as client:
                 response = await login(root_path, client)
                 if response == 403:
                     break
                 if response is True:
-                    print('INFO:\t     [JAVDB] Successfully logged in')
+                    async with aioredis.from_url(os.getenv('REDIS_URL'), db=1, decode_responses=True) as redis:
+                        end_time = time.perf_counter()
+                        log = json.dumps({'finished in': f'{end_time - start_time:.2f}s',
+                                         'time': datetime.now().strftime('%d/%m/%Y - %H:%M:%S%z')})
+                        await redis.rpush('log:javdb_login', log)
                     rmtree(f'{root_path}/uploads')
-                    break
+                    return
                 print(
                     'INFO:\t     [JAVDB] Login Failed, retrying in 10 seconds')
                 try_count += 1
-                await asyncio.sleep(10)
-        else:
+                time.sleep(10)
             print('INFO:\t     [JAVDB] Login Failed, retrying in 10 minutes')
             try_count = 0
-            await asyncio.sleep(600)
+            time.sleep(600)
 
 
 if __name__ == '__main__':

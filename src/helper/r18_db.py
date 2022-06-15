@@ -3,14 +3,14 @@ import json
 import os
 import time
 from datetime import datetime
+
 import httpx
 import uvloop
 from lxml import html
 from redis import asyncio as aioredis
 
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
 ACTRESS_DICTIONARY = {}
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 start_time = time.perf_counter()
 
 
@@ -62,14 +62,14 @@ async def main() -> None:
 
     async with aioredis.from_url(os.getenv('REDIS_URL'), db=0, decode_responses=True) as redis:
         await redis.mset(ACTRESS_DICTIONARY)
-        print(f'{len(ACTRESS_DICTIONARY)} actresses saved to database')   
-    
+        print(f'{len(ACTRESS_DICTIONARY)} actresses saved to database')
+
     async with aioredis.from_url(os.getenv('REDIS_URL'), db=1, decode_responses=True) as redis:
         end_time = time.perf_counter()
-        log = json.dumps({'pages': str(total_pages), 'finished in': f'{end_time - start_time:.2f}s','time': datetime.now().strftime('%d/%m/%Y - %H:%M:%S%z')})
+        log = json.dumps({'pages': str(total_pages), 'finished in': f'{end_time - start_time:.2f}s',
+                         'time': datetime.now().strftime('%d/%m/%Y - %H:%M:%S%z')})
 
         await redis.rpush('log:r18_db', log)
-
 
 
 if __name__ == '__main__':
