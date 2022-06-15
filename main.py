@@ -115,7 +115,7 @@ async def startup():
         if not os.path.exists(
             FILE_TO_CHECK):
             async_scheduler.add_job(r18_db)
-        async_scheduler.add_job(r18_db, trigger='interval', minutes=5)
+        async_scheduler.add_job(r18_db, trigger='interval', minutes=10)
     else:
         print('ERROR:\t    [REDIS] Connection failed')
 
