@@ -1,2 +1,2 @@
 web: python main.py
-cronjob: crond
+cronjob: crond -f
