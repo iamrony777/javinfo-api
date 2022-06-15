@@ -1,12 +1,18 @@
 import asyncio
-import logging
+import json
 import os
-
+import time
+from datetime import datetime
 import httpx
+import uvloop
 from lxml import html
 from redis import asyncio as aioredis
 
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 ACTRESS_DICTIONARY = {}
+start_time = time.perf_counter()
+
 
 async def get_total_pages(client: httpx.AsyncClient) -> int:
     """Get the number of total pages"""
@@ -21,16 +27,9 @@ async def get_page_content(page: int, client: httpx.AsyncClient) -> bytes:
 
 async def parse_page_content(tree: html.HtmlElement) -> None:
     """Parse HTML content to JSON dict"""
-    for result in tree.xpath('//img[@width="135"]'):
-        name = str(result.get('alt'))
-        non_string = []
-        for char in name:
-            if char != ' ' and not str.isalpha(char):
-                non_string.append(char)
-        if len(non_string) != 0:
-            for char in non_string:
-                name = name.replace(char, '')
-
+    for result in tree.findall('.//li/a/p/img'):
+        name = ''.join(filter(lambda char: char.isspace()
+                       or char.isalpha(), str(result.get('alt'))))
         ACTRESS_DICTIONARY[name.strip()] = result.get('src')
 
 
@@ -39,28 +38,37 @@ async def main() -> None:
     header = {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36'}
     url = 'https://www.r18.com/videos/vod/movies/actress'
-    parse_tasks, get_page_tasks = [], []
-    try:
-        async with httpx.AsyncClient(base_url=url, http2=True, timeout=None, headers=header, follow_redirects=True) as client:
-            total_pages = await get_total_pages(client)
+    async with httpx.AsyncClient(base_url=url, http2=True, timeout=None, headers=header, follow_redirects=True) as client:
+        total_pages = int(await get_total_pages(client))
+        start, end = 1, 100  # 100 pages per batch
 
-            for page in range(1, int(total_pages) + 1):
-                get_page_tasks.append(asyncio.create_task(
-                    get_page_content(page, client)))
-            for tree in await asyncio.gather(*get_page_tasks):
-                parse_tasks.append(asyncio.create_task(
-                    parse_page_content(tree)))
+        for _ in range(total_pages // end):
 
+            get_page_tasks = [asyncio.create_task(
+                get_page_content(page, client)) for page in range(start, end + 1)]
+            parse_tasks = [asyncio.create_task(
+                parse_page_content(tree)) for tree in await asyncio.gather(*get_page_tasks)]
             await asyncio.gather(*parse_tasks)
-    except Exception as exception_1:
-        logging.error(exception_1)
+            start += 100
+            end = total_pages if end + 100 > total_pages else end + 100
+            del get_page_tasks, parse_tasks
+        if start != end:
+            get_page_tasks = [asyncio.create_task(
+                get_page_content(page, client)) for page in range(start, end + 1)]
+            parse_tasks = [asyncio.create_task(
+                parse_page_content(tree)) for tree in await asyncio.gather(*get_page_tasks)]
+            await asyncio.gather(*parse_tasks)
+            del get_page_tasks, parse_tasks
 
-    try:
-        async with aioredis.from_url(os.getenv('REDIS_URL'), db=0, decode_responses=True) as redis:
-            await redis.mset(ACTRESS_DICTIONARY)
-            print('Saved to Redis')
+    async with aioredis.from_url(os.getenv('REDIS_URL'), db=0, decode_responses=True) as redis:
+        await redis.mset(ACTRESS_DICTIONARY)
+    
+    async with aioredis.from_url(os.getenv('REDIS_URL'), db=1, decode_responses=True) as redis:
+        end_time = time.perf_counter()
+        log = json.dumps({'pages': str(total_pages), 'finished in': f'{end_time - start_time:.2f}s','time': datetime.now().strftime('%d/%m/%Y - %H:%M:%S%z')})
 
-    except Exception as exception_2:
-        logging.error(exception_2)
+        await redis.rpush('log:r18_db', log)
+
+
 if __name__ == '__main__':
     asyncio.run(main())
