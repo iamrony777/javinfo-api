@@ -62,11 +62,10 @@ async def main() -> None:
 
     async with aioredis.from_url(os.getenv('REDIS_URL'), db=0, decode_responses=True) as redis:
         await redis.mset(ACTRESS_DICTIONARY)
-        print(f'{len(ACTRESS_DICTIONARY)} actresses saved to database')
 
     async with aioredis.from_url(os.getenv('REDIS_URL'), db=1, decode_responses=True) as redis:
         end_time = time.perf_counter()
-        log = json.dumps({'pages': str(total_pages), 'finished in': f'{end_time - start_time:.2f}s',
+        log = json.dumps({'pages': str(total_pages), 'total actress': len(ACTRESS_DICTIONARY),'finished in': f'{end_time - start_time:.2f}s',
                          'time': datetime.now().strftime('%d/%m/%Y - %H:%M:%S%z')})
 
         await redis.rpush('log:r18_db', log)
