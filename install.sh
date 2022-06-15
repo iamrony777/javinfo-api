@@ -13,7 +13,7 @@ if [[ ${CREATE_REDIS} == 'true' ]]; then
 
 	if [[ -n ${RAILWAY_STATIC_URL} ]]; then
 		echo -e "[INFO] Restoring database from ${RAILWAY_STATIC_URL}/database"
-		URL="${RAILWAY_STATIC_URL}/database"
+		URL="https://${RAILWAY_STATIC_URL}/database"
 		apk add --no-cache wget && \
 		mkdir -p /app/src && \
 		if download_database "${URL}"; then

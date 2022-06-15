@@ -34,7 +34,7 @@ async def parse_page_content(tree: html.HtmlElement) -> None:
         ACTRESS_DICTIONARY[name.strip()] = result.get('src')
 
 
-async def main():
+async def main() -> None:
     """Get total page number -> send request to get page -> parse page -> create dictionary -> save to redis"""
     header = {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36'}
@@ -58,6 +58,7 @@ async def main():
     try:
         async with aioredis.from_url(os.getenv('REDIS_URL'), db=0, decode_responses=True) as redis:
             await redis.mset(ACTRESS_DICTIONARY)
+            print('Saved to Redis')
 
     except Exception as exception_2:
         logging.error(exception_2)
