@@ -27,7 +27,7 @@ ARG PORT='' \
     # HEALTHCHECK (Optional)
     HEALTHCHECK_PROVIDER='None' \
     UPTIMEKUMA_PUSH_URL='' \
-    HEALTHCHECKSIO_PING_URL='' \
+    HEALTHCHECKSIO_PING_URL=''
 
 RUN apk --no-cache add alpine-conf bash && \
     setup-timezone -z "$TIMEZONE" && \
