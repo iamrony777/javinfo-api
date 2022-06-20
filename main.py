@@ -179,17 +179,6 @@ async def logs(request: Request, background_tasks: BackgroundTasks, hasaccess: b
         return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={'error': 'Access Denied'})
 
 
-@app.get('/version', tags=[Tags.BADGE])
-async def version():
-    """Get the current version of the API."""
-    json_msg = {'schemaVersion': 1,
-                'label': 'Version',
-                'message': '1.2',
-                'color': 'informational',
-                'style': 'for-the-badge'}
-    return json_msg
-
-
 @app.post('/search', tags=[Tags.DOCS])
 async def search(request: Request, background_tasks: BackgroundTasks, name: str, hasaccess: bool = Depends(check_access), provider: str | None = 'all', only_r18: bool | None = False):
     """Protected search endpoint."""
