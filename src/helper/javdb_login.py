@@ -1,7 +1,6 @@
 import asyncio
 import json
 import os
-import sys
 import time
 from datetime import datetime
 from io import BytesIO
@@ -88,8 +87,6 @@ async def login(root_path, client: httpx.AsyncClient):
                 for key, value in cookies.items():
                     if key in ['remember_me_token', '_jdb_session']:
                         await redis.set(key, value)
-                    else:
-                        continue
                 return True
         except Exception:
             return False
@@ -107,27 +104,24 @@ async def main(root_path: str):
     try_count = 0
     while True:
         if try_count < 10:
-            async with httpx.AsyncClient(
-                    http2=True,
-                    follow_redirects=True,
-                    base_url='https://javdb.com',
-                    headers={'User-Agent': USER_AGENT}) as client:
+            async with httpx.AsyncClient(http2=True,follow_redirects=True,
+                    base_url='https://javdb.com',headers={'User-Agent': USER_AGENT}) as client:
                 response = await login(root_path, client)
                 if response == 403:
                     break
-                if response is True:
+                if response:
                     async with aioredis.from_url(os.getenv('REDIS_URL'), db=1, decode_responses=True) as redis:
                         end_time = time.perf_counter()
                         log = json.dumps({'finished in': f'{end_time - start_time:.2f}s',
                                          'time': datetime.now().strftime('%d/%m/%Y - %H:%M:%S%z')})
                         await redis.rpush('log:javdb_login', log)
                     rmtree(f'{root_path}/uploads')
-                    if __name__ == '__main__':
-                        sys.exit(0)
+                    return
                 print(
                     'INFO:\t     [JAVDB] Login Failed, retrying in 10 seconds')
                 try_count += 1
                 time.sleep(10)
+        else:
             print('INFO:\t     [JAVDB] Login Failed, retrying in 10 minutes')
             try_count = 0
             time.sleep(600)

@@ -57,7 +57,6 @@ class Tags(Enum):
     """Set tags for each endpoint."""
     DEMO = 'demo'
     DOCS = 'secured endpoints'
-    BADGE = 'shields.io badge'
 
 
 def check_access(credentials: HTTPBasicCredentials = Depends(security)):
