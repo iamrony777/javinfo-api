@@ -57,7 +57,6 @@ class Tags(Enum):
     """Set tags for each endpoint."""
     DEMO = 'demo'
     DOCS = 'secured endpoints'
-    BADGE = 'shields.io badge'
 
 
 def check_access(credentials: HTTPBasicCredentials = Depends(security)):
@@ -77,7 +76,6 @@ def check_access(credentials: HTTPBasicCredentials = Depends(security)):
 
 async def get_results(name: str, provider: str, only_r18: bool):
     """Search function."""
-
     if provider == 'all':
         tasks = []
         tasks.append(asyncio.create_task(r18.main(name, only_r18)))
@@ -100,7 +98,7 @@ async def get_results(name: str, provider: str, only_r18: bool):
 
 @app.on_event('startup')
 async def startup():
-    """Startup events"""
+    """Startup events."""
     async_scheduler.add_job(r18_db, trigger='interval', days=1)
     if os.environ.get('CAPTCHA_SOLVER_URL') is not None and len(os.environ.get('CAPTCHA_SOLVER_URL')) > 5:
         if not os.path.exists(
@@ -140,18 +138,18 @@ async def check():
 @app.post('/demo/search', dependencies=[Depends(RateLimiter(times=1, seconds=10))], summary='Search for a video by DVD ID / Content ID', tags=[Tags.DEMO])
 async def demo_search(request: Request, background_tasks: BackgroundTasks, name: str, provider: str | None = 'all', only_r18: bool | None = False):
     """
-### [Demo] Limited to (1 requests/10 seconds)
+    ### [Demo] Limited to (1 requests/10 seconds)
 
-Search for a Movie by its ID.
+    Search for a Movie by its ID.
 
 
-|       Provider      | Query | Actress Data | Movie Data | Screenshots |
-|:-------------------:|:-----:|:------------:|:----------:|:-----------:|
-|       `javdb`       |   Y   |       N      |      Y     |      N      |
-|     `javlibrary`    |   Y   |       Y      |      Y     |      N      |
-|    `javdatabase`    |   Y   |       Y      |      Y     |      N      |
-|        `r18`        |   Y   |       Y      |      Y     |      Y      |
-|      Boobpedia      |   N   |       Y      |      N     |      N      |
+    |       Provider      | Query | Actress Data | Movie Data | Screenshots |
+    |:-------------------:|:-----:|:------------:|:----------:|:-----------:|
+    |       `javdb`       |   Y   |       N      |      Y     |      N      |
+    |     `javlibrary`    |   Y   |       Y      |      Y     |      N      |
+    |    `javdatabase`    |   Y   |       Y      |      Y     |      N      |
+    |        `r18`        |   Y   |       Y      |      Y     |      Y      |
+    |      Boobpedia      |   N   |       Y      |      N     |      N      |
     """
     background_tasks.add_task(request_logger, request)
     background_tasks.add_task(timeout, async_scheduler)
@@ -165,7 +163,7 @@ Search for a Movie by its ID.
 
 @app.get('/database', tags=[Tags.DOCS])
 async def logs(request: Request, background_tasks: BackgroundTasks, hasaccess: bool = Depends(check_access)):
-    """Get a copy of current database (.rdb file) if using non-plugin redis server"""
+    """Get a copy of current database (.rdb file) if using non-plugin redis server."""
     background_tasks.add_task(request_logger, request)
     if hasaccess:
         if os.environ.get('CREATE_REDIS') == 'true':
@@ -178,17 +176,6 @@ async def logs(request: Request, background_tasks: BackgroundTasks, hasaccess: b
             return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'error': 'Can\'t download database file'})
     else:
         return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={'error': 'Access Denied'})
-
-
-@app.get('/version', tags=[Tags.BADGE])
-async def version():
-    """Get the current version of the API."""
-    json_msg = {'schemaVersion': 1,
-                'label': 'Version',
-                'message': '1.2',
-                'color': 'informational',
-                'style': 'for-the-badge'}
-    return json_msg
 
 
 @app.post('/search', tags=[Tags.DOCS])

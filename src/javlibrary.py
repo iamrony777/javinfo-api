@@ -29,7 +29,7 @@ async def filter_results(tree: html.HtmlElement, name: str):
 
 
 async def additional_details(tree: html.HtmlElement) -> dict[str, str | None]:
-    """get movie director, release date, runtime, studio."""
+    """Get movie director, release date, runtime, studio."""
     details, sorted_details = {}, {}
     for data in tree.xpath('//div[@class="item"]/table/tr'):
         key = str(data.xpath('td[@class="header"]/text()')
@@ -43,7 +43,7 @@ async def additional_details(tree: html.HtmlElement) -> dict[str, str | None]:
             release_date = data.xpath(
                     'td[@class="text"]/text()')
             details['release_date'] = release_date[0].strip() if len(release_date) > 0 else None
-            del release_date  
+            del release_date
         elif key == 'Length':
             runtime = data.xpath(
                     'td/span[@class="text"]/text()')
@@ -106,7 +106,6 @@ async def parse_actress_details(tree: html.HtmlElement, only_r18: bool) -> dict[
 
 async def main(name: str, only_r18: bool = False):
     """Main function to handle api call."""
-
     header = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
         "Accept": "*/*"

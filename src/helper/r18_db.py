@@ -15,18 +15,18 @@ start_time = time.perf_counter()
 
 
 async def get_total_pages(client: httpx.AsyncClient) -> int:
-    """Get the number of total pages"""
+    """Get the number of total pages."""
     tree = html.fromstring((await client.get('/')).content)
     return tree.xpath('//div[@class="cmn-list-pageNation02"]/ol/li/a/text()')[-1]
 
 
 async def get_page_content(page: int, client: httpx.AsyncClient) -> bytes:
-    """Send Request to get page"""
+    """Send Request to get page."""
     return html.fromstring((await client.get('/', params={'page': page})).content)
 
 
 async def parse_page_content(tree: html.HtmlElement) -> None:
-    """Parse HTML content to JSON dict"""
+    """Parse HTML content to JSON dict."""
     for result in tree.findall('.//li/a/p/img'):
         name = ''.join(filter(lambda char: char.isspace()
                        or char.isalpha(), str(result.get('alt'))))
@@ -34,7 +34,7 @@ async def parse_page_content(tree: html.HtmlElement) -> None:
 
 
 async def main() -> None:
-    """Get total page number -> send request to get page -> parse page -> create dictionary -> save to redis"""
+    """Get total page number -> send request to get page -> parse page -> create dictionary -> save to redis."""
     header = {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36'}
     url = 'https://www.r18.com/videos/vod/movies/actress'
