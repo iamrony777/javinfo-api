@@ -63,7 +63,6 @@ async def filter_actress_details(tree: html.HtmlElement) -> dict[str] | None:
 
 async def parse_actress_details(tree: html.HtmlElement) -> dict[str] | None:
     """Parse actress details from given page (also search in database for r18 actress links)."""
-
     details = {}
     try:
         details['name'] = tree.findall('.//h1[@class="firstHeading"]')[0].text.strip()

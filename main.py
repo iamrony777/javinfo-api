@@ -54,7 +54,6 @@ async_scheduler = AsyncIOScheduler()
 
 
 class Tags(Enum):
-
     """Set tags for each endpoint."""
     DEMO = 'demo'
     DOCS = 'secured endpoints'
@@ -78,7 +77,6 @@ def check_access(credentials: HTTPBasicCredentials = Depends(security)):
 
 async def get_results(name: str, provider: str, only_r18: bool):
     """Search function."""
-
     if provider == 'all':
         tasks = []
         tasks.append(asyncio.create_task(r18.main(name, only_r18)))
@@ -141,18 +139,18 @@ async def check():
 @app.post('/demo/search', dependencies=[Depends(RateLimiter(times=1, seconds=10))], summary='Search for a video by DVD ID / Content ID', tags=[Tags.DEMO])
 async def demo_search(request: Request, background_tasks: BackgroundTasks, name: str, provider: str | None = 'all', only_r18: bool | None = False):
     """
-### [Demo] Limited to (1 requests/10 seconds)
+    ### [Demo] Limited to (1 requests/10 seconds)
 
-Search for a Movie by its ID.
+    Search for a Movie by its ID.
 
 
-|       Provider      | Query | Actress Data | Movie Data | Screenshots |
-|:-------------------:|:-----:|:------------:|:----------:|:-----------:|
-|       `javdb`       |   Y   |       N      |      Y     |      N      |
-|     `javlibrary`    |   Y   |       Y      |      Y     |      N      |
-|    `javdatabase`    |   Y   |       Y      |      Y     |      N      |
-|        `r18`        |   Y   |       Y      |      Y     |      Y      |
-|      Boobpedia      |   N   |       Y      |      N     |      N      |
+    |       Provider      | Query | Actress Data | Movie Data | Screenshots |
+    |:-------------------:|:-----:|:------------:|:----------:|:-----------:|
+    |       `javdb`       |   Y   |       N      |      Y     |      N      |
+    |     `javlibrary`    |   Y   |       Y      |      Y     |      N      |
+    |    `javdatabase`    |   Y   |       Y      |      Y     |      N      |
+    |        `r18`        |   Y   |       Y      |      Y     |      Y      |
+    |      Boobpedia      |   N   |       Y      |      N     |      N      |
     """
     background_tasks.add_task(request_logger, request)
     background_tasks.add_task(timeout, async_scheduler)
