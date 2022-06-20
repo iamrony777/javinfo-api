@@ -18,8 +18,8 @@
         </a>
     </div>
     <div align="center">
-        <a href="https://www.codefactor.io/repository/github/iamrony777/javinfo-api">
-            <img src="https://img.shields.io/codefactor/grade/github/iamrony777/javinfo-api/main?logo=codefactor&style=for-the-badge">
+        <a href="https://app.codacy.com/gh/iamrony777/JavInfo-api">
+            <img src="https://img.shields.io/codacy/grade/5f4cc6df4a8d4034b19abe5d6c747009?style=for-the-badge&logo=codacy">
         </a>   
         <img src="https://img.shields.io/github/license/iamrony777/javinfo-api?style=for-the-badge">
     <div>
