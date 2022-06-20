@@ -23,5 +23,5 @@
         </a>   
         <img src="https://img.shields.io/github/license/iamrony777/javinfo-api?style=for-the-badge">
     <div>
-    <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/iamrony777/JavInfo-api/docs/version">
+    <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/iamrony777/JavInfo-api/main/docs/version">
 </p>
