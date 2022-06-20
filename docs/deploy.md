@@ -65,6 +65,11 @@
     TIMEZONE='UTC'
     REDIS_URL=''  # If already got a redis-server , then paste redis connect string here ex. redis://...
 
+    # HEALTHCHECK (Optional)
+    HEALTHCHECK_PROVIDER='None' # 'uptimekuma' for UptimeKuma Push , 'healthchecksio' for Healthchecks.io
+    UPTIMEKUMA_PUSH_URL='' # https://<uptime-kuma-instance-url>/api/push/<monitor-slug> with or without optional parameters
+    HEALTHCHECKSIO_PING_URL='' # https://<healthchecks-io-instance-url>/<monitor-uuid> or https://<healthchecks-io-instance-url>/<ping-key>/<monitor-name>
+
     # RAILWAY PROVIDED VARIABLES
     RAILWAY_STATIC_URL='' # Leave empty for default value
 
