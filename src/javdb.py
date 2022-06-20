@@ -1,5 +1,4 @@
 # Its messy but it works, and takes less time so i wont change it
-import asyncio
 import os
 import re
 
@@ -12,8 +11,7 @@ BASE_URL = "https://javdb.com"
 
 
 async def get_page_url(client: AsyncClient, name: str, **kwargs) -> (str | None):
-    """Get the page url from javdb.com"""
-
+    """Get the page url from javdb.com."""
     response = await client.get(
         "/search", params={"q": name, "f": "all", "locale": "en", "over18": 1}, **kwargs
     )
@@ -24,7 +22,7 @@ async def get_page_url(client: AsyncClient, name: str, **kwargs) -> (str | None)
 
 
 async def get_tokens(key: str) -> (str | None):
-    """Returns a token from redis"""
+    """Returns a token from redis."""
     async with aioredis.Redis.from_url(
         os.getenv("REDIS_URL"), decode_responses=True, db=2
     ) as redis:
@@ -32,7 +30,7 @@ async def get_tokens(key: str) -> (str | None):
 
 
 async def parse_panel_data(soup: BeautifulSoup) -> dict[str, str | None]:
-    """Extract additional data from the panel"""
+    """Extract additional data from the panel."""
     details, sorted_details = {}, {}
     data = soup.find_all("div", class_="panel-block")
     for element in data:
@@ -61,7 +59,7 @@ async def parse_panel_data(soup: BeautifulSoup) -> dict[str, str | None]:
 
 
 async def main(name: str) -> dict[str]:
-    """Main function to get video data from javdb.com"""
+    """Main function to get video data from javdb.com."""
     cookies = {
         "theme": "auto",
         "locale": "en",

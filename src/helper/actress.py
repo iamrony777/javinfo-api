@@ -1,7 +1,6 @@
 import asyncio
 import os
 import re
-from typing import Optional
 
 from httpx import AsyncClient
 from lxml import html
@@ -11,7 +10,7 @@ BASE_URL = 'https://www.boobpedia.com'
 
 
 async def boobpedia_special_query(client: AsyncClient, name: str) -> str | None:
-    """Fulltext search on boobpedia"""
+    """Fulltext search on Boobpedia."""
     # this is a search page scrap
     params = {'title': 'Special:Search',
               'search': name,
@@ -32,11 +31,11 @@ async def boobpedia_special_query(client: AsyncClient, name: str) -> str | None:
 
 
 async def get_page_content(client: AsyncClient, url: str, **kwargs) -> html.HtmlElement:
-    """Get the page content as bytes, takes url as optional argument"""
+    """Get the page content as bytes, takes url as optional argument."""
     return html.fromstring((await client.get(url, **kwargs)).content)
 
 async def filter_actress_details(tree: html.HtmlElement) -> dict[str] | None:
-    """Handle filter and parsing info-panel"""
+    """Handle filter and parsing info-panel."""
             # Test 3 passed
     details = {}
     for result in tree.findall('.//tr[@valign="top"]'):
@@ -63,7 +62,7 @@ async def filter_actress_details(tree: html.HtmlElement) -> dict[str] | None:
 
 
 async def parse_actress_details(tree: html.HtmlElement) -> dict[str] | None:
-    """Parse actress details from given page (also search in database for r18 actress links)"""
+    """Parse actress details from given page (also search in database for r18 actress links)."""
 
     details = {}
     try:
@@ -78,7 +77,7 @@ async def parse_actress_details(tree: html.HtmlElement) -> dict[str] | None:
                 details['image'] = BASE_URL + '/'.join(tree.findall
                                                     ('.//td[@colspan="2"]/a/img')[0]
                                                     .get('src').replace('/thumb', '').split('/')[0:-1])
-            finally:                                      
+            finally:
                 r18_image = await r18_database(details['name'])
                 if r18_image is not None:
                     details['image2'] = r18_image
@@ -91,7 +90,7 @@ async def parse_actress_details(tree: html.HtmlElement) -> dict[str] | None:
         return None
 
 async def r18_database(name: str) -> (str | None):
-    """Search from redis-r18 database"""
+    """Search from redis-r18 database."""
     async with aioredis.Redis.from_url(os.environ.get('REDIS_URL'),
                                        decode_responses=True,
                                        db=0) as redis:
@@ -119,7 +118,7 @@ async def r18_database(name: str) -> (str | None):
 
 
 async def actress_handler(client: AsyncClient, actress_name: str) -> dict[str] | None:
-    """Actress Handle Function"""
+    """Actress Handle Function."""
     actress_search_task = []
     actress_search_task.append(asyncio.create_task(
         boobpedia_special_query(client, actress_name), name='boobpedia_query'))
@@ -138,7 +137,7 @@ async def actress_handler(client: AsyncClient, actress_name: str) -> dict[str] |
 
 
 async def actress_search(actress_list: list[str], only_r18: bool = False) -> list[dict]:
-    """Takes actress name list (raw) as input, return a dictionary filled with details [boobpedia + r18]"""
+    """Takes actress name list (raw) as input, return a dictionary filled with details [boobpedia + r18]."""
     actress_details, boobpedia_search_task = [], []
     async with AsyncClient(base_url=BASE_URL, http2=True, follow_redirects=True, timeout=None) as client:
         for actress_name in actress_list:

@@ -10,12 +10,12 @@ from redis import asyncio as aioredis
 TOKEN = os.environ.get('IPINFO_TOKEN')
 
 async def push_dict_to_list(key: str, value: dict, redis: aioredis.Redis):
-    """Push given dictionary"""
+    """Push given dictionary."""
     await redis.rpush(key, json.dumps(value))
 
 
 async def logger(request: Request):
-    """Request Logging function"""
+    """Request Logging function."""
     if os.environ.get('LOG_REQUEST') == 'true':
         request_dict = {}
         method = request.method
@@ -57,7 +57,7 @@ async def logger(request: Request):
 
 
 async def manage(key: Optional[any] = None, values: Optional[any] = None, **kwargs):
-    """Main Function , DB=1"""
+    """Main Function , DB=1."""
     async with aioredis.Redis.from_url(os.environ['REDIS_URL'], decode_responses=True, db=1) as redis:
         if kwargs.get('push'):
             await push_dict_to_list(key, values, redis)

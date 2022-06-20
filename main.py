@@ -54,6 +54,7 @@ async_scheduler = AsyncIOScheduler()
 
 
 class Tags(Enum):
+
     """Set tags for each endpoint."""
     DEMO = 'demo'
     DOCS = 'secured endpoints'
@@ -100,7 +101,7 @@ async def get_results(name: str, provider: str, only_r18: bool):
 
 @app.on_event('startup')
 async def startup():
-    """Startup events"""
+    """Startup events."""
     async_scheduler.add_job(r18_db, trigger='interval', days=1)
     if os.environ.get('CAPTCHA_SOLVER_URL') is not None and len(os.environ.get('CAPTCHA_SOLVER_URL')) > 5:
         if not os.path.exists(
@@ -165,7 +166,7 @@ Search for a Movie by its ID.
 
 @app.get('/database', tags=[Tags.DOCS])
 async def logs(request: Request, background_tasks: BackgroundTasks, hasaccess: bool = Depends(check_access)):
-    """Get a copy of current database (.rdb file) if using non-plugin redis server"""
+    """Get a copy of current database (.rdb file) if using non-plugin redis server."""
     background_tasks.add_task(request_logger, request)
     if hasaccess:
         if os.environ.get('CREATE_REDIS') == 'true':

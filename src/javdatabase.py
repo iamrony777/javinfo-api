@@ -1,4 +1,3 @@
-import asyncio
 import re
 
 from httpx import AsyncClient
@@ -68,7 +67,7 @@ async def parse_actress_details(tree: html.HtmlElement, only_r18: bool) -> (dict
 
 
 async def main(name: str, only_r18: bool = False) -> dict[str] | None:
-    """Main function to get the data from the website"""
+    """Main function to get the data from the website."""
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
         "Accept": "*/*"}

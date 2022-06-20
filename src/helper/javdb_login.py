@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import sys
 import time
 from datetime import datetime
 from io import BytesIO
@@ -22,7 +23,7 @@ USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 
 
 async def token(client: httpx.AsyncClient):
-    """Get session token"""
+    """Get session token."""
     params = {'f': 1,
               'locale': 'en',
               'over18': 1, }
@@ -38,7 +39,7 @@ async def token(client: httpx.AsyncClient):
 
 
 async def get_captcha(root_path, client: httpx.AsyncClient) -> str:
-    """Get captcha image"""
+    """Get captcha image."""
     image_path = f'{root_path}/uploads/captcha_{int(time.time())}'
     captcha = await client.get('/rucaptcha/')
     try:
@@ -50,7 +51,7 @@ async def get_captcha(root_path, client: httpx.AsyncClient) -> str:
 
 
 def captcha_solver(captcha: str) -> str:
-    """Solve captcha"""
+    """Solve captcha."""
     url = os.environ['CAPTCHA_SOLVER_URL']
     try:
         file = {'file': open(captcha, 'rb')}
@@ -61,7 +62,7 @@ def captcha_solver(captcha: str) -> str:
 
 
 async def login(root_path, client: httpx.AsyncClient):
-    """Login to JAVDB"""
+    """Login to JAVDB."""
     token_value = await token(client)
     if token_value != 403:
         url = '/user_sessions'
@@ -97,7 +98,7 @@ async def login(root_path, client: httpx.AsyncClient):
 
 
 async def main(root_path: str):
-    """Main function"""
+    """Main function."""
 
     try:
         os.mkdir(f'{root_path}/uploads')
@@ -121,7 +122,7 @@ async def main(root_path: str):
                                          'time': datetime.now().strftime('%d/%m/%Y - %H:%M:%S%z')})
                         await redis.rpush('log:javdb_login', log)
                     rmtree(f'{root_path}/uploads')
-                    return
+                    sys.exit(0)
                 print(
                     'INFO:\t     [JAVDB] Login Failed, retrying in 10 seconds')
                 try_count += 1
