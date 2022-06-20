@@ -122,7 +122,8 @@ async def main(root_path: str):
                                          'time': datetime.now().strftime('%d/%m/%Y - %H:%M:%S%z')})
                         await redis.rpush('log:javdb_login', log)
                     rmtree(f'{root_path}/uploads')
-                    sys.exit(0)
+                    if __name__ == '__main__':
+                        sys.exit(0)
                 print(
                     'INFO:\t     [JAVDB] Login Failed, retrying in 10 seconds')
                 try_count += 1
