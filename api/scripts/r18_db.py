@@ -16,6 +16,19 @@ LOGGER_CONFIG = {
     "handlers": [
         dict(
             sink=sys.stdout,
+            format="<b>{time:HH:mm:ss}   tasks</b> <lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
+            enqueue=True,
+            colorize=True,
+            level=20,
+        )
+    ],
+}
+
+
+LOGGER_CONFIG_2 = {
+    "handlers": [
+        dict(
+            sink=sys.stdout,
             format="<lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
             enqueue=True,
             colorize=True,
@@ -26,7 +39,6 @@ LOGGER_CONFIG = {
 
 ACTRESS_DICTIONARY = {}
 
-logger.configure(**LOGGER_CONFIG)
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 start_time = time.perf_counter()
 
@@ -66,7 +78,6 @@ async def parse_snippet(client: httpx.AsyncClient, start: int, end: int) -> None
     ]
     await asyncio.gather(*parse_tasks)
     del get_page_tasks, parse_tasks
-
 
 
 @logger.catch
@@ -113,8 +124,14 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    epochDuration = time.time() - os.path.getctime("/proc/1") # epoch float time of the creation time of this file
+    epochDuration = time.time() - os.path.getctime(
+        "/proc/1"
+    )  # epoch float time of the creation time of this file
     utcDuration = time.gmtime(epochDuration)
     if not utcDuration.tm_hour:
         time.sleep(30)
+        logger.configure(**LOGGER_CONFIG)
+        asyncio.run(main())
+    else:
+        logger.configure(**LOGGER_CONFIG_2)
         asyncio.run(main())

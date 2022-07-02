@@ -8,7 +8,7 @@ import uvicorn
 from api import (FILE_TO_CHECK, BackgroundTasks, Depends, FastAPILimiter,
                  FileResponse, JSONResponse, RateLimiter, RedirectResponse,
                  Request, Tags, aioredis, app, async_scheduler, check_access,
-                 filter_string, get_results, logger, login, manage, r18_db,
+                 filter_string, get_results, logger, manage,
                  request_logger, status, timeout)
 
 
@@ -16,13 +16,6 @@ from api import (FILE_TO_CHECK, BackgroundTasks, Depends, FastAPILimiter,
 @logger.catch
 async def startup():
     """Startup events."""
-    # async_scheduler.add_job(r18_db, trigger="interval", days=1)
-    # if (
-    #     os.environ.get("CAPTCHA_SOLVER_URL") is not None
-    #     and len(os.environ.get("CAPTCHA_SOLVER_URL")) > 5
-    # ):
-    #     if not os.path.exists(FILE_TO_CHECK):
-    #         async_scheduler.add_job(login, args=[os.getcwd()])
     if os.environ.get("REDIS_URL") is not None and len(os.environ.get("REDIS_URL")) > 5:
         redis = await aioredis.Redis.from_url(
             os.environ.get("REDIS_URL"), encoding="utf-8", decode_responses=True, db=2
@@ -33,9 +26,6 @@ async def startup():
         else:
             logger.critical("[REDIS] Authentication failed")
             sys.exit(1)
-
-        # if not os.path.exists(FILE_TO_CHECK):
-        #     async_scheduler.add_job(r18_db)
     else:
         logger.critical("[REDIS] Connection failed, no REDIS_URL found in env")
         sys.exit(1)

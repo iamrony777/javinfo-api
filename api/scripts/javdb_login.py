@@ -2,6 +2,7 @@
 import asyncio
 import json
 import os
+from selectors import EpollSelector
 import sys
 import time
 from datetime import datetime
@@ -26,7 +27,7 @@ LOGGER_CONFIG = {
     "handlers": [
         dict(
             sink=sys.stdout,
-            format="<lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
+            format="<b>{time:HH:mm:ss}   tasks</b> <lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
             enqueue=True,
             colorize=True,
             level=20,
@@ -34,7 +35,18 @@ LOGGER_CONFIG = {
     ],
 }
 
-logger.configure(**LOGGER_CONFIG)
+
+LOGGER_CONFIG_2 = {
+    "handlers": [
+        dict(
+            sink=sys.stdout,
+            format="<lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
+            enqueue=True,
+            colorize=True,
+            level=20,
+        )
+    ],
+}
 
 
 async def token(client: httpx.AsyncClient):
@@ -165,4 +177,8 @@ if __name__ == "__main__":
     utcDuration = time.gmtime(epochDuration)
     if not utcDuration.tm_hour:
         time.sleep(30)
+        logger.configure(**LOGGER_CONFIG)
+        asyncio.run(main(os.getcwd()))
+    else:
+        logger.configure(**LOGGER_CONFIG_2)
         asyncio.run(main(os.getcwd()))
