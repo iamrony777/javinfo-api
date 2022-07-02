@@ -52,6 +52,22 @@ async def parse_page_content(tree: html.HtmlElement) -> None:
         ACTRESS_DICTIONARY[name.strip()] = result.get("src")
 
 
+async def parse_snippet(client: httpx.AsyncClient, start: int, end: int) -> None:
+    """just an extra function to remove repetition"""
+    get_page_tasks = [
+        asyncio.create_task(get_page_content(page, client))
+        for page in range(start, end + 1)
+    ]
+
+    parse_tasks = [
+        asyncio.create_task(parse_page_content(tree))
+        for tree in await asyncio.gather(*get_page_tasks)
+    ]
+    await asyncio.gather(*parse_tasks)
+    del get_page_tasks, parse_tasks
+
+
+
 @logger.catch
 async def main() -> None:
     """Get total page number -> send request to get page -> parse page -> create dictionary -> save to redis."""
@@ -66,30 +82,12 @@ async def main() -> None:
         start, end = 1, 100  # 100 pages per batch
 
         for _ in range(total_pages // end):
-
-            get_page_tasks = [
-                asyncio.create_task(get_page_content(page, client))
-                for page in range(start, end + 1)
-            ]
-            parse_tasks = [
-                asyncio.create_task(parse_page_content(tree))
-                for tree in await asyncio.gather(*get_page_tasks)
-            ]
-            await asyncio.gather(*parse_tasks)
+            await parse_snippet(client, start, end)
             start += 100
             end = total_pages if end + 100 > total_pages else end + 100
-            del get_page_tasks, parse_tasks
+
         if start != end:
-            get_page_tasks = [
-                asyncio.create_task(get_page_content(page, client))
-                for page in range(start, end + 1)
-            ]
-            parse_tasks = [
-                asyncio.create_task(parse_page_content(tree))
-                for tree in await asyncio.gather(*get_page_tasks)
-            ]
-            await asyncio.gather(*parse_tasks)
-            del get_page_tasks, parse_tasks
+            await parse_snippet(client, start, end)
 
     async with aioredis.from_url(
         os.getenv("REDIS_URL"), db=0, decode_responses=True
