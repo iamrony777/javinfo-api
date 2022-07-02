@@ -63,5 +63,7 @@ async def manage(key: Optional[any] = None, values: Optional[any] = None, **kwar
     async with aioredis.Redis.from_url(os.environ['REDIS_URL'], decode_responses=True, db=1) as redis:
         if kwargs.get('push'):
             await push_dict_to_list(key, values, redis)
+        elif kwargs.get('set'):
+            await redis.set(key, values)
         elif kwargs.get('save'):
             await redis.save()

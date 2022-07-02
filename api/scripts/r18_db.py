@@ -42,6 +42,13 @@ ACTRESS_DICTIONARY = {}
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 start_time = time.perf_counter()
 
+def up_days() -> int:
+    """return current uptime (day only)"""
+    startup_file='/tmp/startup'
+    with open(startup_file, encoding='UTF-8') as _input:
+        start = json.loads(_input.read())['startup']
+        current = round(time.time())
+        return ((current - start) // 86400)
 
 async def get_total_pages(client: httpx.AsyncClient) -> int:
     """Get the number of total pages."""
@@ -124,12 +131,8 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    epochDuration = time.time() - os.path.getctime(
-        "/proc/1"
-    )  # epoch float time of the creation time of this file
-    utcDuration = time.gmtime(epochDuration)
-    if not utcDuration.tm_hour:
-        time.sleep(30)
+    if not up_days():
+        time.sleep(30) # 30s to wait for redis-server
         logger.configure(**LOGGER_CONFIG)
         asyncio.run(main())
     else:

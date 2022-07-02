@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Save current time since epoch (for scripts)
+echo  "{\"startup\":$(date +%s)}" > /tmp/startup
+
 if [[ ${CREATE_REDIS} == 'true' ]]; then
 	export REDIS_URL="redis://default:$(echo "${API_PASS}" | base64)@127.0.0.1:6379"
 else

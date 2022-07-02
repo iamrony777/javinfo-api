@@ -1,8 +1,7 @@
-"""Auto Login for JAVDB ,solves captcha using custom ML api, not public usable for now as it is unstable"""
+"""[SCRIPT] Auto Login for JAVDB ,solves captcha using custom ML api, not public usable for now as it is unstable"""
 import asyncio
 import json
 import os
-from selectors import EpollSelector
 import sys
 import time
 from datetime import datetime
@@ -48,6 +47,14 @@ LOGGER_CONFIG_2 = {
     ],
 }
 
+
+def up_days() -> int:
+    """return current uptime (day only)"""
+    startup_file='/tmp/startup'
+    with open(startup_file, encoding='UTF-8') as _input:
+        start = json.loads(_input.read())['startup']
+        current = round(time.time())
+        return ((current - start) // 86400)
 
 async def token(client: httpx.AsyncClient):
     """Get session token (csrf-token)."""
@@ -173,10 +180,9 @@ async def main(root_path: str):
 
 
 if __name__ == "__main__":
-    epochDuration = time.time() - os.path.getctime("/proc/1") # epoch float time of the creation time of this file
-    utcDuration = time.gmtime(epochDuration)
-    if not utcDuration.tm_hour:
-        time.sleep(30)
+
+    if not up_days():
+        time.sleep(30) # 30s to wait for redis-server
         logger.configure(**LOGGER_CONFIG)
         asyncio.run(main(os.getcwd()))
     else:

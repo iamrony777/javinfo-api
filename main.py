@@ -1,19 +1,59 @@
 """Server"""
 import os
+import secrets
 import sys
 import time
 
 import uvicorn
+from fastapi import (BackgroundTasks, Depends, FastAPI, HTTPException, Request,
+                     status)
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.staticfiles import StaticFiles
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
 
-from api import (FILE_TO_CHECK, BackgroundTasks, Depends, FastAPILimiter,
-                 FileResponse, JSONResponse, RateLimiter, RedirectResponse,
-                 Request, Tags, aioredis, app, async_scheduler, check_access,
+from api import (FILE_TO_CHECK, Tags, aioredis, async_scheduler,
                  filter_string, get_results, logger, manage,
-                 request_logger, status, timeout)
+                 request_logger, timeout)
 
+# Fastapi Config
+security = HTTPBasic()
+
+app = FastAPI(docs_url="/demo", redoc_url=None)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# site folder is created only during docker build
+app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
+
+app.mount("/readme", StaticFiles(directory="api/html", html=True), name="root")
+
+def check_access(credentials: HTTPBasicCredentials = Depends(security)):
+    """Check credentials."""
+    correct_username = secrets.compare_digest(
+        credentials.username, os.environ["API_USER"]
+    )
+    correct_password = secrets.compare_digest(
+        credentials.password, os.environ["API_PASS"]
+    )
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Access Denied",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return True
+    
 
 @app.on_event("startup")
-@logger.catch
 async def startup():
     """Startup events."""
     if os.environ.get("REDIS_URL") is not None and len(os.environ.get("REDIS_URL")) > 5:
@@ -31,6 +71,7 @@ async def startup():
         sys.exit(1)
 
 
+
 # TODO: Dashboard or Something on '/' route
 @app.get("/", include_in_schema=False)
 async def root():
@@ -44,13 +85,13 @@ async def check():
     return {"status": "OK"}
 
 
+@logger.catch
 @app.post(
     "/public",
     dependencies=[Depends(RateLimiter(times=1, seconds=10))],
     summary="Search for a video by DVD ID / Content ID",
     tags=[Tags.DEMO],
 )
-@logger.catch
 async def demo_search(
     request: Request,
     background_tasks: BackgroundTasks,
@@ -84,6 +125,7 @@ async def demo_search(
     )
 
 
+@logger.catch
 @app.get("/database", tags=[Tags.DOCS])
 async def logs(
     request: Request,
@@ -112,8 +154,8 @@ async def logs(
         )
 
 
-@app.get("/logs", tags=[Tags.DOCS])
 @logger.catch
+@app.get("/logs", tags=[Tags.DOCS])
 async def get_logs(
     request: Request,
     background_tasks: BackgroundTasks,
@@ -127,7 +169,9 @@ async def get_logs(
             media_type="text/plain",
             filename=f"javinfo_{round(time.time())}.log",
         )
-    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={'error': 'Access Denied'})
+    return JSONResponse(
+        status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Access Denied"}
+    )
 
 
 @app.post("/search", tags=[Tags.DOCS])

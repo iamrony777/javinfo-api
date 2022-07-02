@@ -2,20 +2,11 @@
 
 import asyncio
 import gc
-import os
-import secrets
 import sys
 from enum import Enum
 
 import uvloop
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Request, status
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.staticfiles import StaticFiles
-from fastapi_limiter import FastAPILimiter
-from fastapi_limiter.depends import RateLimiter
 from loguru import logger
 from redis import asyncio as aioredis
 
@@ -39,25 +30,6 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 # APscheduler Config
 async_scheduler = AsyncIOScheduler(job_defaults={"misfire_grace_time": 5 * 60})
-
-# Fastapi Config
-security = HTTPBasic()
-
-app = FastAPI(docs_url="/demo", redoc_url=None)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# site folder is created only during docker build
-app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
-
-app.mount("/readme", StaticFiles(directory="api/html", html=True), name="root")
-
 
 class Tags(Enum):
     """Set tags for each endpoint."""
@@ -89,24 +61,6 @@ async def get_results(name: str, provider: str, only_r18: bool):
         return await r18.main(name, only_r18)
 
 
-# Security Templacte
-def check_access(credentials: HTTPBasicCredentials = Depends(security)):
-    """Check credentials."""
-    correct_username = secrets.compare_digest(
-        credentials.username, os.environ["API_USER"]
-    )
-    correct_password = secrets.compare_digest(
-        credentials.password, os.environ["API_PASS"]
-    )
-    if not (correct_username and correct_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Access Denied",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-    return True
-
-
 # Loguru - Logger config
 LOGGER_CONFIG = {
     "handlers": [
@@ -127,3 +81,5 @@ LOGGER_CONFIG = {
 }
 
 logger.configure(**LOGGER_CONFIG)
+
+# print('imported')
