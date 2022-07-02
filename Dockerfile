@@ -34,11 +34,10 @@ RUN apk --no-cache add alpine-conf bash && \
     apk del alpine-conf
     
 RUN apk add --no-cache --virtual .build wget libffi-dev linux-headers musl-dev gcc build-base curl jq libxml2-dev libxslt-dev && \
+    chmod +x install.sh && bash /app/install.sh && \
     pip install --no-cache-dir -U pip setuptools wheel && \
     pip install --no-cache-dir -r requirements.txt && \
-    chmod +x install.sh && bash /app/install.sh && \
-    apk del .build
-
+    apk del .build .build_ext || apk del .build
 
 # MKDocs Static Site Generator
 RUN pip install --no-cache-dir mkdocs-material && \

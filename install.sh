@@ -55,6 +55,19 @@ case ${arch} in
         ;;
 esac
 
+# During arm* docker builds some python packeges requires Rust and Cargo to compile extensions
+case ${arch} in
+    x86_64)
+		echo
+		;;
+	*)
+		apk add --no-cache --virtual .build_ext rust cargo
+		;;
+esac
+
+
+
+
 if [[ -n "${exo_file}" ]]; then
     wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
     apk add --allow-untrusted ./"${exo_file}"
