@@ -127,7 +127,8 @@ async def main() -> None:
         )
 
         await redis.rpush("log:r18_db", log)
-        logger.success("R18 Updated")
+        logger.success("[R18_DB] Database Updated")
+        sys.exit(0)
 
 
 if __name__ == "__main__":

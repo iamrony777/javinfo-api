@@ -36,6 +36,7 @@ async def healthchecks_io(url: str) -> None:
     async with httpx.AsyncClient(timeout=10) as client:
         await client.get(url)
         logger.success("[PING] Successful")
+        sys.exit(0)
 
 
 @logger.catch
@@ -48,6 +49,7 @@ async def uptime_kuma(url: str) -> None:
     async with httpx.AsyncClient(timeout=10, http2=True) as client:
         await client.get(url)
         logger.success("[PING] Successful")
+        sys.exit(0)
 
 
 if __name__ == "__main__":
