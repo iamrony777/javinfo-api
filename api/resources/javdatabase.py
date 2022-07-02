@@ -1,12 +1,6 @@
 import re
 
-from httpx import AsyncClient
-from lxml import html
-
-try:
-    from helper.actress import actress_search
-except ImportError:
-    from .helper.actress import actress_search
+from . import AsyncClient, actress_search, html, logger
 
 BASE_URL = 'https://www.javdatabase.com'
 
@@ -75,9 +69,12 @@ async def main(name: str, only_r18: bool = False) -> dict[str] | None:
                            http2=True, headers=headers,
                            follow_redirects=True,
                            timeout=20) as client:
-        resp = await client.get(f'/movies/{name.lower()}')
-        if resp.status_code == 200:
-            tree = html.fromstring(resp.content)
-            details = await parse_details(tree, only_r18)
-            if details is not None:
-                return details
+        try:
+            resp = await client.get(f'/movies/{name.lower()}')
+            if resp.status_code == 200:
+                tree = html.fromstring(resp.content)
+                details = await parse_details(tree, only_r18)
+                if details is not None:
+                    return details
+        except Exception as exception:
+            logger.error(exception)

@@ -1,13 +1,12 @@
-beautifulsoup4
-httptools
-deep-translator
-fastapi
-lxml
-Pillow
-redis
+deep-translator==1.8.3
+fastapi==0.78.0
+lxml==4.9.0
+Pillow==9.1.1
+redis==4.3.3
 uvicorn[standard] 
-aiofiles
-apscheduler
-httpx[http2]
-honcho
-./src/wheels/fastapi_limiter-0.1.5-py3-none-any.whl
+aiofiles==0.8.0
+apscheduler==3.9.1
+httpx[http2]==0.23.0
+loguru==0.6.0
+# Fastapi-limiter==0.15.0 (pypi release is still on v0.14.0), Using Commit #1b82659 https://github.com/long2ice/fastapi-limiter/commit/1b8265946caa5001cfffe4a636c358029e2c316d
+fastapi-limiter @ https://github.com/long2ice/fastapi-limiter/archive/1b8265946caa5001cfffe4a636c358029e2c316d.zip

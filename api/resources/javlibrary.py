@@ -1,11 +1,6 @@
 from typing import Optional
-from httpx import AsyncClient
-from lxml import html
 
-try:
-    from helper.actress import actress_search
-except ImportError:
-    from .helper.actress import actress_search
+from . import AsyncClient, actress_search, html, logger
 
 
 async def get_page_content(client: AsyncClient,
@@ -117,11 +112,14 @@ async def main(name: str, only_r18: bool = False):
                            follow_redirects=True,
                            timeout=20) as client:
         # Fetch html tree, by query and filter the results
-        result = await filter_results((await get_page_content(client,
-                                                              params={'keyword': name})), name)
-        if result is not None and not isinstance(result, str):
-            return await parse_details(result, only_r18)
-        if result is not None and isinstance(result, str):
-            result = await filter_results(await get_page_content(client,
-                                                                 url=result.replace('.', '')), name)
-            return await parse_details(result, only_r18)
+        try:
+            result = await filter_results((await get_page_content(client,
+                                                                params={'keyword': name})), name)
+            if result is not None and not isinstance(result, str):
+                return await parse_details(result, only_r18)
+            if result is not None and isinstance(result, str):
+                result = await filter_results(await get_page_content(client,
+                                                                    url=result.replace('.', '')), name)
+                return await parse_details(result, only_r18)
+        except Exception as exception:
+            logger.error(exception)

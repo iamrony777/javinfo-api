@@ -4,10 +4,12 @@ import time
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from redis import asyncio as aioredis
+from api import logger
 TIMEOUT = int(os.getenv('INACTIVITY_TIMEOUT', '300'))
 FILE_TO_CHECK = 'timeout.json'
 
 # After 5min , worker will restart
+@logger.catch
 async def set_timeout(timeout_scheduler: AsyncIOScheduler) -> None:
     """Set inactivity timeout for (master) worker."""
     async with aioredis.Redis.from_url(os.getenv('REDIS_URL'), decode_responses=True, db=3) as redis:

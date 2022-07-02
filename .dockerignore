@@ -24,8 +24,8 @@ dist/
 .venv
 .env
 .vscode
-.gitignore
-.dockerignore
-test*
-testing*
 var*
+
+# Dev
+test*
+old_*

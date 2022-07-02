@@ -6,6 +6,7 @@ from typing import Optional
 import httpx
 from fastapi import Request
 from redis import asyncio as aioredis
+from api import logger as _logger_
 
 TOKEN = os.environ.get('IPINFO_TOKEN')
 
@@ -55,7 +56,7 @@ async def logger(request: Request):
     else:
         return
 
-
+@_logger_.catch
 async def manage(key: Optional[any] = None, values: Optional[any] = None, **kwargs):
     """Main Function , DB=1."""
     async with aioredis.Redis.from_url(os.environ['REDIS_URL'], decode_responses=True, db=1) as redis:

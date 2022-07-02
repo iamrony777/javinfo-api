@@ -1,2 +1,2 @@
-web: python main.py
+api: python main.py
 cronjob: crond -f

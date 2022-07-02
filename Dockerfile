@@ -33,9 +33,10 @@ RUN apk --no-cache add alpine-conf bash && \
     setup-timezone -z "$TIMEZONE" && \
     apk del alpine-conf
     
-RUN apk add --no-cache --virtual .build libffi-dev linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev && \
+RUN apk add --no-cache --virtual .build wget libffi-dev linux-headers musl-dev gcc build-base curl jq libxml2-dev libxslt-dev && \
     pip install --no-cache-dir -U pip setuptools wheel && \
     pip install --no-cache-dir -r requirements.txt && \
+    chmod +x install.sh && bash /app/install.sh && \
     apk del .build
 
 
@@ -45,8 +46,6 @@ RUN pip install --no-cache-dir mkdocs-material && \
     mkdir -p /app/site && \
     pip uninstall mkdocs-material -y
 
-RUN chmod +x install.sh && \
-    bash /app/install.sh && \
-    python -m compileall .
+RUN python -m compileall .
 
 ENTRYPOINT ["bash", "start.sh"] 

@@ -1,21 +1,18 @@
 import re
 
-from bs4 import BeautifulSoup
-from httpx import AsyncClient
-try:
-    from helper.actress import actress_search
-except ImportError:
-    from .helper.actress import actress_search
+from . import AsyncClient, actress_search, html, logger
 
 
-async def fetch(name: str, url: str, client: AsyncClient):
+async def fetch(name: str, url: str, client: AsyncClient) -> str | None:
     """Get contentname from search result."""
     response = await client.get(url)
-    soup = BeautifulSoup(response.text, 'lxml')
-    if soup.find('div', class_='mb10 pl10 fzL fwB') is None:
-        for item in soup.find_all('li', class_='item-list'):
-            if name == item.find('img')['alt'].strip():
-                return item.get('data-content_id').strip()
+    tree = html.fromstring(response.content)
+    try:
+        for item in tree.findall('.//li[@class="item-list"]'):
+            if name == item.find('a/p/img').get('alt'):
+                return item.get('data-content_id')
+    except AttributeError:
+        return None
 
 
 async def movie_data(client: AsyncClient, content_id: str, only_r18: bool) -> dict[str] | None:
@@ -61,9 +58,29 @@ async def movie_data(client: AsyncClient, content_id: str, only_r18: bool) -> di
         return base_details
 
 
+# async def main(name: str, only_r18: bool = False) -> dict[str]:
+#     """Main Function to manage rest of the fucntion."""
+#     async with AsyncClient(base_url='https://www.r18.com', follow_redirects=True, timeout=20, http2=True) as client:
+#         try:
+#             contentname = await fetch(name=name, url=f'/common/search/searchword={name}', client=client)
+#             if contentname is not None:
+#                 return await movie_data(client, contentname, only_r18)
+#         except Exception as exception:
+#             logger.error(exception)
+
+@logger.catch
 async def main(name: str, only_r18: bool = False) -> dict[str]:
     """Main Function to manage rest of the fucntion."""
     async with AsyncClient(base_url='https://www.r18.com', follow_redirects=True, timeout=20, http2=True) as client:
         contentname = await fetch(name=name, url=f'/common/search/searchword={name}', client=client)
         if contentname is not None:
             return await movie_data(client, contentname, only_r18)
+
+
+if __name__ == "__main__":
+    import asyncio
+    print(
+        asyncio.run(
+            main('EBOD-391')
+        )
+    )
