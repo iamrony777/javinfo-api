@@ -66,7 +66,7 @@ else
 fi
 
 # Setting correct api port
-sed -i "s/api:/api: PORT="${PORT}"/g" /app/Procfile
+sed -i "s/api:/api: PORT=${PORT}/g" /app/Procfile
 
 #copy images: /app/api/html/images/* -> /app/docs/images/
 mkdir -p /app/docs/images/
