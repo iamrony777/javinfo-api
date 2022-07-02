@@ -60,12 +60,16 @@ case ${arch} in
     x86_64)
 		echo
 		;;
-	*)	
-		# For python extentions that requires rust
-		apk add --no-cache --virtual .rust_ext cargo
-		cargo update
+	armv7*)
+		# Watchfiles requires Cargo to build from source , instead of building from source , downloading binary
+		# ref. https://pypi.org/project/watchfiles/#files
+		pip install https://files.pythonhosted.org/packages/55/4d/f95f3c134f52a0c278e92d3a6a0c1fd6b1bc69290ceac6415f878e3c4b64/watchfiles-0.15.0-cp37-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl
+		;;
+	aarch64*)	
+		# Watchfiles wheel
+		pip install https://files.pythonhosted.org/packages/39/9a/dc96c6ae0984d87023f695d81b2a6d72670066ec4170a9a4331b7272ff21/watchfiles-0.15.0-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
 
-		# For Pillow build on arm platform
+		# For Pillow build on arm64 platform
 		apk add --no-cache --virtual .pillow_ext  freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev
 		;;
 esac

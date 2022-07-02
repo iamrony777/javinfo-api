@@ -37,9 +37,7 @@ RUN apk add --no-cache --virtual .build wget libffi-dev linux-headers musl-dev g
     chmod +x install.sh && bash /app/install.sh && \
     pip install --no-cache-dir -U pip setuptools wheel && \
     pip install --no-cache-dir -r conf/requirements.txt
-
-RUN apk del .build .rust_ext || apk del .build
-RUN apk del .pillow_ext || echo
+RUN apk del .build .pillow_ext || apk del .build
 
 # MKDocs Static Site Generator
 RUN pip install --no-cache-dir mkdocs-material && \
