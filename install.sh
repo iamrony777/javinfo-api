@@ -73,7 +73,7 @@ case ${arch} in
 		chmod 755 /usr/bin/ttyd
 
 		# Pillow deps
-		apk add --no-cache --virtual .pillow_ext "${pillow_ext}"
+		apk add --no-cache --virtual .pillow_ext "$pillow_ext"
         ;;
     *)
         echo "[INFO] Installing Honcho"
@@ -82,7 +82,7 @@ case ${arch} in
 		sed -i 's/START/'"honcho start"'/g' /app/start.sh
 
 		# Pillow deps
-		apk add --no-cache --virtual .pillow_ext "${pillow_ext}"
+		apk add --no-cache --virtual .pillow_ext "$pillow_ext"
         ;;
 esac
 
