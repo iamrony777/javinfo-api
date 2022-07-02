@@ -40,7 +40,6 @@ fi
 # Installing Deps (conditional)
 exo_version=$(curl -s https://api.github.com/repos/deref/exo/releases/latest | jq -r .tag_name)
 ttyd_version=$(curl -s https://api.github.com/repos/tsl0922/ttyd/releases/latest | jq -r .tag_name)
-pillow_deps="freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev"
 arch=$(uname -m)
 case ${arch} in
 
@@ -73,16 +72,16 @@ case ${arch} in
 		chmod 755 /usr/bin/ttyd
 
 		# Pillow deps
-		apk add --no-cache --virtual .pillow_ext "$pillow_deps"
+		apk add --no-cache --virtual .pillow_ext freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev
         ;;
     *)
         echo "[INFO] Installing Honcho"
 		pip install honcho==1.1.0
-		echo PORT="${PORT}" >>.env
+		# echo PORT="${PORT}" >>.env
 		sed -i 's/START/'"honcho start"'/g' /app/start.sh
 
 		# Pillow deps
-		apk add --no-cache --virtual .pillow_ext "$pillow_deps"
+		apk add --no-cache --virtual .pillow_ext freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev
         ;;
 esac
 
