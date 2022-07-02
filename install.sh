@@ -37,57 +37,62 @@ else
 	rm -rf /app/javinfo.log
 fi
 
-# Installing Exo or Honcho as process manager depending on arch
+# Installing Deps (conditional)
 exo_version=$(curl -s https://api.github.com/repos/deref/exo/releases/latest | jq -r .tag_name)
+ttyd_version=$(curl -s https://api.github.com/repos/tsl0922/ttyd/releases/latest | jq -r .tag_name)
+pillow_ext="freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev"
 arch=$(uname -m)
 case ${arch} in
 
     x86_64)
-        echo "[INFO] Installing Exo for ${arch}"
+        echo "[INFO] Installing Deps for ${arch}"
         exo_file=exo_${exo_version}_linux_amd64.apk
+
+		# EXO
+		wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
+    	apk add --allow-untrusted ./"${exo_file}"
+		sed -i 's/START/'"exo run"'/g' /app/start.sh
+
+		# TTYD
+		wget -qcO ttyd https://github.com/tsl0922/ttyd/releases/download/${ttyd_version}/ttyd.${arch}
+		mv ttyd /usr/bin/ttyd
+		chmod 755 /usr/bin/ttyd
         ;;
     aarch64*)
-        echo "[INFO] Installing Exo for ${arch}"
+        echo "[INFO] Installing Deps for ${arch}"
         exo_file=exo_${exo_version}_linux_arm64.apk
+
+		# EXO
+		wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
+    	apk add --allow-untrusted ./"${exo_file}"
+		sed -i 's/START/'"exo run"'/g' /app/start.sh
+
+		# TTYD
+		wget -qcO ttyd https://github.com/tsl0922/ttyd/releases/download/${ttyd_version}/ttyd.${arch}
+		mv ttyd /usr/bin/ttyd
+		chmod 755 /usr/bin/ttyd
+
+		# Pillow deps
+		apk add --no-cache --virtual .pillow_ext "${pillow_ext}"
         ;;
     *)
         echo "[INFO] Installing Honcho"
+		pip install honcho==1.1.0
+		echo PORT="${PORT}" >>.env
+		sed -i 's/START/'"honcho start"'/g' /app/start.sh
+
+		# Pillow deps
+		apk add --no-cache --virtual .pillow_ext "${pillow_ext}"
         ;;
 esac
 
-# During arm* docker builds some python packeges requires Rust and Cargo to compile extensions
-case ${arch} in
-    x86_64)
-		echo
-		;;
-	armv7*)
-		echo
-		# Watchfiles requires Cargo to build from source , instead of building from source , downloading binary
-		# ref. https://pypi.org/project/watchfiles/#files
-		# pip install https://files.pythonhosted.org/packages/55/4d/f95f3c134f52a0c278e92d3a6a0c1fd6b1bc69290ceac6415f878e3c4b64/watchfiles-0.15.0-cp37-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl
-		;;
-	aarch64*)	
-		# Watchfiles wheel
-		# pip install https://files.pythonhosted.org/packages/39/9a/dc96c6ae0984d87023f695d81b2a6d72670066ec4170a9a4331b7272ff21/watchfiles-0.15.0-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
 
-		# For Pillow build on arm64 platform
-		apk add --no-cache --virtual .pillow_ext  freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev
-		;;
-esac
-
-
-if [[ -n "${exo_file}" ]]; then
-    wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
-    apk add --allow-untrusted ./"${exo_file}"
-	sed -i 's/START/'"exo run"'/g' /app/start.sh
-else
-    pip install honcho==1.1.0
-	echo PORT="${PORT}" >>.env
-	sed -i 's/START/'"honcho start"'/g' /app/start.sh
-fi
 
 # Setting correct api port
-sed -i "s/api:/api: PORT=${PORT}/g" /app/Procfile
+# sed -i "s/api:/api: PORT=${PORT}/g" /app/Procfile
+# now its caddy
+sed -i "s/caddy:/caddy: PORT=${PORT}/g" /app/Procfile
+
 
 #copy images: /app/api/html/images/* -> /app/docs/images/
 mkdir -p /app/docs/images/

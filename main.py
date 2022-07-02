@@ -21,7 +21,7 @@ from api import (FILE_TO_CHECK, Tags, aioredis, async_scheduler,
 # Fastapi Config
 security = HTTPBasic()
 
-app = FastAPI(docs_url="/demo", redoc_url=None)
+app = FastAPI(docs_url="/api/demo", openapi_url='/api/openapi.json', redoc_url=None)
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,9 +32,9 @@ app.add_middleware(
 )
 
 # site folder is created only during docker build
-app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
+app.mount("/api/docs", StaticFiles(directory="site", html=True), name="docs")
 
-app.mount("/readme", StaticFiles(directory="api/html", html=True), name="root")
+app.mount("/api/readme", StaticFiles(directory="api/html", html=True), name="root")
 
 def check_access(credentials: HTTPBasicCredentials = Depends(security)):
     """Check credentials."""
@@ -73,13 +73,13 @@ async def startup():
 
 
 # TODO: Dashboard or Something on '/' route
-@app.get("/", include_in_schema=False)
+@app.get("/api/", include_in_schema=False)
 async def root():
     """Redirect to readme."""
     return RedirectResponse("/readme")
 
 
-@app.head("/check", include_in_schema=False)
+@app.head("/api/check", include_in_schema=False)
 async def check():
     """(Uptime) Monitor endpoint."""
     return {"status": "OK"}
@@ -87,7 +87,7 @@ async def check():
 
 @logger.catch
 @app.post(
-    "/public",
+    "/api/public",
     dependencies=[Depends(RateLimiter(times=1, seconds=10))],
     summary="Search for a video by DVD ID / Content ID",
     tags=[Tags.DEMO],
@@ -126,7 +126,7 @@ async def demo_search(
 
 
 @logger.catch
-@app.get("/database", tags=[Tags.DOCS])
+@app.get("/api/database", tags=[Tags.DOCS])
 async def logs(
     request: Request,
     background_tasks: BackgroundTasks,
@@ -155,7 +155,7 @@ async def logs(
 
 
 @logger.catch
-@app.get("/logs", tags=[Tags.DOCS])
+@app.get("/api/logs", tags=[Tags.DOCS])
 async def get_logs(
     request: Request,
     background_tasks: BackgroundTasks,
@@ -174,7 +174,7 @@ async def get_logs(
     )
 
 
-@app.post("/search", tags=[Tags.DOCS])
+@app.post("/api/search", tags=[Tags.DOCS])
 @logger.catch
 async def search(
     request: Request,

@@ -39,6 +39,9 @@ RUN apk add --no-cache --virtual .build wget libffi-dev linux-headers musl-dev g
     pip install --no-cache-dir -r conf/requirements.txt
 RUN apk del .build .pillow_ext || apk del .build
 
+RUN apk add --no-cache caddy
+
+
 # MKDocs Static Site Generator
 RUN pip install --no-cache-dir mkdocs-material && \
     mkdocs build -f /app/conf/mkdocs.yml && \
