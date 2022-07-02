@@ -63,12 +63,12 @@ case ${arch} in
 	*)	
 		# For python extentions that requires rust
 
-		# export PATH="/root/.cargo/bin:${PATH}"
-		# curl https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-musl/rustup-init --output /tmp/rustup-init && \
-		# chmod +x /tmp/rustup-init && \
-		# /tmp/rustup-init -y && \
-		apk add --no-cache --virtual .rust_ext rust cargo
-		rm -rf ~/.cargo/registry/index
+		export PATH="/root/.cargo/bin:${PATH}"
+		curl https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-musl/rustup-init --output /tmp/rustup-init && \
+		chmod +x /tmp/rustup-init && \
+		/tmp/rustup-init -y && \
+		# apk add --no-cache --virtual .rust_ext rust cargo
+		# rm -rf ~/.cargo/registry/index
 		cargo update
 
 		# For Pillow build on arm platform
