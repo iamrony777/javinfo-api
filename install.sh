@@ -45,13 +45,20 @@ case ${arch} in
 
     x86_64)
         echo "[INFO] Installing Deps for ${arch}"
-        exo_file=exo_${exo_version}_linux_amd64.apk
+        # exo_file=exo_${exo_version}_linux_amd64.apk
 
-		# EXO
-		wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
-    	apk add --allow-untrusted ./"${exo_file}"
-		sed -i 's/START/'"exo run"'/g' /app/start.sh
+		# # EXO
+		# wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
+    	# apk add --allow-untrusted ./"${exo_file}"
+		# sed -i 's/START/'"exo run"'/g' /app/start.sh
 
+
+        echo "[INFO] Installing Honcho"
+		pip install honcho==1.1.0
+		# echo PORT="${PORT}" >>.env
+		sed -i 's/START/'"honcho start"'/g' /app/start.sh
+
+		
 		# TTYD
 		wget -qcO ttyd https://github.com/tsl0922/ttyd/releases/download/${ttyd_version}/ttyd.${arch}
 		mv ttyd /usr/bin/ttyd
