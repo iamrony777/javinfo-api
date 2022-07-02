@@ -1,3 +1,4 @@
+"""Scraps all Actress's name and profile photo from r18's actress section and saves them into database"""
 import asyncio
 import json
 import os

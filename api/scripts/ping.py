@@ -1,3 +1,4 @@
+"""Simple Healthcheck script, supports Healthchecks.io and Uptime-Kuma (push type)"""
 import asyncio
 import os
 import sys

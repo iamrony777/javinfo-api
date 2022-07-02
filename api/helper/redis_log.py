@@ -1,3 +1,4 @@
+"""Saving request logs in redis instead of saving in a .log file as plaintext format """
 import json
 import os
 from datetime import datetime

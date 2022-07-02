@@ -1,14 +1,12 @@
-"""Configs"""
+"""api/__init__.py"""
 
 import asyncio
 import gc
 import os
 import secrets
 import sys
-import time
 from enum import Enum
 
-import uvicorn
 import uvloop
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Request, status
@@ -107,7 +105,6 @@ def check_access(credentials: HTTPBasicCredentials = Depends(security)):
             headers={"WWW-Authenticate": "Basic"},
         )
     return True
-
 
 
 # Loguru - Logger config

@@ -1,3 +1,4 @@
+"""Auto Login for JAVDB ,solves captcha using custom ML api, not public usable for now as it is unstable"""
 import asyncio
 import json
 import os
@@ -117,46 +118,46 @@ async def login(root_path, client: httpx.AsyncClient):
 
 async def main(root_path: str):
     """Main function."""
-
-    try:
-        os.mkdir(f"{root_path}/uploads")
-    except FileExistsError:
-        pass
-    try_count = 0
-    while True:
-        if try_count < 10:
-            async with httpx.AsyncClient(
-                http2=True,
-                follow_redirects=True,
-                base_url="https://javdb.com",
-                headers={"User-Agent": USER_AGENT},
-            ) as client:
-                response = await login(root_path, client)
-                if response == 403:
-                    break
-                if response:
-                    async with aioredis.from_url(
-                        os.getenv("REDIS_URL"), db=1, decode_responses=True
-                    ) as redis:
-                        end_time = time.perf_counter()
-                        log = json.dumps(
-                            {
-                                "finished in": f"{end_time - start_time:.2f}s",
-                                "time": datetime.now().strftime(
-                                    "%d/%m/%Y - %H:%M:%S%z"
-                                ),
-                            }
-                        )
-                        await redis.rpush("log:javdb_login", log)
-                    rmtree(f"{root_path}/uploads")
-                    return
-                logger.warning("[JAVDB_LOGIN] Login Failed, retrying in 10 seconds")
-                try_count += 1
-                time.sleep(10)
-        else:
-            logger.error("[JAVDB_LOGIN] Login Failed, retrying in 10 minutes")
-            try_count = 0
-            time.sleep(600)
+    if os.getenv("CAPTCHA_SOLVER_URL") not in [None, 'None', 'none', '']:
+        try:
+            os.mkdir(f"{root_path}/uploads")
+        except FileExistsError:
+            pass
+        try_count = 0
+        while True:
+            if try_count < 10:
+                async with httpx.AsyncClient(
+                    http2=True,
+                    follow_redirects=True,
+                    base_url="https://javdb.com",
+                    headers={"User-Agent": USER_AGENT},
+                ) as client:
+                    response = await login(root_path, client)
+                    if response == 403:
+                        break
+                    if response:
+                        async with aioredis.from_url(
+                            os.getenv("REDIS_URL"), db=1, decode_responses=True
+                        ) as redis:
+                            end_time = time.perf_counter()
+                            log = json.dumps(
+                                {
+                                    "finished in": f"{end_time - start_time:.2f}s",
+                                    "time": datetime.now().strftime(
+                                        "%d/%m/%Y - %H:%M:%S%z"
+                                    ),
+                                }
+                            )
+                            await redis.rpush("log:javdb_login", log)
+                        rmtree(f"{root_path}/uploads")
+                        return
+                    logger.warning("[JAVDB_LOGIN] Login Failed, retrying in 10 seconds")
+                    try_count += 1
+                    time.sleep(10)
+            else:
+                logger.error("[JAVDB_LOGIN] Login Failed, retrying in 10 minutes")
+                try_count = 0
+                time.sleep(600)
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+"""api/resources/__init__.py"""
 from httpx import AsyncClient
 from lxml import html
 from api import logger

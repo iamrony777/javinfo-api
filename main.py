@@ -1,5 +1,15 @@
 """Server"""
-from api import *
+import os
+import sys
+import time
+
+import uvicorn
+
+from api import (FILE_TO_CHECK, BackgroundTasks, Depends, FastAPILimiter,
+                 FileResponse, JSONResponse, RateLimiter, RedirectResponse,
+                 Request, Tags, aioredis, app, async_scheduler, check_access,
+                 filter_string, get_results, logger, login, manage, r18_db,
+                 request_logger, status, timeout)
 
 
 @app.on_event("startup")
@@ -119,6 +129,7 @@ async def get_logs(
     background_tasks: BackgroundTasks,
     hasaccess: bool = Depends(check_access),
 ):
+    """An endpoint to download saved logs"""
     background_tasks.add_task(request_logger, request)
     if hasaccess:
         return FileResponse(
@@ -126,7 +137,7 @@ async def get_logs(
             media_type="text/plain",
             filename=f"javinfo_{round(time.time())}.log",
         )
-    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED)
+    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={'error': 'Access Denied'})
 
 
 @app.post("/search", tags=[Tags.DOCS])

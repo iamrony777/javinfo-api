@@ -1,3 +1,4 @@
+"""Main srcaper - R18"""
 import re
 
 from . import AsyncClient, actress_search, html, logger
@@ -9,78 +10,73 @@ async def fetch(name: str, url: str, client: AsyncClient) -> str | None:
     tree = html.fromstring(response.content)
     try:
         for item in tree.findall('.//li[@class="item-list"]'):
-            if name == item.find('a/p/img').get('alt'):
-                return item.get('data-content_id')
+            if name == item.find("a/p/img").get("alt"):
+                return item.get("data-content_id")
     except AttributeError:
         return None
 
 
-async def movie_data(client: AsyncClient, content_id: str, only_r18: bool) -> dict[str] | None:
+async def movie_data(
+    client: AsyncClient, content_id: str, only_r18: bool
+) -> dict[str] | None:
     """Fetch data from r18.com's api."""
-    response = await client.get(url=f'/api/v4f/contents/{content_id}', params={'lang': 'en'})
+    response = await client.get(
+        url=f"/api/v4f/contents/{content_id}", params={"lang": "en"}
+    )
     if response.status_code == 200:
-        response = response.json()['data']
+        response = response.json()["data"]
         base_details, extra_details = {}, {}
         actress_list = []
 
-        base_details['id'] = response.get('dvd_id')
-        base_details['title'] = response.get('title')
-        base_details['poster'] = response.get(
-            'images').get('jacket_image').get('large')
-        base_details['page'] = response.get('detail_url')
+        base_details["id"] = response.get("dvd_id")
+        base_details["title"] = response.get("title")
+        base_details["poster"] = response.get("images").get("jacket_image").get("large")
+        base_details["page"] = response.get("detail_url")
 
-        extra_details['director'] = response.get('director')
-        extra_details['release_data'] = response.get(
-            'release_date').split(' ')[0]
-        extra_details['runtime'] = response.get('runtime_minutes')
-        extra_details['studio'] = response.get('maker').get('name')
+        extra_details["director"] = response.get("director")
+        extra_details["release_data"] = response.get("release_date").split(" ")[0]
+        extra_details["runtime"] = response.get("runtime_minutes")
+        extra_details["studio"] = response.get("maker").get("name")
 
-        base_details['details'] = extra_details
+        base_details["details"] = extra_details
 
-        temp_actresses = response.get('actresses')
+        temp_actresses = response.get("actresses")
         if temp_actresses is not None:
             for actresses in temp_actresses:
-                if bool(re.search(r'\(', actresses['name'])):
-                    name = actresses['name'].replace(' (', ', ')
-                    name = name.replace(')', '')
-                    [actress_list.append(name) for name in name.split(', ')]
-                actress_list.append(actresses['name'].strip())
+                if bool(re.search(r"\(", actresses["name"])):
+                    name = str(actresses["name"].replace(" (", ", "))
+                    name = name.replace(")", "")
+                    for name in name.split(", "):
+                        actress_list.append(name)
+                    actress_list.append(actresses["name"].strip())
 
-            base_details['actress'] = await actress_search(actress_list, only_r18)
+            base_details["actress"] = await actress_search(actress_list, only_r18)
 
-        temp_screenshots = response.get('gallery')
+        temp_screenshots = response.get("gallery")
         if temp_screenshots is not None:
-            screenshots = [screenshot[list(screenshot.keys())[0]]
-                           for screenshot in temp_screenshots
-                           if screenshot.get(list(screenshot.keys())[0]) is not None]
-            base_details['screenshots'] = screenshots
+            screenshots = [
+                screenshot[list(screenshot.keys())[0]]
+                for screenshot in temp_screenshots
+                if screenshot.get(list(screenshot.keys())[0]) is not None
+            ]
+            base_details["screenshots"] = screenshots
 
         return base_details
-
-
-# async def main(name: str, only_r18: bool = False) -> dict[str]:
-#     """Main Function to manage rest of the fucntion."""
-#     async with AsyncClient(base_url='https://www.r18.com', follow_redirects=True, timeout=20, http2=True) as client:
-#         try:
-#             contentname = await fetch(name=name, url=f'/common/search/searchword={name}', client=client)
-#             if contentname is not None:
-#                 return await movie_data(client, contentname, only_r18)
-#         except Exception as exception:
-#             logger.error(exception)
 
 @logger.catch
 async def main(name: str, only_r18: bool = False) -> dict[str]:
     """Main Function to manage rest of the fucntion."""
-    async with AsyncClient(base_url='https://www.r18.com', follow_redirects=True, timeout=20, http2=True) as client:
-        contentname = await fetch(name=name, url=f'/common/search/searchword={name}', client=client)
+    async with AsyncClient(
+        base_url="https://www.r18.com", follow_redirects=True, timeout=20, http2=True
+    ) as client:
+        contentname = await fetch(
+            name=name, url=f"/common/search/searchword={name}", client=client
+        )
         if contentname is not None:
             return await movie_data(client, contentname, only_r18)
 
 
 if __name__ == "__main__":
     import asyncio
-    print(
-        asyncio.run(
-            main('EBOD-391')
-        )
-    )
+
+    print(asyncio.run(main("EBOD-391")))

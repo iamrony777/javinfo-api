@@ -1,3 +1,4 @@
+"""Main srcaper - Javdb"""
 import os
 import re
 
@@ -8,13 +9,14 @@ from . import AsyncClient, html, logger
 
 BASE_URL = "https://javdb.com"
 
+
 async def get_page_url(client: AsyncClient, name: str, **kwargs) -> (str | None):
     """Get the page url from javdb.com."""
     response = await client.get(
         "/search", params={"q": name, "f": "all", "locale": "en", "over18": 1}, **kwargs
     )
     try:
-        return html.fromstring(response.content).find('.//a[@class="box"]').get('href')
+        return html.fromstring(response.content).find('.//a[@class="box"]').get("href")
     except AttributeError:
         return None
 
@@ -26,12 +28,13 @@ async def get_tokens(key: str) -> (str | None):
     ) as redis:
         return await redis.get(key)
 
+
 async def parse_tags(tree: html.HtmlElement) -> list[str] | None:
     """Get list of tags"""
     for element in tree.findall('.//div[@class="panel-block"]'):
         try:
-            if element.find('strong').text.strip() == "Tags:":
-                return element.xpath('span/a/text()')
+            if element.find("strong").text.strip() == "Tags:":
+                return element.xpath("span/a/text()")
         except AttributeError:
             pass
 
@@ -42,19 +45,21 @@ async def parse_panel_data(tree: html.HtmlElement) -> dict[str, str | None]:
     data = tree.findall('.//div[@class="panel-block"]')
     for element in data:
         try:
-            element_text = element.find('strong').text.strip()
+            element_text = element.find("strong").text.strip()
             if element_text == "Director:":
                 details["director"] = GoogleTranslator(
-                    source="auto", target="en" 
-                ).translate(element.find('span/a').text.strip())
+                    source="auto", target="en"
+                ).translate(element.find("span/a").text.strip())
             elif element_text == "Released Date:":
-                details["release_date"] = element.find('span').text.strip()
+                details["release_date"] = element.find("span").text.strip()
             elif element_text == "Duration:":
-                details["runtime"] = element.find('span').text.strip().split(" ")[0]
+                details["runtime"] = element.find("span").text.strip().split(" ")[0]
             elif element_text == "Maker:":
-                details["studio"] = element.find('span/a').text.strip()
+                details["studio"] = element.find("span/a").text.strip()
             elif element_text == "Rating:":
-                details["user_rating"] = element.xpath('span/text()')[-1].strip().split(",")[0]
+                details["user_rating"] = (
+                    element.xpath("span/text()")[-1].strip().split(",")[0]
+                )
         except AttributeError:
             pass
     for key, value in sorted(details.items()):
@@ -86,7 +91,7 @@ async def main(name: str) -> dict[str] | None:
         cookies=cookies,
     ) as client:
         try:
-            parser = html.HTMLParser(encoding='UTF-8')
+            parser = html.HTMLParser(encoding="UTF-8")
             page_url = await get_page_url(client, name)
             if page_url is not None:
                 movie_dictionary = {}
@@ -103,12 +108,14 @@ async def main(name: str) -> dict[str] | None:
                         movie_title = re.sub(
                             rf"{movie_dictionary['id']} | JavDB, Online information source for adult movies",
                             "",
-                            tree.find('head/title').text.strip(),
+                            tree.find("head/title").text.strip(),
                         )
                         movie_dictionary["title"] = GoogleTranslator(
                             source="auto", target="en"
                         ).translate(movie_title.replace(" |", " ").strip())
-                        movie_dictionary["poster"] = tree.find('.//img[@class="video-cover"]').get("src")
+                        movie_dictionary["poster"] = tree.find(
+                            './/img[@class="video-cover"]'
+                        ).get("src")
                         movie_dictionary["page"] = BASE_URL + page_url
                         movie_dictionary["details"] = await parse_panel_data(tree)
                         movie_dictionary["tags"] = await parse_tags(tree)
