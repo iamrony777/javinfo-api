@@ -3,7 +3,9 @@ fastapi==0.78.0
 lxml==4.9.0
 Pillow==9.1.1
 redis==4.3.3
-uvicorn[standard] 
+uvicorn==0.18.2
+httptools==0.4.0
+uvloop==0.16.0
 aiofiles==0.8.0
 apscheduler==3.9.1
 httpx[http2]==0.23.0
