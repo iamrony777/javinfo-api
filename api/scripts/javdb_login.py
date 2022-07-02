@@ -115,7 +115,7 @@ async def login(root_path, client: httpx.AsyncClient):
     else:
         return 403
 
-
+@logger.catch
 async def main(root_path: str):
     """Main function."""
     if os.getenv("CAPTCHA_SOLVER_URL") not in [None, 'None', 'none', '']:

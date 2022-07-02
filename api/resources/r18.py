@@ -48,7 +48,7 @@ async def movie_data(
                     name = name.replace(")", "")
                     for name in name.split(", "):
                         actress_list.append(name)
-                    actress_list.append(actresses["name"].strip())
+                actress_list.append(actresses["name"].strip())
 
             base_details["actress"] = await actress_search(actress_list, only_r18)
 
