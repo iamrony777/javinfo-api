@@ -38,7 +38,7 @@ gc.enable()
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 # APscheduler Config
-async_scheduler = AsyncIOScheduler(job_defaults={"misfire_grace_time": 5 * 60})
+# async_scheduler = AsyncIOScheduler(job_defaults={"misfire_grace_time": 5 * 60})
 
 # Fastapi Config
 security = HTTPBasic()

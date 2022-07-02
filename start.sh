@@ -9,6 +9,9 @@ fi
 if [ -n "${CAPTCHA_SOLVER_URL}" ] && [ "${CAPTCHA_SOLVER_URL}" != 'None' ]; then
 	# Update javdb cookies at 00:00 on Sunday, ref. https://crontab.guru/every-week
 	crontab -l | { cat; echo "0 0 * * 0 /usr/local/bin/python /app/api/scripts/javdb_login.py"; } | crontab - 
+
+	# Also run same script as Startup job
+	/usr/local/bin/python /app/api/scripts/javdb_login.py &
 fi
 
 if [ -n "${HEALTHCHECK_PROVIDER}" ] && [ "${HEALTHCHECK_PROVIDER}" != 'None' ]; then
@@ -18,6 +21,9 @@ fi
 
 # Fetch Actress data from r18 everyday, ref. https://crontab.guru/#0_0_*_*_*
 crontab -l | { cat; echo "0 0 * * * /usr/local/bin/python /app/api/scripts/r18_db.py"; } | crontab -
+
+# And also run as startup job
+/usr/local/bin/python /app/api/scripts/r18_db.py &
 
 #Placeholder for processmanager
 exec START

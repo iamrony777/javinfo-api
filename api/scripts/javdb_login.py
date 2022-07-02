@@ -161,4 +161,8 @@ async def main(root_path: str):
 
 
 if __name__ == "__main__":
-    asyncio.run(main(os.getcwd()))
+    epochDuration = time.time() - os.path.getctime("/proc/1") # epoch float time of the creation time of this file
+    utcDuration = time.gmtime(epochDuration)
+    if not utcDuration.tm_hour:
+        time.sleep(30)
+        asyncio.run(main(os.getcwd()))
