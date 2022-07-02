@@ -29,5 +29,8 @@ fi
 # And also run as startup job
 /usr/local/bin/python /app/api/scripts/r18_db.py &
 
+
+cat Procfile
+
 #Placeholder for processmanager
 exec START
