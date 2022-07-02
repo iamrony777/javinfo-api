@@ -1,6 +1,6 @@
 <p align="center">
     <div align="center">
-        <img src="./src/root/logo.png" alt="logo">
+        <img src="api/html/images/logo.png" alt="logo">
     </div>
     <div align="center">Backend for <b>JAVINFO CLI</b> | API to fetch JAV data from various sites
     </div>

@@ -66,8 +66,6 @@ case ${arch} in
 esac
 
 
-
-
 if [[ -n "${exo_file}" ]]; then
     wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
     apk add --allow-untrusted ./"${exo_file}"
