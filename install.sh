@@ -40,47 +40,46 @@ else
 fi
 
 # Installing Deps (conditional)
-exo_version=$(curl -s https://api.github.com/repos/deref/exo/releases/latest | jq -r .tag_name)
-
 arch=$(uname -m)
+overmind_version=$(curl -s https://api.github.com/repos/DarthSim/overmind/releases/latest | jq -r .tag_name)
 case ${arch} in
 
     x86_64)
         echo "[INFO] Installing Deps for ${arch}"
-        exo_file=exo_${exo_version}_linux_amd64.apk
-
-		# EXO
-		wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
-    	apk add --allow-untrusted ./"${exo_file}"
-		sed -i 's/START/'"exo run"'/g' /app/start.sh
-
-		# # *** Experimental *** 
-        # echo "[INFO] Installing Honcho"
-		# pip install honcho==1.1.0
-		# sed -i 's/START/'"honcho start"'/g' /app/start.sh
+		overmind_file=overmind-${overmind_version}-linux-amd64.gz
+		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
+		tar -xzvf overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
+		sed -i 's/START/overmind start/g' /app/start.sh
 
         ;;
     aarch64*)
         echo "[INFO] Installing Deps for ${arch}"
-        exo_file=exo_${exo_version}_linux_arm64.apk
-
-		# EXO
-		wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
-    	apk add --allow-untrusted ./"${exo_file}"
-		sed -i 's/START/'"exo run"'/g' /app/start.sh
+		overmind_file=overmind-${overmind_version}-linux-arm64.gz
+		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
+		tar -xzvf overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
+		sed -i 's/START/overmind start/g' /app/start.sh
 
 		# Pillow deps
 		apk add --no-cache --virtual .pillow_ext $PILLOW_BUILD
         ;;
-    *)
+    arm*)
         echo "[INFO] Installing Deps for ${arch}"
+		overmind_file=overmind-${overmind_version}-linux-arm.gz
+		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
+		tar -xzvf overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
+		sed -i 's/START/overmind start/g' /app/start.sh
+
+		# Pillow deps
+		apk add --no-cache --virtual .pillow_ext $PILLOW_BUILD
+        ;;
+	*)
+	    echo "[INFO] Installing Deps for ${arch}"
 		pip install honcho==1.1.0
-		# echo PORT="${PORT}" >>.env
 		sed -i 's/START/'"honcho start"'/g' /app/start.sh
 
 		# Pillow deps
 		apk add --no-cache --virtual .pillow_ext $PILLOW_BUILD
-        ;;
+		;;
 esac
 
 

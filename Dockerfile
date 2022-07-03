@@ -29,11 +29,12 @@ ARG PORT='' \
     UPTIMEKUMA_PUSH_URL='' \
     HEALTHCHECKSIO_PING_URL=''
 
-# Pre-Built watchfiles (Main repo: https://github.com/samuelcolvin/watchfiles), (Dockerfile used to build: https://github.com/iamrony777/docker-rust/blob/master/Custom/Dockerfile)
-COPY --from=iamrony777/watchfiles-build:latest /app/wheel/ /tmp/wheel/
+# Pre-Built watchfiles (Main repo: https://github.com/samuelcolvin/watchfiles), (Dockerfile used to build: https://github.com/iamrony777/watchfiles/blob/custom-docker/Dockerfile)
+COPY --from=iamrony777/watchfiles:latest /app/wheel/ /tmp/wheel/
 
-ENV COMMON_BUILD='wget curl jq libffi-dev linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
-    PILLOW_BUILD='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev'
+ENV COMMON_BUILD='wget curl jq libffi-dev tar linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
+    PILLOW_BUILD='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev' \
+    RUNTIME='tmux ca-certificates'
 
 RUN apk --no-cache add alpine-conf bash && \
     setup-timezone -z "$TIMEZONE" && \
@@ -45,6 +46,8 @@ RUN apk add --no-cache --virtual .build $COMMON_BUILD && \
     pip install --no-cache-dir /tmp/wheel/* && \
     pip install --no-cache-dir -r conf/requirements.txt
 RUN apk del .build .pillow_ext || apk del .build
+
+RUN apk add --no-cache $RUNTIME
 
 # MKDocs Static Site Generator
 RUN pip install --no-cache-dir mkdocs-material && \

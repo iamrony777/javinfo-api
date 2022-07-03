@@ -13,12 +13,12 @@ from redis import asyncio as aioredis
 import api.resources.javdatabase as jdtb
 import api.resources.javdb as jdb
 import api.resources.javlibrary as jlb
-import api.resources.r18 as r18
 from api.helper.redis_log import logger as request_logger
 from api.helper.redis_log import manage
 from api.helper.string_modify import filter_string
 from api.helper.timeout import FILE_TO_CHECK
 from api.helper.timeout import set_timeout as timeout
+from api.resources import r18
 from api.scripts.javdb_login import main as login
 from api.scripts.r18_db import main as r18_db
 
@@ -30,6 +30,7 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 # APscheduler Config
 async_scheduler = AsyncIOScheduler(job_defaults={"misfire_grace_time": 5 * 60})
+
 
 class Tags(Enum):
     """Set tags for each endpoint."""

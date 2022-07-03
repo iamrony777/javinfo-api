@@ -26,14 +26,13 @@ LOGGER_CONFIG = {
     "handlers": [
         dict(
             sink=sys.stdout,
-            format="<b>{time:HH:mm:ss}   tasks</b> <lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
+            format="<b>tasks  |</b> <lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
             enqueue=True,
             colorize=True,
             level=20,
         )
     ],
 }
-
 
 LOGGER_CONFIG_2 = {
     "handlers": [
