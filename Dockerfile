@@ -8,7 +8,7 @@ WORKDIR /app
 COPY conf/requirements.txt /app/
 
 # Build deps, wheels and store
-RUN apk add --no-cache add $COMMON_DEPS $PILLOW_DEPS $WATCHFILES_DEPS
+RUN apk add --no-cache $COMMON_DEPS $PILLOW_DEPS $WATCHFILES_DEPS
 RUN pip install -U pip wheel setuptools && \
     pip wheel --wheel-dir=/app/wheels -r requirements.txt
 
