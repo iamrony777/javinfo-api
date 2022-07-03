@@ -1,6 +1,6 @@
 # Build
 FROM python:alpine as build
-ENV COMMON_DEPS='libffi-dev curl giy linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
+ENV COMMON_DEPS='libffi-dev curl git linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
     PILLOW_DEPS='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev' \
     WATCHFILES_DEPS='rust cargo'
 
