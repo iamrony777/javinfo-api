@@ -1,6 +1,7 @@
 name: JAVINFO-API Build Image 
 
 on: 
+  push:
   # Schedule updates (“Runs at 00:00 UTC on 1st of every month”)
   schedule: [{cron: "0 0 1 * *"}]
   workflow_dispatch:
