@@ -50,7 +50,7 @@ RUN apk --no-cache add alpine-conf bash && \
 RUN apk add --no-cache $RUNTIME_DEPS && \
     chmod +x install.sh && bash /app/install.sh && \
     pip install --no-cache-dir -U pip setuptools wheel && \
-    pip install --no-cache-dir --no-index --find-links=/app/wheels -r requirements.txt && \
+    pip install --no-cache-dir --no-index --find-links=/app/wheels -r requirements.txt
 
 # MKDocs Static Site Generator
 RUN mkdocs build -f /app/conf/mkdocs.yml && \
