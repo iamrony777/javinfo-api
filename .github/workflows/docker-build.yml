@@ -1,8 +1,8 @@
-name: Build and Push
+name: JAVINFO-API Build Image 
 
 on: 
   # Schedule updates (“Runs at 00:00 UTC on 1st of every month”)
-  schedule: schedule: [{cron: "0 0 1 * *"}]
+  schedule: [{cron: "0 0 1 * *"}]
   workflow_dispatch:
 
 jobs:
