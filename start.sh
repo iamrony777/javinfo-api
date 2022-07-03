@@ -30,7 +30,7 @@ fi
 /usr/local/bin/python /app/api/scripts/r18_db.py &
 
 
-# cat Procfile
+cat Procfile
 
 #Placeholder for processmanager
 exec START

@@ -11,7 +11,6 @@ if [[ ${CREATE_REDIS} == 'true' ]]; then
 	apk add --no-cache redis &&
 		sed -i 's/PASSWORD/'"$(echo "${API_PASS}" | base64)"'/g' /app/conf/redis.conf
 	echo -e "[INFO] Adding redis-server to Procfile..."
-	# echo "" >> Procfile
 	sed -i 's/redis_process_placeholder/redis: redis-server \/app\/conf\/redis.conf/g' /app/Procfile
 
 	if [[ -n ${RAILWAY_STATIC_URL} ]]; then
@@ -27,6 +26,8 @@ if [[ ${CREATE_REDIS} == 'true' ]]; then
 
 else
 	echo "[INFO] Using redis server from plugins / addons"
+	sed -i 's/redis_process_placeholder//g' /app/Procfile
+	
 fi
 
 # Restoring previous logs
@@ -40,29 +41,24 @@ fi
 
 # Installing Deps (conditional)
 exo_version=$(curl -s https://api.github.com/repos/deref/exo/releases/latest | jq -r .tag_name)
-ttyd_version=$(curl -s https://api.github.com/repos/tsl0922/ttyd/releases/latest | jq -r .tag_name)
+
 arch=$(uname -m)
 case ${arch} in
 
     x86_64)
         echo "[INFO] Installing Deps for ${arch}"
-        # exo_file=exo_${exo_version}_linux_amd64.apk
+        exo_file=exo_${exo_version}_linux_amd64.apk
 
-		# # EXO
-		# wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
-    	# apk add --allow-untrusted ./"${exo_file}"
-		# sed -i 's/START/'"exo run"'/g' /app/start.sh
+		# EXO
+		wget -q https://github.com/deref/exo/releases/download/"${exo_version}"/"${exo_file}"
+    	apk add --allow-untrusted ./"${exo_file}"
+		sed -i 's/START/'"exo run"'/g' /app/start.sh
 
-		# *** Experimental *** 
-        echo "[INFO] Installing Honcho"
-		pip install honcho==1.1.0
-		sed -i 's/START/'"honcho start"'/g' /app/start.sh
+		# # *** Experimental *** 
+        # echo "[INFO] Installing Honcho"
+		# pip install honcho==1.1.0
+		# sed -i 's/START/'"honcho start"'/g' /app/start.sh
 
-		
-		# TTYD
-		wget -qcO ttyd https://github.com/tsl0922/ttyd/releases/download/${ttyd_version}/ttyd.${arch}
-		mv ttyd /usr/bin/ttyd
-		chmod 755 /usr/bin/ttyd
         ;;
     aarch64*)
         echo "[INFO] Installing Deps for ${arch}"
@@ -73,16 +69,11 @@ case ${arch} in
     	apk add --allow-untrusted ./"${exo_file}"
 		sed -i 's/START/'"exo run"'/g' /app/start.sh
 
-		# TTYD
-		wget -qcO ttyd https://github.com/tsl0922/ttyd/releases/download/${ttyd_version}/ttyd.${arch}
-		mv ttyd /usr/bin/ttyd
-		chmod 755 /usr/bin/ttyd
-
 		# Pillow deps
 		apk add --no-cache --virtual .pillow_ext $PILLOW_BUILD
         ;;
     *)
-        echo "[INFO] Installing Honcho"
+        echo "[INFO] Installing Deps for ${arch}"
 		pip install honcho==1.1.0
 		# echo PORT="${PORT}" >>.env
 		sed -i 's/START/'"honcho start"'/g' /app/start.sh
@@ -95,9 +86,7 @@ esac
 
 
 # Setting correct api port
-# sed -i "s/api:/api: PORT=${PORT}/g" /app/Procfile
-# now its caddy
-sed -i "s/caddy:/caddy: PORT=${PORT}/g" /app/Procfile
+sed -i "s/api:/api: PORT=${PORT}/g" /app/Procfile
 
 
 #copy images: /app/api/html/images/* -> /app/docs/images/
