@@ -6,6 +6,10 @@ ENV COMMON_DEPS='libffi-dev linux-headers musl-dev gcc build-base libxml2-dev li
 
 WORKDIR /app
 COPY conf/requirements.txt /app/
+RUN echo    '[url "git@github.com:"]
+                    insteadOf = https://github.com/
+            [url "https://github.com/rust-lang/crates.io-index"]
+                    insteadOf = https://github.com/rust-lang/crates.io-index' >> .git/config
 
 # Build deps, wheels and store
 RUN apk add --no-cache $COMMON_DEPS $PILLOW_DEPS $WATCHFILES_DEPS
