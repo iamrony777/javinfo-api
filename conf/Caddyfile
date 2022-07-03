@@ -8,11 +8,11 @@
 
 	redir /api /api/ permanent
 	handle /api/* {
-		reverse_proxy 127.0.0.1:8000
+		reverse_proxy 127.0.0.1:9000
 	}
 
 	redir /terminal /terminal/ permanent
 	handle_path /terminal/* {
-		reverse_proxy 127.0.0.1:9080
+		reverse_proxy 127.0.0.1:9100
 	}
 }

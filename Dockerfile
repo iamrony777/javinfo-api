@@ -29,13 +29,20 @@ ARG PORT='' \
     UPTIMEKUMA_PUSH_URL='' \
     HEALTHCHECKSIO_PING_URL=''
 
+# Pre-Built watchfiles (Main repo: https://github.com/samuelcolvin/watchfiles), (Dockerfile used to build: https://github.com/iamrony777/docker-rust/blob/master/Custom/Dockerfile)
+COPY --from=iamrony777/watchfiles-build:latest /app/watchfiles/target/wheels/ /tmp/wheels/
+
+ENV COMMON_BUILD='wget libffi-dev linux-headers musl-dev gcc build-base curl jq libxml2-dev libxslt-dev' \
+    PILLOW_BUILD='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev'
+
 RUN apk --no-cache add alpine-conf bash && \
     setup-timezone -z "$TIMEZONE" && \
     apk del alpine-conf
     
-RUN apk add --no-cache --virtual .build wget libffi-dev linux-headers musl-dev gcc build-base curl jq libxml2-dev libxslt-dev && \
+RUN apk add --no-cache --virtual .build $COMMON_BUILD && \
     chmod +x install.sh && bash /app/install.sh && \
     pip install --no-cache-dir -U pip setuptools wheel && \
+    pip install --no-cache-dir --find-links /tmp/wheels/ && \
     pip install --no-cache-dir -r conf/requirements.txt
 RUN apk del .build .pillow_ext || apk del .build
 

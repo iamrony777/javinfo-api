@@ -26,8 +26,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64, linux/arm/v7, linux/arm64
-          # platforms: linux/arm/v7
+          # platforms: linux/amd64, linux/arm/v7, linux/arm64
+          platforms: linux/arm/v7
           push: true
-          # tags: iamrony777/javinfo-api:railway-latest_arm7l
-          tags: iamrony777/javinfo-api:railway-latest
+          tags: iamrony777/javinfo-api:railway-latest_arm7l
+          # tags: iamrony777/javinfo-api:railway-latest

@@ -52,10 +52,9 @@ case ${arch} in
     	# apk add --allow-untrusted ./"${exo_file}"
 		# sed -i 's/START/'"exo run"'/g' /app/start.sh
 
-
+		# *** Experimental *** 
         echo "[INFO] Installing Honcho"
 		pip install honcho==1.1.0
-		# echo PORT="${PORT}" >>.env
 		sed -i 's/START/'"honcho start"'/g' /app/start.sh
 
 		
@@ -79,7 +78,7 @@ case ${arch} in
 		chmod 755 /usr/bin/ttyd
 
 		# Pillow deps
-		apk add --no-cache --virtual .pillow_ext freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev
+		apk add --no-cache --virtual .pillow_ext $PILLOW_BUILD
         ;;
     *)
         echo "[INFO] Installing Honcho"
@@ -88,7 +87,7 @@ case ${arch} in
 		sed -i 's/START/'"honcho start"'/g' /app/start.sh
 
 		# Pillow deps
-		apk add --no-cache --virtual .pillow_ext freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev
+		apk add --no-cache --virtual .pillow_ext $PILLOW_BUILD
         ;;
 esac
 
