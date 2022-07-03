@@ -50,7 +50,6 @@ case ${arch} in
 		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
 		gunzip overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
 		sed -i 's/START/overmind start/g' /app/start.sh
-
         ;;
     aarch64*)
         echo "[INFO] Installing Deps for ${arch}"
@@ -58,9 +57,6 @@ case ${arch} in
 		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
 		gunzip overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
 		sed -i 's/START/overmind start/g' /app/start.sh
-
-		# Pillow deps
-		apk add --no-cache --virtual .pillow_ext $PILLOW_BUILD
         ;;
     arm*)
         echo "[INFO] Installing Deps for ${arch}"
@@ -68,21 +64,16 @@ case ${arch} in
 		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
 		gunzip overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
 		sed -i 's/START/overmind start/g' /app/start.sh
-
-		# Pillow deps
-		apk add --no-cache --virtual .pillow_ext $PILLOW_BUILD
         ;;
 	*)
 	    echo "[INFO] Installing Deps for ${arch}"
 		pip install honcho==1.1.0
 		sed -i 's/START/'"honcho start"'/g' /app/start.sh
-
-		# Pillow deps
-		apk add --no-cache --virtual .pillow_ext $PILLOW_BUILD
 		;;
 esac
 
-
+# Removing packages
+apk del wget curl jq
 
 # Setting correct api port
 sed -i "s/api:/api: PORT=${PORT}/g" /app/Procfile

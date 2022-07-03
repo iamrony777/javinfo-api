@@ -12,31 +12,29 @@ from loguru import logger
 from lxml import html
 from redis import asyncio as aioredis
 
-LOGGER_CONFIG = {
-    "handlers": [
+CONF = {
+    "background": [
         dict(
             sink=sys.stdout,
-            format="<b>tasks  |</b> <lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
+            format="<b>*</b> <lvl>{message}</lvl> <b>*</b>",
             enqueue=True,
             colorize=True,
             level=20,
         )
     ],
-}
-
-
-LOGGER_CONFIG_2 = {
-    "handlers": [
+    "cronjob": [
         dict(
             sink=sys.stdout,
             format="<lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
             enqueue=True,
             colorize=True,
             level=20,
-        )
-    ],
+        ),
+    ]
 }
-
+logger.configure(handlers=CONF[
+    os.getenv('HANDLER', 'cronjob')
+])
 ACTRESS_DICTIONARY = {}
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
@@ -132,10 +130,4 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    if not up_days():
-        time.sleep(30) # 30s to wait for redis-server
-        logger.configure(**LOGGER_CONFIG)
-        asyncio.run(main())
-    else:
-        logger.configure(**LOGGER_CONFIG_2)
-        asyncio.run(main())
+    asyncio.run(main())

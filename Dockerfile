@@ -1,9 +1,21 @@
-FROM python:alpine
-
+# Build
+FROM python:alpine as build
+ENV COMMON_DEPS='libffi-dev linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
+    PILLOW_DEPS='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev' \
+    WATCHFILES_DEPS='rust cargo'
+    RUNTIME_DEPS='wget curl jq tmux ca-certificates'
 WORKDIR /app
+COPY conf/requirements.txt /app/
 
+# Build deps, wheels and store
+RUN apk add --no-cache add $COMMON_DEPS $PILLOW_DEPS $WATCHFILES_DEPS
+RUN pip install -U pip wheel setuptools && \
+    pip wheel --wheel-dir=/app/wheels -r requirements.txt
+
+# Release
+FROM python:alpine
+WORKDIR /app
 COPY ./ /app/
-
 ARG PORT='' \
     API_USER= '' \
     API_PASS='' \
@@ -29,29 +41,19 @@ ARG PORT='' \
     UPTIMEKUMA_PUSH_URL='' \
     HEALTHCHECKSIO_PING_URL=''
 
-# Pre-Built watchfiles (Main repo: https://github.com/samuelcolvin/watchfiles), (Dockerfile used to build: https://github.com/iamrony777/watchfiles/blob/custom-docker/Dockerfile)
-COPY --from=iamrony777/watchfiles:latest /app/wheel/ /tmp/wheel/
-
-ENV COMMON_BUILD='wget curl jq libffi-dev linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
-    PILLOW_BUILD='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev' \
-    RUNTIME='tmux ca-certificates'
+COPY --from=build /app/wheels /app/wheels
 
 RUN apk --no-cache add alpine-conf bash && \
     setup-timezone -z "$TIMEZONE" && \
     apk del alpine-conf
     
-RUN apk add --no-cache --virtual .build $COMMON_BUILD && \
+RUN apk add --no-cache $RUNTIME_DEPS && \
     chmod +x install.sh && bash /app/install.sh && \
     pip install --no-cache-dir -U pip setuptools wheel && \
-    pip install --no-cache-dir /tmp/wheel/* && \
-    pip install --no-cache-dir -r conf/requirements.txt
-RUN apk del .build .pillow_ext || apk del .build
-
-RUN apk add --no-cache $RUNTIME
+    pip install --no-cache-dir --no-index --find-links=/app/wheels -r requirements.txt && \
 
 # MKDocs Static Site Generator
-RUN pip install --no-cache-dir mkdocs-material && \
-    mkdocs build -f /app/conf/mkdocs.yml && \
+RUN mkdocs build -f /app/conf/mkdocs.yml && \
     pip uninstall mkdocs-material -y
 
 RUN python -m compileall .

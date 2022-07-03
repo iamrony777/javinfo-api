@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#Save current time since epoch (for scripts)
-echo  "{\"startup\":$(date +%s)}" > /tmp/startup
+# Save current time since epoch (for scripts)
+# echo  "{\"startup\":$(date +%s)}" > /tmp/startup
 
 if [[ ${CREATE_REDIS} == 'true' ]]; then
 	export REDIS_URL="redis://default:$(echo "${API_PASS}" | base64)@127.0.0.1:6379"
@@ -21,16 +21,12 @@ if [ -n "${CAPTCHA_SOLVER_URL}" ] && [ "${CAPTCHA_SOLVER_URL}" != 'None' ]; then
 	# Update javdb cookies at 00:00 on Sunday, ref. https://crontab.guru/every-week
 	crontab -l | { cat; echo "0 0 * * 0 /usr/local/bin/python /app/api/scripts/javdb_login.py"; } | crontab - 
 
-	# Also run same script as Startup job
-	/usr/local/bin/python /app/api/scripts/javdb_login.py &
+	# Also run same script as Startup job, after 30s 
+	(sleep 30; HANDLER="background" /usr/local/bin/python /app/api/scripts/javdb_login.py) &
 fi
 
-
 # And also run as startup job
-/usr/local/bin/python /app/api/scripts/r18_db.py &
-
-
-cat Procfile
+(sleep 30; HANDLER="background" /usr/local/bin/python /app/api/scripts/r18_db.py) &
 
 #Placeholder for processmanager
 exec START

@@ -22,29 +22,30 @@ start_time = time.perf_counter()
 EMAIL = os.getenv("JAVDB_EMAIL")
 PASSWORD = os.getenv("JAVDB_PASSWORD")
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
-LOGGER_CONFIG = {
-    "handlers": [
+CONF = {
+    "background": [
         dict(
             sink=sys.stdout,
-            format="<b>tasks  |</b> <lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
+            format="<b>*</b> <lvl>{message}</lvl> <b>*</b>",
             enqueue=True,
             colorize=True,
             level=20,
         )
     ],
-}
-
-LOGGER_CONFIG_2 = {
-    "handlers": [
+    "cronjob": [
         dict(
             sink=sys.stdout,
             format="<lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
             enqueue=True,
             colorize=True,
             level=20,
-        )
-    ],
+        ),
+    ]
 }
+logger.configure(handlers=CONF[
+    os.getenv('HANDLER', 'cronjob')
+])
+
 
 
 def up_days() -> int:
@@ -179,11 +180,5 @@ async def main(root_path: str):
 
 
 if __name__ == "__main__":
+    asyncio.run(main(os.getcwd()))
 
-    if not up_days():
-        time.sleep(30) # 30s to wait for redis-server
-        logger.configure(**LOGGER_CONFIG)
-        asyncio.run(main(os.getcwd()))
-    else:
-        logger.configure(**LOGGER_CONFIG_2)
-        asyncio.run(main(os.getcwd()))
