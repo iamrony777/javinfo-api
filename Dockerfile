@@ -32,7 +32,7 @@ ARG PORT='' \
 # Pre-Built watchfiles (Main repo: https://github.com/samuelcolvin/watchfiles), (Dockerfile used to build: https://github.com/iamrony777/watchfiles/blob/custom-docker/Dockerfile)
 COPY --from=iamrony777/watchfiles:latest /app/wheel/ /tmp/wheel/
 
-ENV COMMON_BUILD='wget curl jq libffi-dev tar linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
+ENV COMMON_BUILD='wget curl jq libffi-dev linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
     PILLOW_BUILD='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev' \
     RUNTIME='tmux ca-certificates'
 

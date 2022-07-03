@@ -48,7 +48,7 @@ case ${arch} in
         echo "[INFO] Installing Deps for ${arch}"
 		overmind_file=overmind-${overmind_version}-linux-amd64.gz
 		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
-		tar -xzvf overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
+		gunzip overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
 		sed -i 's/START/overmind start/g' /app/start.sh
 
         ;;
@@ -56,7 +56,7 @@ case ${arch} in
         echo "[INFO] Installing Deps for ${arch}"
 		overmind_file=overmind-${overmind_version}-linux-arm64.gz
 		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
-		tar -xzvf overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
+		gunzip overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
 		sed -i 's/START/overmind start/g' /app/start.sh
 
 		# Pillow deps
@@ -66,7 +66,7 @@ case ${arch} in
         echo "[INFO] Installing Deps for ${arch}"
 		overmind_file=overmind-${overmind_version}-linux-arm.gz
 		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
-		tar -xzvf overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
+		gunzip overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
 		sed -i 's/START/overmind start/g' /app/start.sh
 
 		# Pillow deps
