@@ -1,17 +1,3 @@
-# Build
-FROM python:alpine as build
-ENV COMMON_DEPS='libffi-dev linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
-    PILLOW_DEPS='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev' \
-    WATCHFILES_DEPS='rust cargo'
-
-WORKDIR /app
-COPY conf/requirements.txt /app/
-
-# Build deps, wheels and store
-RUN apk add --no-cache $COMMON_DEPS $PILLOW_DEPS $WATCHFILES_DEPS
-RUN pip install -U pip wheel setuptools && \
-    pip wheel --wheel-dir=/app/wheels -r requirements.txt
-
 # Release
 FROM python:alpine
 WORKDIR /app
@@ -42,7 +28,7 @@ ARG PORT='' \
     UPTIMEKUMA_PUSH_URL='' \
     HEALTHCHECKSIO_PING_URL=''
 
-COPY --from=build /app/wheels /app/wheels
+COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
 
 RUN apk --no-cache add alpine-conf bash && \
     setup-timezone -z "$TIMEZONE" && \
@@ -51,7 +37,7 @@ RUN apk --no-cache add alpine-conf bash && \
 RUN apk add --no-cache $RUNTIME_DEPS && \
     chmod +x install.sh && bash /app/install.sh && \
     pip install --no-cache-dir -U pip setuptools wheel && \
-    pip install --no-cache-dir --no-index --find-links=/app/wheels -r requirements.txt
+    pip install --no-cache-dir --no-index --find-links=/app/wheels -r conf/requirements.txt
 
 # MKDocs Static Site Generator
 RUN mkdocs build -f /app/conf/mkdocs.yml && \
