@@ -2,8 +2,8 @@
 FROM python:alpine as build
 ENV COMMON_DEPS='libffi-dev linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev' \
     PILLOW_DEPS='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev' \
-    WATCHFILES_DEPS='rust cargo' \
-    RUNTIME_DEPS='wget curl jq tmux ca-certificates'
+    WATCHFILES_DEPS='rust cargo'
+
 WORKDIR /app
 COPY conf/requirements.txt /app/
 
@@ -16,6 +16,7 @@ RUN pip install -U pip wheel setuptools && \
 FROM python:alpine
 WORKDIR /app
 COPY ./ /app/
+ENV RUNTIME_DEPS='wget curl jq tmux ca-certificates'
 ARG PORT='' \
     API_USER= '' \
     API_PASS='' \
