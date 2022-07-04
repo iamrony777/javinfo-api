@@ -46,16 +46,6 @@ logger.configure(handlers=CONF[
     os.getenv('HANDLER', 'cronjob')
 ])
 
-
-
-def up_days() -> int:
-    """return current uptime (day only)"""
-    startup_file='/tmp/startup'
-    with open(startup_file, encoding='UTF-8') as _input:
-        start = json.loads(_input.read())['startup']
-        current = round(time.time())
-        return ((current - start) // 86400)
-
 async def token(client: httpx.AsyncClient):
     """Get session token (csrf-token)."""
     params = {

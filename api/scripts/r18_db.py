@@ -40,14 +40,6 @@ ACTRESS_DICTIONARY = {}
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 start_time = time.perf_counter()
 
-def up_days() -> int:
-    """return current uptime (day only)"""
-    startup_file='/tmp/startup'
-    with open(startup_file, encoding='UTF-8') as _input:
-        start = json.loads(_input.read())['startup']
-        current = round(time.time())
-        return ((current - start) // 86400)
-
 async def get_total_pages(client: httpx.AsyncClient) -> int:
     """Get the number of total pages."""
     tree = html.fromstring((await client.get("/")).content)

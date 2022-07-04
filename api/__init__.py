@@ -83,5 +83,5 @@ LOGGER_CONFIG = {
 }
 logger.configure(**LOGGER_CONFIG)
 
-with open("/home/rony/Github/JavInfo-api/docs/version", "r", encoding="UTF-8") as ver:
+with open("/app/docs/version", "r", encoding="UTF-8") as ver:
     version: str = json.loads(ver.read())["message"]

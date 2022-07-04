@@ -5,7 +5,8 @@ import sys
 import time
 
 import uvicorn
-from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Request, status
+from fastapi import (BackgroundTasks, Depends, FastAPI, HTTPException, Request,
+                     status)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -13,19 +14,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 
-from api import (
-    FILE_TO_CHECK,
-    Tags,
-    aioredis,
-    async_scheduler,
-    filter_string,
-    get_results,
-    logger,
-    version,
-    manage,
-    request_logger,
-    timeout,
-)
+from api import (FILE_TO_CHECK, Tags, aioredis, async_scheduler, filter_string,
+                 get_results, logger, manage, request_logger, timeout, version)
 
 # Fastapi Config
 security = HTTPBasic()
@@ -47,10 +37,9 @@ app.add_middleware(
 )
 
 # site folder is created only during docker build
-# app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
+app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
 
 app.mount("/readme", StaticFiles(directory="api/html", html=True), name="root")
-
 
 def check_access(credentials: HTTPBasicCredentials = Depends(security)):
     """Check credentials."""
