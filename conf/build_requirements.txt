@@ -11,5 +11,5 @@ apscheduler==3.9.1
 httpx[http2]==0.23.0
 loguru==0.6.0
 mkdocs-material==8.3.8
-# Fastapi-limiter==0.15.0 (pypi release is still on v0.14.0), Using Commit #1b82659 https://github.com/long2ice/fastapi-limiter/commit/1b8265946caa5001cfffe4a636c358029e2c316d
+# Fastapi-limiter==0.1.5 (pypi release is still on v0.1.4), Using Commit #1b82659 https://github.com/long2ice/fastapi-limiter/commit/1b8265946caa5001cfffe4a636c358029e2c316d
 fastapi-limiter @ https://github.com/long2ice/fastapi-limiter/archive/1b8265946caa5001cfffe4a636c358029e2c316d.zip
