@@ -2,6 +2,7 @@
 
 import asyncio
 import gc
+import json
 import sys
 from enum import Enum
 
@@ -80,7 +81,7 @@ LOGGER_CONFIG = {
         ),
     ],
 }
-
 logger.configure(**LOGGER_CONFIG)
 
-# print('imported')
+with open("/home/rony/Github/JavInfo-api/docs/version", "r", encoding="UTF-8") as ver:
+    version: str = json.loads(ver.read())["message"]

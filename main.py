@@ -5,8 +5,7 @@ import sys
 import time
 
 import uvicorn
-from fastapi import (BackgroundTasks, Depends, FastAPI, HTTPException, Request,
-                     status)
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -14,14 +13,30 @@ from fastapi.staticfiles import StaticFiles
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 
-from api import (FILE_TO_CHECK, Tags, aioredis, async_scheduler,
-                 filter_string, get_results, logger, manage,
-                 request_logger, timeout)
+from api import (
+    FILE_TO_CHECK,
+    Tags,
+    aioredis,
+    async_scheduler,
+    filter_string,
+    get_results,
+    logger,
+    version,
+    manage,
+    request_logger,
+    timeout,
+)
 
 # Fastapi Config
 security = HTTPBasic()
 
-app = FastAPI(docs_url="/demo", openapi_url='/openapi.json', redoc_url=None)
+app = FastAPI(
+    title="JAVINFO-API | Swagger UI",
+    version=version,
+    docs_url="/demo",
+    openapi_url="/openapi.json",
+    redoc_url=None,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,9 +47,10 @@ app.add_middleware(
 )
 
 # site folder is created only during docker build
-app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
+# app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
 
 app.mount("/readme", StaticFiles(directory="api/html", html=True), name="root")
+
 
 def check_access(credentials: HTTPBasicCredentials = Depends(security)):
     """Check credentials."""
@@ -51,7 +67,7 @@ def check_access(credentials: HTTPBasicCredentials = Depends(security)):
             headers={"WWW-Authenticate": "Basic"},
         )
     return True
-    
+
 
 @app.on_event("startup")
 async def startup():
@@ -69,7 +85,6 @@ async def startup():
     else:
         logger.critical("[REDIS] Connection failed, no REDIS_URL found in env")
         sys.exit(1)
-
 
 
 # TODO: Dashboard or Something on '/' route
@@ -211,5 +226,6 @@ if __name__ == "__main__":
         proxy_headers=True,
         reload=True,
         reload_dirs=["."],
+        reload_excludes=["*.log", "*.py"],
         reload_includes=[FILE_TO_CHECK],
     )

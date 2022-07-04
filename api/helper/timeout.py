@@ -9,7 +9,7 @@ from api import logger
 
 
 TIMEOUT = int(os.getenv("INACTIVITY_TIMEOUT", "300"))
-FILE_TO_CHECK = "timeout.json"
+FILE_TO_CHECK = "timeout"
 
 # After 5min , worker will restart
 @logger.catch

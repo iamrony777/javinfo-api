@@ -1,3 +1,4 @@
+# Installing packages from wheels (ref. https://github.com/iamrony777/JavInfo-api/tree/build, https://hub.docker.com/r/iamrony777/javinfo-api/tags -> build-latest)
 aiofiles==0.8.0
 anyio==3.6.1
 APScheduler==3.9.1

@@ -39,34 +39,33 @@ else
 	rm -rf /app/javinfo.log
 fi
 
-# Installing Deps (conditional)
 arch=$(uname -m)
 overmind_version=$(curl -s https://api.github.com/repos/DarthSim/overmind/releases/latest | jq -r .tag_name)
 case ${arch} in
 
     x86_64)
-        echo "[INFO] Installing Deps for ${arch}"
+        echo "[INFO] Installing Overmind for ${arch}"
 		overmind_file=overmind-${overmind_version}-linux-amd64.gz
 		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
 		gunzip overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
 		sed -i 's/START/overmind start/g' /app/start.sh
         ;;
     aarch64*)
-        echo "[INFO] Installing Deps for ${arch}"
+        echo "[INFO] Installing Overmind for ${arch}"
 		overmind_file=overmind-${overmind_version}-linux-arm64.gz
 		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
 		gunzip overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
 		sed -i 's/START/overmind start/g' /app/start.sh
         ;;
     arm*)
-        echo "[INFO] Installing Deps for ${arch}"
+        echo "[INFO] Installing Overmind for ${arch}"
 		overmind_file=overmind-${overmind_version}-linux-arm.gz
 		wget -qcO overmind.gz https://github.com/DarthSim/overmind/releases/download/"${overmind_version}"/"${overmind_file}"
 		gunzip overmind.gz && mv overmind /usr/bin/overmind && chmod 755 /usr/bin/overmind
 		sed -i 's/START/overmind start/g' /app/start.sh
         ;;
 	*)
-	    echo "[INFO] Installing Deps for ${arch}"
+	    echo "[INFO] Installing Honcho for ${arch}"
 		pip install honcho==1.1.0
 		sed -i 's/START/'"honcho start"'/g' /app/start.sh
 		;;
