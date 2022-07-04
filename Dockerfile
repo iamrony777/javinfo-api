@@ -1,9 +1,8 @@
+# Release
 FROM python:alpine
-
 WORKDIR /app
-
 COPY ./ /app/
-
+ENV RUNTIME_DEPS='wget curl jq tmux ca-certificates'
 ARG PORT='' \
     API_USER= '' \
     API_PASS='' \
@@ -29,24 +28,21 @@ ARG PORT='' \
     UPTIMEKUMA_PUSH_URL='' \
     HEALTHCHECKSIO_PING_URL=''
 
+COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
+
 RUN apk --no-cache add alpine-conf bash && \
     setup-timezone -z "$TIMEZONE" && \
     apk del alpine-conf
     
-RUN apk add --no-cache --virtual .build libffi-dev linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev && \
+RUN apk add --no-cache $RUNTIME_DEPS && \
+    chmod +x install.sh && bash /app/install.sh && \
     pip install --no-cache-dir -U pip setuptools wheel && \
-    pip install --no-cache-dir -r requirements.txt && \
-    apk del .build
-
+    pip install --no-cache-dir --no-index --find-links=/app/wheels -r conf/requirements.txt
 
 # MKDocs Static Site Generator
-RUN pip install --no-cache-dir mkdocs-material && \
-    mkdocs build && \
-    mkdir -p /app/site && \
+RUN mkdocs build -f /app/conf/mkdocs.yml && \
     pip uninstall mkdocs-material -y
 
-RUN chmod +x install.sh && \
-    bash /app/install.sh && \
-    python -m compileall .
+RUN python -m compileall .
 
 ENTRYPOINT ["bash", "start.sh"] 

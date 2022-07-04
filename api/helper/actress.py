@@ -1,3 +1,4 @@
+"""Main srcaper - Boobpedia ,R18"""
 import asyncio
 import os
 import re
@@ -5,9 +6,9 @@ import re
 from httpx import AsyncClient
 from lxml import html
 from redis import asyncio as aioredis
+from api import logger
 
 BASE_URL = 'https://www.boobpedia.com'
-
 
 async def boobpedia_special_query(client: AsyncClient, name: str) -> str | None:
     """Fulltext search on Boobpedia."""
@@ -28,7 +29,6 @@ async def boobpedia_special_query(client: AsyncClient, name: str) -> str | None:
                 # ... return href value from that search result
     except TypeError:
         return None
-
 
 async def get_page_content(client: AsyncClient, url: str, **kwargs) -> html.HtmlElement:
     """Get the page content as bytes, takes url as optional argument."""
@@ -60,7 +60,6 @@ async def filter_actress_details(tree: html.HtmlElement) -> dict[str] | None:
         details[result.text.strip().lower()] = result.get('href')
     return details
 
-
 async def parse_actress_details(tree: html.HtmlElement) -> dict[str] | None:
     """Parse actress details from given page (also search in database for r18 actress links)."""
     details = {}
@@ -88,6 +87,7 @@ async def parse_actress_details(tree: html.HtmlElement) -> dict[str] | None:
     except (IndexError, TypeError, AttributeError):
         return None
 
+@logger.catch
 async def r18_database(name: str) -> (str | None):
     """Search from redis-r18 database."""
     async with aioredis.Redis.from_url(os.environ.get('REDIS_URL'),
@@ -134,7 +134,7 @@ async def actress_handler(client: AsyncClient, actress_name: str) -> dict[str] |
         if result is not None and pos == 1:
             return {'name': actress_name, 'image': result}
 
-
+@logger.catch
 async def actress_search(actress_list: list[str], only_r18: bool = False) -> list[dict]:
     """Takes actress name list (raw) as input, return a dictionary filled with details [boobpedia + r18]."""
     actress_details, boobpedia_search_task = [], []

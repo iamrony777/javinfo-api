@@ -1,7 +1,8 @@
 site_name: Documentation
 repo_url: "https://github.com/iamrony777/javinfo-api"
 repo_name: "JavInfo API"
-docs_dir: docs
+docs_dir: ../docs
+site_dir: ../site
 edit_uri: ""
 theme:
   favicon: "images/favicon.ico"

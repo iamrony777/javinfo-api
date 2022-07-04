@@ -1,3 +1,4 @@
+"""Saving request logs in redis instead of saving in a .log file as plaintext format """
 import json
 import os
 from datetime import datetime
@@ -6,6 +7,7 @@ from typing import Optional
 import httpx
 from fastapi import Request
 from redis import asyncio as aioredis
+from api import logger as _logger_
 
 TOKEN = os.environ.get('IPINFO_TOKEN')
 
@@ -55,11 +57,13 @@ async def logger(request: Request):
     else:
         return
 
-
+@_logger_.catch
 async def manage(key: Optional[any] = None, values: Optional[any] = None, **kwargs):
     """Main Function , DB=1."""
     async with aioredis.Redis.from_url(os.environ['REDIS_URL'], decode_responses=True, db=1) as redis:
         if kwargs.get('push'):
             await push_dict_to_list(key, values, redis)
+        elif kwargs.get('set'):
+            await redis.set(key, values)
         elif kwargs.get('save'):
             await redis.save()

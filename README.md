@@ -1,6 +1,6 @@
 <p align="center">
     <div align="center">
-        <img src="./src/root/logo.png" alt="logo">
+        <img src="api/html/images/logo.png" alt="logo">
     </div>
     <div align="center">Backend for <b>JAVINFO CLI</b> | API to fetch JAV data from various sites
     </div>
@@ -22,6 +22,8 @@
             <img src="https://img.shields.io/codacy/grade/5f4cc6df4a8d4034b19abe5d6c747009?style=for-the-badge&logo=codacy">
         </a>   
         <img src="https://img.shields.io/github/license/iamrony777/javinfo-api?style=for-the-badge">
+        <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/iamrony777/JavInfo-api/main/docs/version">
     <div>
-    <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/iamrony777/JavInfo-api/main/docs/version">
+    <img alt="AlpineLinux" src="https://img.shields.io/badge/Built%20on-Alpine%20Linux-lightblue?style=for-the-badge&logo=AlpineLinux">
+    <img alt="Docker Image Size (tag)" src="https://img.shields.io/docker/image-size/iamrony777/javinfo-api/railway-latest?logo=Docker&style=for-the-badge">
 </p>
