@@ -1,4 +1,4 @@
-name: JAVINFO-API Build Image 
+name: Build-Layer 
 
 on: 
   # Schedule updates (“Runs at 00:00 UTC on 1st of every month”)
@@ -30,6 +30,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile.build
-          platforms: linux/amd64, linux/arm/v7, linux/arm64
+          platforms: linux/amd64, linux/arm/v7, linux/arm/v6, linux/arm64
           push: true
           tags: iamrony777/javinfo-api:build-layer
