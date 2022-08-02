@@ -138,25 +138,19 @@ async def logs(
 ):
     """Get a copy of current database (.rdb file) if using non-plugin redis server."""
     background_tasks.add_task(request_logger, request)
-    if hasaccess:
-        if os.environ.get("CREATE_REDIS") == "true":
-            try:
-                await manage(save=True)
-                return FileResponse(
-                    "/app/database.rdb",
-                    media_type="application/octet-stream",
-                    filename="database.rdb",
-                )
-            except Exception as exception:
-                return JSONResponse(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    content={"error": str(exception)},
-                )
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"error": "Can't download database file"},
-        )
-
+    if os.environ.get("CREATE_REDIS") == "true":
+        try:
+            await manage(save=True)
+            return FileResponse(
+                "/app/database.rdb",
+                media_type="application/octet-stream",
+                filename="database.rdb",
+            )
+        except Exception as exception:
+            return JSONResponse(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content={"error": str(exception)},
+            )
 
 @logger.catch
 @app.get("/logs", tags=[Tags.DOCS])
@@ -167,16 +161,11 @@ async def get_logs(
 ):
     """An endpoint to download saved logs"""
     background_tasks.add_task(request_logger, request)
-    if hasaccess:
-        return FileResponse(
-            "/app/javinfo.log",
-            media_type="text/plain",
-            filename=f"javinfo_{round(time.time())}.log",
-        )
-    return JSONResponse(
-        status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Access Denied"}
+    return FileResponse(
+        "/app/javinfo.log",
+        media_type="text/plain",
+        filename=f"javinfo_{round(time.time())}.log",
     )
-
 
 @app.post("/search", tags=[Tags.DOCS])
 @logger.catch
@@ -191,19 +180,14 @@ async def search(
     """Protected search endpoint."""
     background_tasks.add_task(request_logger, request)
     background_tasks.add_task(timeout, async_scheduler)
-    if hasaccess:
-        name = filter_string(name).upper()
-        result = await get_results(name=name, provider=provider, only_r18=only_r18)
-        if result is not None:
-            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"error": f"{name} Not Found"},
-        )
+    name = filter_string(name).upper()
+    result = await get_results(name=name, provider=provider, only_r18=only_r18)
+    if result is not None:
+        return JSONResponse(status_code=status.HTTP_200_OK, content=result)
     return JSONResponse(
-        status_code=status.HTTP_401_UNAUTHORIZED, content={"error": "Access Denied"}
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"error": f"{name} Not Found"},
     )
-
 
 if __name__ == "__main__":
     uvicorn.run(

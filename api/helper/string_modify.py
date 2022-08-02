@@ -46,12 +46,18 @@ def filter_string(name):
         r"-$",
     ]
 
+    # Removes any occureneces created by those patterns
     for pattern in patterns:
         name = re.sub(pattern, "", name)
 
+    # idk what this do
     name = list(name)
     for char in name:
         if not char.isalpha() and not char.isdigit() and char != "-":
             name.remove(char)
 
-    return "".join(name)
+    pattern = r"[a-zA-Z]{2,5}-\d{3,5}"  # JAV code should be like this
+    return (re.match(pattern, "".join(name)).group())
+
+if __name__ == '__main__':     
+    print(filter_string('VDD-101 Kisaki Ema, Haruki Kato JAV CENSORED'))
