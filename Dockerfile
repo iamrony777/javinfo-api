@@ -9,20 +9,15 @@ ENV PORT='' \
     CAPTCHA_SOLVER_URL='' \
     JAVDB_EMAIL='' \
     JAVDB_PASSWORD='' \
-    # IF YOU WANT TO USE OWN REDIS SERVER, set it to 'true'
     CREATE_REDIS='false' \
-    # IF YOU WANT LOG IP addresses, set it to 'true'
     LOG_REQUEST='false' \
-    # OPTIONAL 
     REMEMBER_ME_TOKEN='' \
     JDB_SESSION='' \
     TIMEZONE='UTC' \
     IPINFO_TOKEN='' \
     INACTIVITY_TIMEOUT='' \
     REDIS_URL='' \
-    # RAILWAY PROVIDED VARIABLES 
     RAILWAY_STATIC_URL='' \
-    # HEALTHCHECK (Optional)
     HEALTHCHECK_PROVIDER='None' \
     UPTIMEKUMA_PUSH_URL='' \
     HEALTHCHECKSIO_PING_URL=''
