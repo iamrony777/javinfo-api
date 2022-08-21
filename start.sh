@@ -64,12 +64,12 @@ if (/app/api/scripts/startup); then
 		"$(which python3)" /app/api/scripts/redis_database_setup.py
 	) &
 	(
-		sleep 30
+		sleep 10
 		HANDLER="background" "$(which python3)" /app/api/scripts/r18_db.py
 	) &
 	if [[ -n "${CAPTCHA_SOLVER_URL}" ]]; then # JAVDB LOGIN COOKIES
 		(
-			sleep 30
+			sleep 10
 			HANDLER="background" "$(which python3)" /app/api/scripts/javdb_login.py
 		) &
 	fi

@@ -21,6 +21,7 @@ ARG PORT \
     HEALTHCHECK_PROVIDER="None" \
     UPTIMEKUMA_PUSH_URL \
     HEALTHCHECKSIO_PING_URL \
+    PYTHONPATH="." \
     PLATFORM
 
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
