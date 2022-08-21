@@ -3,4 +3,3 @@ build:
     web: Dockerfile.heroku
   config:
     PLATFORM: "heroku"
-    CREATE_REDIS: "false"

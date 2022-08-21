@@ -128,8 +128,8 @@ async def demo_search(
 
     |       Provider      | Query | Actress Data | Movie Data | Screenshots |
     |:-------------------:|:-----:|:------------:|:----------:|:-----------:|
-    |       `javdb`       |   Y   |       N      |      Y     |      N      |
-    |     `javlibrary`    |   Y   |       Y      |      Y     |      N      |
+    |       `javdb`       |   Y   |       N      |      Y     |      Y      |
+    |     `javlibrary`    |   Y   |       Y      |      Y     |      Y      |
     |    `javdatabase`    |   Y   |       Y      |      Y     |      Y      |
     |        `r18`        |   Y   |       Y      |      Y     |      Y      |
     |      Boobpedia      |   N   |       Y      |      N     |      N      |
@@ -137,10 +137,10 @@ async def demo_search(
     background_tasks.add_task(redis_logger, request)
     background_tasks.add_task(timeout, async_scheduler)
 
-    filtered_name = filter_string(name).upper()
+    filtered_name = filter_string(name)
     if filtered_name is not None:
         result = await get_results(
-            name=filtered_name, provider=provider, only_r18=only_r18
+            name=filtered_name.upper(), provider=provider, only_r18=only_r18
         )
         if result is not None:
             return JSONResponse(status_code=status.HTTP_200_OK, content=result)
@@ -166,7 +166,7 @@ async def logs(
         os.environ["REDIS_URL"], decode_responses=True
     ) as redis:
         if os.environ.get("CREATE_REDIS") == re.search(
-            r"true", os.environ.get("CREATE_REDIS"), re.IGNORECASE
+            r"true", os.getenv("CREATE_REDIS"), re.IGNORECASE
         ) and (await redis.save()):
             return FileResponse(
                 "/app/database.rdb",
@@ -204,9 +204,9 @@ async def search(
     """Protected search endpoint."""
     background_tasks.add_task(redis_logger, request)
     background_tasks.add_task(timeout, async_scheduler)
-    filtered_name = filter_string(name).upper()
+    filtered_name = filter_string(name)
 
-    result = await get_results(name=filtered_name, provider=provider, only_r18=only_r18)
+    result = await get_results(name=filtered_name.upper(), provider=provider, only_r18=only_r18)
     if result is not None:
         return JSONResponse(status_code=status.HTTP_200_OK, content=result)
     return JSONResponse(

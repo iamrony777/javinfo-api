@@ -15,6 +15,7 @@ ENV PORT \
     TIMEZONE="UTC" \
     IPINFO_TOKEN \
     INACTIVITY_TIMEOUT \
+    CREATE_REDIS="false" \
     REDIS_URL \
     RAILWAY_STATIC_URL \
     HEALTHCHECK_PROVIDER="None" \
@@ -22,8 +23,6 @@ ENV PORT \
     HEALTHCHECKSIO_PING_URL
 
 ARG PLATFORM
-ARG CREATE_REDIS="false"
-
 
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
 
