@@ -10,7 +10,7 @@ from datetime import datetime
 import httpx
 import uvloop
 from lxml import html
-from redis import asyncio as aioredis
+from redis.asyncio import Redis
 
 from api import logger
 
@@ -78,15 +78,13 @@ async def main() -> None:
         if start != end:
             await parse_snippet(client, start, end)
 
-    async with aioredis.from_url(
-        os.getenv("REDIS_URL"), decode_responses=True
+    async with Redis.from_url(
+        os.getenv("REDIS_URL"),
+        decode_responses=True,
     ) as redis:
         await redis.mset(ACTRESS_DICTIONARY)
 
-
-    async with aioredis.from_url(
-        os.getenv("REDIS_URL"), decode_responses=True
-    ) as redis:
+    async with Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True) as redis:
         end_time = time.perf_counter()
         log = json.dumps(
             {
@@ -98,7 +96,9 @@ async def main() -> None:
         )
 
         await redis.rpush("log/r18_db", log)
-        logger.success(f"[R18_DB] Database Updated, Actress Count: {len(ACTRESS_DICTIONARY)}")
+        logger.success(
+            f"[R18_DB] Database Updated, Actress Count: {len(ACTRESS_DICTIONARY)}"
+        )
         sys.exit(0)
 
 

@@ -102,30 +102,68 @@ async def parse_actress_details(tree: html.HtmlElement) -> dict[str] | None:
 @logger.catch
 async def r18_database(name: str) -> (str | None):
     """Search from redis-r18 database."""
-    async with aioredis.Redis.from_url(
-        os.environ.get("REDIS_URL"), decode_responses=True
-    ) as redis:
+    if (
+        os.getenv("REDIS_REST_URL") is not None
+        and os.getenv("REDIS_REST_TOKEN") is not None
+    ):
         tasks = []
-        name: list = name.split(" ")
-        # case 1: name is a single word
-        if len(name) == 1:
-            tasks.append(asyncio.create_task(redis.get("actress/" + name[0])))
+        header = {"Authorization": f"Bearer {os.getenv('REDIS_REST_TOKEN')}"}
+        async with AsyncClient(
+            base_url=os.getenv("REDIS_REST_URL"), headers=header, timeout=60
+        ) as conn:
+            name: list = name.split(" ")
+            if len(name) == 1:
+                tasks.append(["GET", "actress/" + name[0]])
 
-            # case 1.2: name is full captalized
-            tasks.append(asyncio.create_task(redis.get("actress/" + name[0].upper())))
-        # case 2: name is a multi-word
-        elif len(name) > 1:
-            for pos, alias in enumerate(name):
-                name[pos] = alias.capitalize()
-            tasks.append(asyncio.create_task(redis.get("actress/" + " ".join(name))))
+                # case 1.2: name is full captalized
+                tasks.append(["GET", "actress/" + name[0].upper()])
+                # case 2: name is a multi-word
+            elif len(name) > 1:
+                for pos, alias in enumerate(name):
+                    name[pos] = alias.capitalize()
+                tasks.append(["GET", "actress/" + " ".join(name)])
 
-            # case 2.2: some names have surname before name
-            name.reverse()
-            tasks.append(asyncio.create_task(redis.get("actress/" + " ".join(name))))
+                # case 2.2: some names have surname before name
+                name.reverse()
+                tasks.append(["GET", "actress/" + " ".join(name)])
+            for result in [
+                resp["result"]
+                for resp in (await conn.post("/pipeline", json=tasks)).json()
+            ]:
+                if result is not None:
+                    return result
 
-        for result in await asyncio.gather(*tasks):
-            if result is not None:
-                return result
+    else:
+        async with aioredis.Redis.from_url(
+            os.environ.get("REDIS_URL"), decode_responses=True
+        ) as redis:
+            tasks = []
+            name: list = name.split(" ")
+            # case 1: name is a single word
+            if len(name) == 1:
+                tasks.append(asyncio.create_task(redis.get("actress/" + name[0])))
+
+                # case 1.2: name is full captalized
+                tasks.append(
+                    asyncio.create_task(redis.get("actress/" + name[0].upper()))
+                )
+            # case 2: name is a multi-word
+            elif len(name) > 1:
+                for pos, alias in enumerate(name):
+                    name[pos] = alias.capitalize()
+                tasks.append(
+                    asyncio.create_task(redis.get("actress/" + " ".join(name)))
+                )
+
+                # case 2.2: some names have surname before name
+                name.reverse()
+                tasks.append(
+                    asyncio.create_task(redis.get("actress/" + " ".join(name)))
+                )
+
+            for result in await asyncio.gather(*tasks):
+                if result is not None:
+                    return result
 
 
 async def actress_handler(client: AsyncClient, actress_name: str) -> dict[str] | None:
@@ -179,4 +217,4 @@ async def actress_search(actress_list: list[str], only_r18: bool = False) -> lis
 
 
 if __name__ == "__main__":
-    print(asyncio.run(actress_search(["ema kisaki"])))
+    print(asyncio.run(r18_database("Ema Kisaki")))
