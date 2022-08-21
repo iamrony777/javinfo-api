@@ -257,10 +257,10 @@ async def get_total_users(request: Request, background_tasks: BackgroundTasks) -
                         "https://img.shields.io/static/v1",
                         params={
                             "label": "Total Users",
-                            "labelColor": "CAD5E2",
+                            "labelColor": "232a2d",
                             "message": users,
                             "logo": f"data:image/png;base64,{users_base64}",
-                            "color": "success",
+                            "color": "67b0e8",
                             "style": "for-the-badge",
                         },
                     )
