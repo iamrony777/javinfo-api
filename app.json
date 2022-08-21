@@ -27,7 +27,7 @@
         },
         "CAPTCHA_SOLVER_URL": {
             "description": "An API to solve JAVDB captchas during login",
-            "default": "https://captcha-solver-api2.herokuapp.com/javdb",
+            "value": "https://captcha-solver-api2.herokuapp.com/javdb",
             "required": false
         },
         "JAVDB_EMAIL": {
@@ -48,12 +48,12 @@
         },
         "LOG_REQUEST": {
             "description": "Log every request made to this API instance",
-            "default": false,
+            "value": false,
             "required": false
         },
         "TIMEZONE": {
             "description": "TIMEZONE",
-            "default": "UTC",
+            "value": "UTC",
             "required": false
         },
         "CREATE_REDIS": {
@@ -61,7 +61,7 @@
             "required": false
         },
         "PLATFORM": {
-            "default": "heroku",
+            "value": "heroku",
             "required": true
         }
     },

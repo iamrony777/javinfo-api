@@ -27,7 +27,7 @@ ENV PORT='' \
     UPTIMEKUMA_PUSH_URL='' \
     HEALTHCHECKSIO_PING_URL=''
 
-ARG PLATFORM
+ARG PLATFORM=''
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
 
 RUN apk --no-cache add alpine-conf bash && \
