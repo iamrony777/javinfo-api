@@ -74,8 +74,12 @@ async def main(name: str) -> dict[str] | None:
         "theme": "auto",
         "locale": "en",
         "over18": "1",
-        "remember_me_token": await get_tokens("cookie/remember_me_token"),
-        "_jdb_session": await get_tokens("cookie/_jdb_session"),
+        "remember_me_token": os.getenv(
+            "REMEMBER_ME_TOKEN", default=(await get_tokens("cookie/remember_me_token"))
+        ),
+        "_jdb_session": os.getenv(
+            "JDB_SESSION", default=(await get_tokens("cookie/_jdb_session"))
+        ),
         "redirect_to": "%2F",
     }
     headers = {

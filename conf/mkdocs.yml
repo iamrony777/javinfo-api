@@ -27,7 +27,7 @@ theme:
   name: material
   font:
     text: Noto Sans
-    code: Fira Code
+    code: JetBrains Mono
   features:
     - content.code.annotate
 markdown_extensions:

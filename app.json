@@ -1,0 +1,74 @@
+{
+    "name": "Javinfo API",
+    "description": "Backend for Javinfo CLI, a tool to fetch JAV data from various sites",
+    "keywords": [
+        "api",
+        "jav",
+        "av",
+        "r18",
+        "javlibrary",
+        "fastapi",
+        "javdb",
+        "javdatabase"
+    ],
+    "website": "",
+    "repository": "https://github.com/iamrony777/JavInfo-api",
+    "logo": "https://github.com/iamrony777/JavInfo-api/raw/main/api/html/images/logo.png",
+    "success_url": "/",
+    "env": {
+        "API_USER": {
+            "description": "USERNAME for access to protected endpoints"
+        },
+        "API_PASS": {
+            "description": "PASSWORD for API_USER"
+        },
+        "APP_NAME": {
+            "description": "Same as current app-name"
+        },
+        "CAPTCHA_SOLVER_URL": {
+            "description": "An API to solve JAVDB captchas during login",
+            "default": "https://captcha-solver-api2.herokuapp.com/javdb",
+            "required": false
+        },
+        "JAVDB_EMAIL": {
+            "description": "Requried for auto-login into JAVDB, usable if only CAPTCHA_SOLVER_URL is set",
+            "required": false
+        },
+        "JAVDB_PASSWORD": {
+            "description": "Requried for auto-login into JAVDB, usable if only CAPTCHA_SOLVER_URL is set",
+            "required": false
+        },
+        "REMEMBER_ME_TOKEN": {
+            "description": "If not using auto-login for JAVDB, manually paste cookies",
+            "required": false
+        },
+        "JDB_SESSION": {
+            "description": "If not using auto-login for JAVDB, manually paste cookies",
+            "required": false
+        },
+        "LOG_REQUEST": {
+            "description": "Log every request made to this API instance",
+            "default": false,
+            "required": false
+        },
+        "TIMEZONE": {
+            "description": "TIMEZONE",
+            "default": "UTC",
+            "required": false
+        },
+        "CREATE_REDIS": {
+            "description": "Whether to use an inbuilt redis server [Not a good idea to create one in Heroku]",
+            "required": false
+        },
+        "PLATFORM": {
+            "default": "heroku",
+            "required": true
+        }
+    },
+    "addons": [
+        {
+            "plan": "upstash-redis:free",
+            "as": "REDIS"
+        }
+    ]
+}

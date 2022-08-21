@@ -6,7 +6,6 @@ downloader() {
 	wget --quiet --timeout 60 --user "${API_USER}" --password "${API_PASS}" -O "$1" "$2"; return $?
 }
 
-
 #HEROKU / RAILWAY dependent configs
 if [[ ${PLATFORM} == 'railway' ]]; then
 	# Install and Setup Redis if needed

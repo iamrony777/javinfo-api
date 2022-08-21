@@ -4,6 +4,7 @@
 
 # Save current time since epoch (for scripts)
 # echo  "{\"startup\":$(date +%s)}" > /tmp/startup
+if [[ -z $]]
 if [[ ${PLATFORM} == 'railway' ]]; then
 
 	if [[ ${CREATE_REDIS} == 'true' ]]; then

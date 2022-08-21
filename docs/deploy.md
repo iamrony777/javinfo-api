@@ -22,7 +22,7 @@
 
 ### Manual way `(git, railway-cli)`
 1. Install [Railway-CLI](https://docs.railway.app/develop/cli)
-2. Clone [Javinfo-API](https://github.com/iamrony777/javinfo-api)
+2. Clone [Repo](https://github.com/iamrony777/javinfo-api)
     <!-- trunk-ignore(markdownlint/MD046) -->
     ```bash
     git clone https://github.com/iamrony777/javinfo-api
@@ -57,6 +57,11 @@
     CREATE_REDIS='false' # check #using-without-redis-database-plugin
     LOG_REQUEST='false' # check #log-requests 
 
+    # JAVDB Search Related 
+    CAPTCHA_SOLVER_URL='https://captcha-solver-api2.herokuapp.com' 
+    JAVDB_EMAIL='' # Add JAVDB email / Leave empty
+    JAVDB_PASSWORD='' # Add JAVDB password / Leave empty
+
     # OPTIONAL 
     REMEMBER_ME_TOKEN='' 
     JDB_SESSION=''
@@ -72,11 +77,8 @@
 
     # RAILWAY PROVIDED VARIABLES
     RAILWAY_STATIC_URL='' # Leave empty for default value
+    BASE_URL='' # https://example.com / Publicly available url
 
-    # NOT USABLE FOR NOW 
-    CAPTCHA_SOLVER_URL='' 
-    JAVDB_EMAIL='' 
-    JAVDB_PASSWORD=''
     ```
 
     #### Using without Redis Database Plugin _(Optional)_
@@ -114,7 +116,11 @@
         - Set `REDIS_URL=redis://$REDIS_USER:$REDIS_PASSWORD@$REDIS_HOST:$REDIS_PORT` with your redis-server credentials
 
 
+## Using [Heroku](https://heroku.com)
 
+
+
+#### ADD TO Docs 
     ---
     #### Log requests _(Optional)_
     - Set `LOG_REQUEST='true'` to log incoming request headers, query parameters, time, ip address details (from [ipinfo](https://ipinfo.io))

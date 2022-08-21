@@ -1,7 +1,8 @@
 {
     "schemaVersion": 1,
     "label": "Version",
+    "labelColor": "CAD5E2",
     "message": "1.4",
-    "color": "informational",
+    "color": "darkviolet",
     "style": "for-the-badge"
 }

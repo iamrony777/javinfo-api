@@ -6,6 +6,9 @@ ENV RUNTIME_DEPS='wget curl jq tmux ca-certificates'
 ARG PORT='' \
     API_USER= '' \
     API_PASS='' \
+    CAPTCHA_SOLVER_URL='' \
+    JAVDB_EMAIL='' \
+    JAVDB_PASSWORD='' \
     # IF YOU WANT TO USE OWN REDIS SERVER, set it to 'true'
     CREATE_REDIS='false' \
     # IF YOU WANT LOG IP addresses, set it to 'true'
@@ -19,10 +22,6 @@ ARG PORT='' \
     REDIS_URL='' \
     # RAILWAY PROVIDED VARIABLES 
     RAILWAY_STATIC_URL='' \
-    # NOT USABLE FOR NOW 
-    CAPTCHA_SOLVER_URL='' \
-    JAVDB_EMAIL='' \
-    JAVDB_PASSWORD='' \
     # HEALTHCHECK (Optional)
     HEALTHCHECK_PROVIDER='None' \
     UPTIMEKUMA_PUSH_URL='' \

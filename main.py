@@ -7,8 +7,15 @@ import sys
 import time
 
 import uvicorn
-from fastapi import (BackgroundTasks, Depends, FastAPI, HTTPException, Request,
-                     Response, status)
+from fastapi import (
+    BackgroundTasks,
+    Depends,
+    FastAPI,
+    HTTPException,
+    Request,
+    Response,
+    status,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -17,9 +24,18 @@ from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from httpx import AsyncClient
 
-from api import (FILE_TO_CHECK, Tags, aioredis, async_scheduler, filter_string,
-                 get_results, logger, redis_logger, timeout, user_resp,
-                 version)
+from api import (
+    FILE_TO_CHECK,
+    Tags,
+    aioredis,
+    filter_string,
+    get_results,
+    redis_logger,
+    timeout,
+    logger,
+    async_scheduler,
+    version,
+)
 
 # Fastapi Config
 security = HTTPBasic()
@@ -84,7 +100,7 @@ async def startup():
 @app.head("/check", include_in_schema=False)
 async def check():
     """(Uptime) Monitor endpoint."""
-    return {"status": "OK"}
+    return
 
 
 @logger.catch
@@ -198,9 +214,9 @@ async def get_total_users(request: Request, background_tasks: BackgroundTasks) -
     ) as redis:
         users = len(redis.scan(0, "user/*", 10000)[1])
         if users > 10000:
-            user_resp["message"] = "10K+"
+            users = "10K+"
         else:
-            user_resp["message"] = str(users)
+            users = str(users)
 
     with open("api/html/images/users.png", "rb") as users_png:
         users_base64 = base64.b64encode(users_png.read()).decode("utf-8")
@@ -226,12 +242,27 @@ async def get_total_users(request: Request, background_tasks: BackgroundTasks) -
 
 @app.get("/version", tags=[Tags.STATS])
 @logger.catch
-async def get_current_version() -> dict[str, str]:
-    """Get current API Version"""
-    return {"version": version}
+async def get_current_version():
+    """Version Badge"""
+    async with AsyncClient(timeout=10) as client:
+        return Response(
+            content=(
+                await client.get(
+                    "https://img.shields.io/static/v1",
+                    params={
+                        "label": "JAVINFO API",
+                        "labelColor": "232a2d",
+                        "message": version,
+                        "color": "c47fd5",
+                        "style": "for-the-badge",
+                    },
+                )
+            ).text,
+            media_type="image/svg+xml;charset=utf-8",
+        )
 
 
-# site folder is created only during docker build
+# site directory is created only during docker build
 app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
 
 app.mount("/", StaticFiles(directory="api/html", html=True), name="root")
