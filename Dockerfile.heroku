@@ -22,7 +22,7 @@ ENV PORT \
     HEALTHCHECKSIO_PING_URL
 
 ARG PLATFORM
-ARG CREATE_REDIS
+ARG CREATE_REDIS="false"
 
 
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
