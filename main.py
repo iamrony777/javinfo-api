@@ -151,6 +151,13 @@ async def demo_search(
                 "message": f"Possible Movie ID: {filtered_name}",
             },
         )
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={
+            "error": f"{name} Not Found",
+            "message": "No Movie is found from input string",
+        },
+    )
 
 
 @logger.catch
@@ -205,15 +212,24 @@ async def search(
     background_tasks.add_task(redis_logger, request)
     background_tasks.add_task(timeout, async_scheduler)
     filtered_name = filter_string(name)
-
-    result = await get_results(name=filtered_name.upper(), provider=provider, only_r18=only_r18)
-    if result is not None:
-        return JSONResponse(status_code=status.HTTP_200_OK, content=result)
+    if filtered_name is not None:
+        result = await get_results(
+            name=filtered_name.upper(), provider=provider, only_r18=only_r18
+        )
+        if result is not None:
+            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={
+                "error": f"{name} Not Found",
+                "message": f"Possible Movie ID: {filtered_name}",
+            },
+        )
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
         content={
             "error": f"{name} Not Found",
-            "message": f"Possible Movie ID: {filtered_name}",
+            "message": "No Movie is found from input string",
         },
     )
 
