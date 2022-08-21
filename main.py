@@ -96,8 +96,9 @@ async def startup():
 #     """Redirect to readme."""
 #     return RedirectResponse("/readme")
 
-# site directory is created only during docker build                                                                                                                     
-app.mount("/docs", StaticFiles(directory="site", html=True), name="docs") 
+# site directory is created only during docker build
+app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
+
 
 @app.head("/check", include_in_schema=False)
 async def check():
@@ -136,13 +137,20 @@ async def demo_search(
     background_tasks.add_task(redis_logger, request)
     background_tasks.add_task(timeout, async_scheduler)
 
-    name = filter_string(name).upper()
-    result = await get_results(name=name, provider=provider, only_r18=only_r18)
-    if result is not None:
-        return JSONResponse(status_code=status.HTTP_200_OK, content=result)
-    return JSONResponse(
-        status_code=status.HTTP_404_NOT_FOUND, content={"error": f"{name} Not Found"}
-    )
+    filtered_name = filter_string(name).upper()
+    if filtered_name is not None:
+        result = await get_results(
+            name=filtered_name, provider=provider, only_r18=only_r18
+        )
+        if result is not None:
+            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={
+                "error": f"{name} Not Found",
+                "message": f"Possible Movie ID: {filtered_name}",
+            },
+        )
 
 
 @logger.catch
@@ -196,13 +204,17 @@ async def search(
     """Protected search endpoint."""
     background_tasks.add_task(redis_logger, request)
     background_tasks.add_task(timeout, async_scheduler)
-    name = filter_string(name).upper()
-    result = await get_results(name=name, provider=provider, only_r18=only_r18)
+    filtered_name = filter_string(name).upper()
+
+    result = await get_results(name=filtered_name, provider=provider, only_r18=only_r18)
     if result is not None:
         return JSONResponse(status_code=status.HTTP_200_OK, content=result)
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
-        content={"error": f"{name} Not Found"},
+        content={
+            "error": f"{name} Not Found",
+            "message": f"Possible Movie ID: {filtered_name}",
+        },
     )
 
 
@@ -262,6 +274,7 @@ async def get_current_version():
             ).text,
             media_type="image/svg+xml;charset=utf-8",
         )
+
 
 app.mount("/", StaticFiles(directory="api/html", html=True), name="root")
 
