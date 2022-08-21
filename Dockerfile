@@ -3,7 +3,7 @@ FROM python:alpine
 WORKDIR /app
 COPY ./ /app/
 ENV RUNTIME_DEPS='wget curl jq tmux ca-certificates'
-ARG PORT='' \
+ENV PORT='' \
     API_USER= '' \
     API_PASS='' \
     CAPTCHA_SOLVER_URL='' \
@@ -27,6 +27,7 @@ ARG PORT='' \
     UPTIMEKUMA_PUSH_URL='' \
     HEALTHCHECKSIO_PING_URL=''
 
+ARG PLATFORM
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
 
 RUN apk --no-cache add alpine-conf bash && \
