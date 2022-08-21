@@ -46,15 +46,15 @@ async def actress_db():
             logger.info(f"[Actress DB]: Total {len(names)} actress data found")
             # Dump them all
             await redis.delete(*names)
-        while True:
-            try:
-                # Rename & Reinsert
-                names = [name.replace(name, f"actress/{name}") for name in names]
-                await redis.mset(dict(zip(names, urls)))
-                break
-            except Exception as exception:
-                logger.critical(f'{exception}, Trying again')
-                sleep(10)
+            while True:
+                try:
+                    # Rename & Reinsert
+                    names = [name.replace(name, f"actress/{name}") for name in names]
+                    await redis.mset(dict(zip(names, urls)))
+                    break
+                except Exception as exception:
+                    logger.critical(f'{exception}, Trying again')
+                    sleep(10)
 
 
 # Restructure Logs DB
