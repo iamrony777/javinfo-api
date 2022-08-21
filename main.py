@@ -96,6 +96,8 @@ async def startup():
 #     """Redirect to readme."""
 #     return RedirectResponse("/readme")
 
+# site directory is created only during docker build                                                                                                                     
+app.mount("/docs", StaticFiles(directory="site", html=True), name="docs") 
 
 @app.head("/check", include_in_schema=False)
 async def check():
@@ -209,10 +211,10 @@ async def search(
 async def get_total_users(request: Request, background_tasks: BackgroundTasks) -> str:
     """Get number of total users from redis database log"""
 
-    with aioredis.Redis.from_url(
+    async with aioredis.Redis.from_url(
         os.getenv("REDIS_URL"), decode_responses=True
     ) as redis:
-        users = len(redis.scan(0, "user/*", 10000)[1])
+        users = len((await redis.scan(0, "user/*", 10000))[1])
         if users > 10000:
             users = "10K+"
         else:
@@ -260,10 +262,6 @@ async def get_current_version():
             ).text,
             media_type="image/svg+xml;charset=utf-8",
         )
-
-
-# site directory is created only during docker build
-app.mount("/docs", StaticFiles(directory="site", html=True), name="docs")
 
 app.mount("/", StaticFiles(directory="api/html", html=True), name="root")
 
