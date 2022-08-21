@@ -121,12 +121,7 @@ async def javdb_login_db():
 
 if __name__ == "__main__":
     with logger.catch():
-        if (
-            os.getenv("CREATE_REDIS")
-            == re.search(r"false", os.getenv("CREATE_REDIS"), re.IGNORECASE)
-            or os.getenv("REDIS_URL") is None
-        ):
-            logger.info("Couldn't connect to Redis Instance")
+        if bool(re.search(r"false", os.getenv("CREATE_REDIS"), re.IGNORECASE)):
             sys.exit(1)
         else:
             logger.info("Checking redis instance")
