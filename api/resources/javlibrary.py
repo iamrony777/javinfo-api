@@ -1,14 +1,21 @@
 """Main srcaper - Javlibrary"""
+import asyncio
+from pprint import pprint
+import re
 from typing import Optional
 
-from . import AsyncClient, actress_search, html, logger
+from httpx import AsyncClient
+from api.resources import actress_search, html, logger
 
 
 async def get_page_content(
     client: AsyncClient, url: Optional[str] = "vl_searchbyid.php", **kwargs
 ) -> bytes:
     """Get the page content as bytes, takes url as optional argument."""
-    return html.fromstring((await client.get(url, **kwargs)).content)
+    data = (await client.get(url, **kwargs)).content
+    with open("javlibrary.html", "wb") as output_data:
+        output_data.write(data)
+    return html.fromstring(data)
 
 
 async def filter_results(tree: html.HtmlElement, name: str):
@@ -85,6 +92,13 @@ async def parse_details(tree: html.HtmlElement, only_r18: bool) -> dict[str] | N
     # print actress details
     movie_dictionary["actress"] = await parse_actress_details(tree, only_r18)
 
+    # Screenshots
+    movie_dictionary["screenshots"] = [
+        el.get("src")
+        for el in tree.findall('.//div[@class="previewthumbs"]/img')
+        if bool(re.match(r"https", el.get("src")))
+    ]
+
     # get movie genres / tags
     for data in tree.xpath('//div[@id="video_genres"]/table/tr'):
         movie_dictionary["tags"] = data.xpath('td[@class="text"]/span/a/text()')
@@ -129,3 +143,10 @@ async def main(name: str, only_r18: bool = False) -> dict[str] | None:
                 await get_page_content(client, url=result.replace(".", "")), name
             )
             return await parse_details(result, only_r18)
+
+
+if __name__ == "__main__":
+    from json import dumps
+
+    print(dumps(asyncio.run(main("EBOD-391")), indent=4))
+

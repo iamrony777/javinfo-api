@@ -4,9 +4,9 @@
 
 |     Provider    |       Query      |   Actress Data   |    Movie Data    | Screenshots      |
 |:---------------:|:----------------:|:----------------:|:----------------:|------------------|
-|     `javdb`     | :material-check: | :material-close: | :material-check: | :material-close: |
+|     `javdb`     | :material-check: | :material-close: | :material-check: | :material-check: |
 |   `javlibrary`  | :material-check: | :material-check: | :material-check: | :material-close: |
-|  `javdatabase`  | :material-check: | :material-check: | :material-check: | :material-close: |
+|  `javdatabase`  | :material-check: | :material-check: | :material-check: | :material-check: |
 |      `r18`      | :material-check: | :material-check: | :material-check: | :material-check: |
 |    Boobpedia    | :material-close: | :material-check: | :material-close: | :material-close: |
 |Actress image data from r18| :material-close: | :material-check: | :material-close: | :material-close: |

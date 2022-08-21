@@ -45,4 +45,4 @@ RUN mkdocs build -f /app/conf/mkdocs.yml && \
 
 RUN python -m compileall .
 
-ENTRYPOINT ["bash", "start.sh"] 
+CMD ["bash", "start.sh"] 

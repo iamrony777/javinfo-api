@@ -5,7 +5,7 @@ import re
 from deep_translator import GoogleTranslator
 from redis import asyncio as aioredis
 
-from . import AsyncClient, html, logger
+from api.resources import AsyncClient, html, logger
 
 BASE_URL = "https://javdb.com"
 
@@ -24,7 +24,7 @@ async def get_page_url(client: AsyncClient, name: str, **kwargs) -> (str | None)
 async def get_tokens(key: str) -> (str | None):
     """Returns a token from redis."""
     async with aioredis.Redis.from_url(
-        os.getenv("REDIS_URL"), decode_responses=True, db=2
+        os.getenv("REDIS_URL"), decode_responses=True
     ) as redis:
         return await redis.get(key)
 
@@ -74,8 +74,8 @@ async def main(name: str) -> dict[str] | None:
         "theme": "auto",
         "locale": "en",
         "over18": "1",
-        "remember_me_token": await get_tokens("remember_me_token"),
-        "_jdb_session": await get_tokens("_jdb_session"),
+        "remember_me_token": await get_tokens("cookie/remember_me_token"),
+        "_jdb_session": await get_tokens("cookie/_jdb_session"),
         "redirect_to": "%2F",
     }
     headers = {
@@ -118,6 +118,11 @@ async def main(name: str) -> dict[str] | None:
                         ).get("src")
                         movie_dictionary["page"] = BASE_URL + page_url
                         movie_dictionary["details"] = await parse_panel_data(tree)
+                        movie_dictionary["screenshots"] = [
+                            el.get("href")
+                            for el in tree.findall('.//a[@data-fancybox="gallery"]')
+                            if bool(re.match(r"https", el.get("href")))
+                        ]
                         movie_dictionary["tags"] = await parse_tags(tree)
 
                         return movie_dictionary
@@ -126,3 +131,10 @@ async def main(name: str) -> dict[str] | None:
         except Exception as exception:
             logger.error(exception)
             return None
+
+
+if __name__ == "__main__":
+    from pprint import pprint
+    from asyncio import run
+
+    pprint(run(main("EBOD-391")))

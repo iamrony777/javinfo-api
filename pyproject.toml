@@ -18,9 +18,16 @@ Pillow = "^9.2.0"
 mkdocs-material = "^8.3.9"
 redis = "^4.3.4"
 uvicorn = {extras = ["standard"], version = "^0.18.2"}
+fastapi-limiter = {url = "https://github.com/long2ice/fastapi-limiter/archive/1b8265946caa5001cfffe4a636c358029e2c316d.zip"}
 
 [tool.poetry.dev-dependencies]
-fastapi-limiter = {url = "https://github.com/long2ice/fastapi-limiter/archive/1b8265946caa5001cfffe4a636c358029e2c316d.zip"}
+pyclean = "^2.2.0"
+psycopg2 = "^2.9.3"
+SQLAlchemy = {extras = ["asyncio"], version = "^1.4.40"}
+asyncpg = "^0.26.0"
+python-dotenv = "^0.20.0"
+uvloop = "^0.16.0"
+black = "^22.6.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

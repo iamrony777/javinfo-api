@@ -56,8 +56,9 @@ def filter_string(name):
         if not char.isalpha() and not char.isdigit() and char != "-":
             name.remove(char)
 
-    pattern = r"[a-zA-Z]{2,5}-\d{3,5}"  # JAV code should be like this
+    pattern = r"[a-zA-Z]{1,5}-\d{3,6}(|\-[a-zA-z])"  # JAV code should be like this
     return (re.match(pattern, "".join(name)).group())
+    
 
 if __name__ == '__main__':     
-    print(filter_string('VDD-101 Kisaki Ema, Haruki Kato JAV CENSORED'))
+    print(filter_string('VDD-011-C Kisaki Ema, Haruki Kato JAV CENSORED'))
