@@ -18,9 +18,9 @@ async def need_to_setup():
     If redis-database have more than 1 database then it needs to be configured first
     """
     async with aioredis.Redis.from_url(
-        os.getenv("REDIS_URL"), decode_responses=True, db=0
+        os.getenv("REDIS_URL"), decode_responses=True
     ) as redis:
-        if len(await redis.info("Keyspace")) == 1:
+        if len(await redis.info("Keyspace")) in [0, 1]:
             logger.success("No need to configure Redis, starting API")
             sys.exit(0)
         return True
@@ -46,15 +46,17 @@ async def actress_db():
             logger.info(f"[Actress DB]: Total {len(names)} actress data found")
             # Dump them all
             await redis.delete(*names)
-            while True:
+            count = 0
+            while count < 5:
                 try:
                     # Rename & Reinsert
                     names = [name.replace(name, f"actress/{name}") for name in names]
                     await redis.mset(dict(zip(names, urls)))
-                    break
+                    return
                 except Exception as exception:
-                    logger.critical(f'{exception}, Trying again')
+                    logger.warning(f"{exception}, Trying again")
                     sleep(10)
+            logger.critical("Error occured in Actress DB")
 
 
 # Restructure Logs DB
