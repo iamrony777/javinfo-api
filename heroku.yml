@@ -4,3 +4,4 @@ build:
   config:
     PLATFORM: heroku
     CREATE_REDIS: false
+    TIMEZONE: UTC
