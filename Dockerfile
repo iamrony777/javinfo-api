@@ -4,7 +4,7 @@ WORKDIR /app
 COPY ./ /app/
 ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates"
 ENV PORT="" \
-    API_USER= "" \
+    API_USER="" \
     API_PASS="" \
     CAPTCHA_SOLVER_URL="" \
     JAVDB_EMAIL="" \
