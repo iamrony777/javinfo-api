@@ -1,7 +1,6 @@
 build:
   docker:
-    web: Dockerfile
+    web: Dockerfile.heroku
   config:
     PLATFORM: heroku
     CREATE_REDIS: false
-    TIMEZONE: UTC
