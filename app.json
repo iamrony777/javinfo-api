@@ -65,10 +65,11 @@
             "required": true
         }
     },
+    "stack": "container",
     "addons": [
         {
             "plan": "upstash-redis:free",
             "as": "REDIS"
         }
-    ]
+    ] 
 }
