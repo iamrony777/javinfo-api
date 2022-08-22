@@ -21,18 +21,14 @@ ENV API_USER="" \
     UPTIMEKUMA_PUSH_URL="" \
     HEALTHCHECKSIO_PING_URL=""
 
-ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates" \
+ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates alpine-conf bash" \
     PYTHONPATH="." \
     OVERMIND_NO_PORT=1
     
 ARG PLATFORM
 
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
-
-RUN apk --no-cache add alpine-conf bash && \
-    setup-timezone -z "$TIMEZONE" && \
-    apk del alpine-conf
-    
+   
 RUN apk add --no-cache $RUNTIME_DEPS && \
     chmod +x install.sh && bash /app/install.sh && \
     pip install --no-cache-dir -U pip setuptools wheel && \

@@ -5,7 +5,7 @@
 |     Provider    |       Query      |   Actress Data   |    Movie Data    | Screenshots      |
 |:---------------:|:----------------:|:----------------:|:----------------:|------------------|
 |     `javdb`     | :material-check: | :material-close: | :material-check: | :material-check: |
-|   `javlibrary`  | :material-check: | :material-check: | :material-check: | :material-close: |
+|   `javlibrary`  | :material-check: | :material-check: | :material-check: | :material-check: |
 |  `javdatabase`  | :material-check: | :material-check: | :material-check: | :material-check: |
 |      `r18`      | :material-check: | :material-check: | :material-check: | :material-check: |
 |    Boobpedia    | :material-close: | :material-check: | :material-close: | :material-close: |
@@ -43,7 +43,7 @@ __only_r18__: *bool* `optional`
 ## Variables / Options Descriptions
 > Required
 
-- `PORT` : Starting port, api will listen on this port only (default port `8000`, host `0.0.0.0`)
+- `PORT` : Starting port, api will listen on this port only (default port `8000`, host `0.0.0.0`, don't set if using *Heroku*)
 - `API_USER` & `API_PASS` : Using basic http auth to protect core endpoints , use unique password (don't use `admin` & `admin`)
 - `CREATE_REDIS` : Check [here](/docs/deploy/#using-without-redis-database-plugin-optional) 
 - `LOG_REQUESTS` : Check [here](/docs/deploy/#log-requests-optional)
@@ -56,10 +56,12 @@ __only_r18__: *bool* `optional`
 - `REMEMBER_ME_TOKEN` & `JDB_SESSION` : Some cotent on JAVDB requires account to view (scrape),if any result from JAVDB return `null` then maybe you need to fill up this 
 
       - These are cookie values, login into javdb and copy values from `_jdb_session` & `remember_me_token`. This cookies will expire after 7days if you checked _Keep me logged in for 7days_ during sign in
+- `JAVDB_EMAIL` & `JAVDB_PASSWORD`: For auto-login into JAVDB account, some query on JAVDB required login , captcha is bypassed via another api, check [repo here](https://github.com/iamrony777/captcha-solver-api)
 
+- `CAPTCHA_SOLVER_URL`: `https://captcha-solver-api2.herokuapp.com/javdb` [Repo](https://github.com/iamrony777/captcha-solver-api)
 > Healthcheck (Optional)
 
-- `HEALTHCHECK_PROVIDER` : Set `None` / [`uptimekuma`](https://uptime.kuma.pet/) (push method) / [`healthchecksio`](https://healthchecks.io/)
+- `HEALTHCHECK_PROVIDER` : Set `None` / [`uptimekuma`](https://uptime.kuma.pet/) (push method) / [`healthchecksio`](https://healthchecks.io/) / `self` (self ping, needed `BASE_URL` env or visit homepage once it will set `BASE_URL`) 
 - `UPTIMEKUMA_PUSH_URL` : Set this url in this format, ___https://uptime-kuma-instance-url/api/push/monitor-slug___ with or without optional parameters and set `HEALTHCHECK_PROVIDER` to `uptimekuma`
 - `HEALTHCHECKSIO_PING_URL`: Set url in this format, ___https://healthchecks-io-instance-url/monitor-uuid___ or ___https://healthchecks-io-instance-url/ping-key/monitor-name___ and set `HEALTHCHECK_PROVIDER` to `healthchecksio`
 
@@ -72,20 +74,20 @@ __only_r18__: *bool* `optional`
 
     ```bash
     https --auth "${API_USER}:${API_PASS}" \
-    POST javinfo-api.up.railway.app/search \
+    POST $APP_URL/api/search \
     name==JAV_ID
     ```
 === "Name, Provider"
 
     ```bash
     https --auth "${API_USER}:${API_PASS}" \
-    POST javinfo-api.up.railway.app/search \
+    POST $APP_URL/api/search \
     name==JAV_ID provider==PROVIDER
     ```
 === "Name, Provider, Only_r18"
     ```bash
     https --auth "${API_USER}:${API_PASS}" \
-    POST javinfo-api.up.railway.app/search \
+    POST $APP_URL/api/search \
     name==JAV_ID provider==PROVIDER only_r18==BOOLEAN
     ```
 
@@ -96,7 +98,7 @@ __only_r18__: *bool* `optional`
 === "Name"
 
     ```bash
-    curl -X "POST" "https://javinfo-api.up.railway.app/search?name=JAV_ID" \
+    curl -X "POST" "https://$APP_URL/api/search?name=JAV_ID" \
         --header "Accept: application/json" \
         --user "${API_USER}:${API_PASS}"
     ```
@@ -104,14 +106,14 @@ __only_r18__: *bool* `optional`
 === "Name, Provider"
 
     ```bash
-    curl -X "POST" "https://javinfo-api.up.railway.app/search?name=JAV_ID&provider=PROVIDER" \
+    curl -X "POST" "https://$APP_URL/api/search?name=JAV_ID&provider=PROVIDER" \
         --header "Accept: application/json" \
         --user "${API_USER}:${API_PASS}"
     ```
 === "Name, Provider, Only_r18"
 
     ```bash
-    curl -X "POST" "https://javinfo-api.up.railway.app/search?name=JAV_ID&provider=PROVIDER&only_r18=BOOLEAN" \
+    curl -X "POST" "https://$APP_URL/api/search?name=JAV_ID&provider=PROVIDER&only_r18=BOOLEAN" \
         --header "Accept: application/json" \
         --user "${API_USER}:${API_PASS}"
     ```   

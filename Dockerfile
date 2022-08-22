@@ -23,17 +23,13 @@ ARG PORT \
     HEALTHCHECKSIO_PING_URL \
     PLATFORM
 
-ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates"
+ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates alpine-conf bash"
 
 ENV BASE_URL="${RAILWAY_STATIC_URL:-}" \
     PYTHONPATH="." \
     OVERMIND_NO_PORT=1
 
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
-
-RUN apk --no-cache add alpine-conf bash && \
-    setup-timezone -z "$TIMEZONE" && \
-    apk del alpine-conf
     
 RUN apk add --no-cache $RUNTIME_DEPS && \
     chmod +x install.sh && bash /app/install.sh && \

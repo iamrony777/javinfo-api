@@ -54,34 +54,34 @@
     _(just copy-paste and edit variables , railway will automatically remove comments)_
     ```bash
     # Requrired
-    PORT='8000' # default starting port
-    API_USER='' # HTTP basicauth : username
-    API_PASS='' # HTTP basicauth : passsword
-    CREATE_REDIS='false' # check #using-without-redis-database-plugin
-    LOG_REQUEST='false' # check #log-requests 
-    PLATFORM='railway'
+    PORT="8000" # default starting port
+    API_USER="" # HTTP basicauth : username
+    API_PASS="" # HTTP basicauth : passsword
+    CREATE_REDIS="false" # check #using-without-redis-database-plugin
+    LOG_REQUEST="false" # check #log-requests 
+    PLATFORM="railway"
 
     # JAVDB Search Related 
-    CAPTCHA_SOLVER_URL='https://captcha-solver-api2.herokuapp.com' 
-    JAVDB_EMAIL='' # Add JAVDB email / Leave empty
-    JAVDB_PASSWORD='' # Add JAVDB password / Leave empty
+    CAPTCHA_SOLVER_URL="https://captcha-solver-api2.herokuapp.com" 
+    JAVDB_EMAIL="" # Add JAVDB email / Leave empty
+    JAVDB_PASSWORD="" # Add JAVDB password / Leave empty
 
     # OPTIONAL 
-    REMEMBER_ME_TOKEN='' 
-    JDB_SESSION=''
-    IPINFO_TOKEN=''
-    INACTIVITY_TIMEOUT='300' 
-    TIMEZONE='UTC'
-    REDIS_URL=''  # If already got a redis-server , then paste redis connect string here ex. redis://...
+    REMEMBER_ME_TOKEN="" 
+    JDB_SESSION=""
+    IPINFO_TOKEN=""
+    INACTIVITY_TIMEOUT="300" 
+    TIMEZONE="UTC"
+    REDIS_URL=""  # If already got a redis-server , then paste redis connect string here ex. redis://...
     BASE_URL=${RAILWAY_STATIC_URL:-} 
 
     # HEALTHCHECK (Optional)
-    HEALTHCHECK_PROVIDER='None' # 'uptimekuma' for UptimeKuma Push , 'healthchecksio' for Healthchecks.io
-    UPTIMEKUMA_PUSH_URL='' # https://<uptime-kuma-instance-url>/api/push/<monitor-slug> with or without optional parameters
-    HEALTHCHECKSIO_PING_URL='' # https://<healthchecks-io-instance-url>/<monitor-uuid> or https://<healthchecks-io-instance-url>/<ping-key>/<monitor-name>
+    HEALTHCHECK_PROVIDER="None" # "uptimekuma" for UptimeKuma Push , "healthchecksio" for Healthchecks.io, or just `self`
+    UPTIMEKUMA_PUSH_URL="" # https://<uptime-kuma-instance-url>/api/push/<monitor-slug> with or without optional parameters
+    HEALTHCHECKSIO_PING_URL="" # https://<healthchecks-io-instance-url>/<monitor-uuid> or https://<healthchecks-io-instance-url>/<ping-key>/<monitor-name>
 
     # RAILWAY PROVIDED VARIABLES
-    RAILWAY_STATIC_URL='' # Leave empty for default value
+    RAILWAY_STATIC_URL="" # Leave empty for default value
 
     ```
 
@@ -125,7 +125,7 @@
 
 ### Automatic way `(One-Click Template  button)`
 
-<a href="https://heroku.com/deploy" target="_blank">
+<a href="https://heroku.com/deploy?template=https://github.com/iamrony777/JavInfo-api" target="_blank">
     <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
 </a>
 
@@ -141,42 +141,38 @@
     cd javinfo-api 
     heroku login # Finish login process
     heorku create # You're app name will be shown here
+    heroku git:remote --app $APP_NAME
+    heroku stack:set container --app $APP_NAME
     ```
 4. Add Database Addon _(Optional if you already using any Online redis service eg. Redislab, Upstash etc)_
 
     **Using [Upstash-Redis Addon](https://elements.heroku.com/addons/upstash-redis)**
     ```bash
-    heroku addons:create upstash-redis:free --as REDIS
+    heroku addons:create upstash-redis:free --as REDIS --app $APP_NAME
     ```
 5. Set Environmental Variables 
+   ```bash
+    heroku config:edit --app $APP_NAME 
+   ```
 
     #### __Variable template__ 
 
     _(just copy-paste and edit variables , railway will automatically remove comments)_
     ```bash
-    # Requrired
-    API_USER='' # HTTP basicauth : username
-    API_PASS='' # HTTP basicauth : passsword
-    APP_NAME='' # Paste current app name (Required for self-ping)
-    CREATE_REDIS='false' # As Using Datbase addon
-    LOG_REQUEST='false' # check #log-requests 
-    PLATFORM='heroku'
-
-    # JAVDB Search Related 
-    CAPTCHA_SOLVER_URL='https://captcha-solver-api2.herokuapp.com' 
-    JAVDB_EMAIL='' # Add JAVDB email / Leave empty
-    JAVDB_PASSWORD='' # Add JAVDB password / Leave empty
-
-    # OPTIONAL 
-    REMEMBER_ME_TOKEN='' 
-    JDB_SESSION=''
-    IPINFO_TOKEN=''
-    INACTIVITY_TIMEOUT='60' 
-    TIMEZONE='UTC'
-
-    # HEALTHCHECK (Optional)
-    HEALTHCHECK_PROVIDER='None' # `uptimekuma` for UptimeKuma Push , `healthchecksio` for Healthchecks.io or `self` just to ping this app , 
-    UPTIMEKUMA_PUSH_URL='' # https://<uptime-kuma-instance-url>/api/push/<monitor-slug> with or without optional parameters
-    HEALTHCHECKSIO_PING_URL='' # https://<healthchecks-io-instance-url>/<monitor-uuid> or https://<healthchecks-io-instance-url>/<ping-key>/<monitor-name>
-
+    API_USER=""
+    API_PASS=""
+    CREATE_REDIS="false"
+    LOG_REQUEST="false"
+    PLATFORM="heroku"
+    CAPTCHA_SOLVER_URL="https://captcha-solver-api2.herokuapp.com" 
+    JAVDB_EMAIL=""
+    JAVDB_PASSWORD=""
+    REMEMBER_ME_TOKEN="" 
+    JDB_SESSION=""
+    IPINFO_TOKEN=""
+    INACTIVITY_TIMEOUT="60" 
+    TIMEZONE="UTC"
+    HEALTHCHECK_PROVIDER="None"
+    UPTIMEKUMA_PUSH_URL=""
+    HEALTHCHECKSIO_PING_URL=""
     ```

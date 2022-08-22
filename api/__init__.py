@@ -94,6 +94,5 @@ except FileNotFoundError:
 
 
 if os.getenv("PLATFORM") == 'heroku' and os.getenv("APP_NAME") is not None:
-    API_BASE_URL = f"https://{os.getenv('APP_NAME')}.herokuapp.com"
-else:
-    API_BASE_URL = os.getenv("BASE_URL")
+    os.environ["BASE_URL"] = f"https://{os.getenv('APP_NAME')}.herokuapp.com"
+

@@ -5,7 +5,7 @@ import os
 import sys
 
 from httpx import AsyncClient
-from redis.asyncio import Redis
+from redis import Redis
 from api import logger
 
 HEALTHCHECK_PROVIDER = str(os.getenv("HEALTHCHECK_PROVIDER"))
@@ -47,7 +47,7 @@ async def self_ping():
     """
     if os.getenv("BASE_URL") is None and not os.path.exists("/tmp/hostname"):
         if os.getenv("REDIS_URL") is not None:
-            async with Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True) as redis:
+            with Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True) as redis:
                 for key in redis.scan_iter(match="user/*", count=10, _type="list"):
                     data = json.loads(redis.lrange(key, 0, redis.llen(key))[0])
                     url: str = data["headers"]["x-forwarded-proto"] + "://" + (data["headers"]["host"])

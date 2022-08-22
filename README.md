@@ -19,12 +19,14 @@
     </div>
     <div align="center">
         <a href="https://app.codacy.com/gh/iamrony777/JavInfo-api">
-            <img src="https://img.shields.io/codacy/grade/5f4cc6df4a8d4034b19abe5d6c747009?style=for-the-badge&logo=codacy">
+            <img src="https://img.shields.io/codacy/grade/5f4cc6df4a8d4034b19abe5d6c747009?style=for-the-badge&logo=codacy&labelColor=232a2d&color=8ccf7e">
         </a>
-        <img src="https://img.shields.io/github/license/iamrony777/javinfo-api?style=for-the-badge">
+        <img src="https://img.shields.io/github/license/iamrony777/javinfo-api?style=for-the-badge&labelColor=232a2d&color=8ccf7e">
     <div>
+        <img alt="Custom badge" src="https://img.shields.io/endpoint?color=67b0e8&labelColor=232a2d&style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fiamrony777%2FJavInfo-api%2Fdev%2Fdocs%2Fversion">
     <br>
-    <img alt="AlpineLinux" src="https://img.shields.io/badge/Built%20on-Alpine%20Linux-lightblue?style=for-the-badge&logo=AlpineLinux">
-    <img alt="Docker Image Size (tag)" src="https://img.shields.io/docker/image-size/iamrony777/javinfo-api/railway-latest?logo=Docker&style=for-the-badge">
+    <br>
+    <img alt="AlpineLinux" src="https://img.shields.io/badge/Built%20on-Alpine%20Linux-lightblue?style=for-the-badge&logo=AlpineLinux&labelColor=232a2d&color=67b0e8">
+    <img alt="Docker Image Size (tag)" src="https://img.shields.io/docker/image-size/iamrony777/javinfo-api/railway-latest?logo=Docker&style=for-the-badge&labelColor=232a2d&color=67b0e8&logoColor=67b0e8">
     <br>
 </p>

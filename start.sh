@@ -73,5 +73,8 @@ if (/app/api/scripts/startup); then
 	fi
 fi
 
+# Timezone set
+setup-timezone -z "$TIMEZONE"
+
 #Placeholder for processmanager
 exec START
