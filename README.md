@@ -27,7 +27,7 @@
     <img alt="AlpineLinux" src="https://img.shields.io/badge/Built%20on-Alpine%20Linux-lightblue?style=for-the-badge&logo=AlpineLinux">
     <img alt="Docker Image Size (tag)" src="https://img.shields.io/docker/image-size/iamrony777/javinfo-api/railway-latest?logo=Docker&style=for-the-badge">
     <br>
-    <a href="https://heroku.com/deploy">
-  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
-</a>
+    <a href="https://heroku.com/deploy" target="_blank">
+        <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
+    </a>
 </p>
