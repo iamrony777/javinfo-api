@@ -17,13 +17,19 @@
     "success_url": "/",
     "env": {
         "API_USER": {
-            "description": "USERNAME for access to protected endpoints"
+            "description": "USERNAME for access to protected endpoints",
+            "value": "",
+            "required": true
         },
         "API_PASS": {
-            "description": "PASSWORD for API_USER"
+            "description": "PASSWORD for API_USER",
+            "value": "",
+            "required": true
         },
         "APP_NAME": {
-            "description": "Same as current app-name"
+            "description": "Same as current app-name",
+            "value": "",
+            "required": true
         },
         "CAPTCHA_SOLVER_URL": {
             "description": "An API to solve JAVDB captchas during login",
@@ -32,23 +38,25 @@
         },
         "JAVDB_EMAIL": {
             "description": "Requried for auto-login into JAVDB, usable if only CAPTCHA_SOLVER_URL is set",
+            "value": "",
             "required": false
         },
         "JAVDB_PASSWORD": {
             "description": "Requried for auto-login into JAVDB, usable if only CAPTCHA_SOLVER_URL is set",
+            "value": "",
             "required": false
         },
         "REMEMBER_ME_TOKEN": {
-            "description": "If not using auto-login for JAVDB, manually paste cookies",
+            "description": "If not using auto-login for JAVDB, manually paste cookies","value": "",
             "required": false
         },
         "JDB_SESSION": {
-            "description": "If not using auto-login for JAVDB, manually paste cookies",
+            "description": "If not using auto-login for JAVDB, manually paste cookies","value": "",
             "required": false
         },
         "LOG_REQUEST": {
             "description": "Log every request made to this API instance",
-            "value": false,
+            "value": "false",
             "required": false
         },
         "TIMEZONE": {
@@ -58,6 +66,7 @@
         },
         "CREATE_REDIS": {
             "description": "Whether to use an inbuilt redis server [Not a good idea to create one in Heroku]",
+            "value": "false",
             "required": false
         },
         "PLATFORM": {
@@ -71,5 +80,5 @@
             "plan": "upstash-redis:free",
             "as": "REDIS"
         }
-    ] 
+    ]
 }
