@@ -7,22 +7,25 @@
 
 === "With Redis Database Plugin _(Default)_"
     - Check [Variables](#variable-template) 
+<a href="https://railway.app/new/template/T55Se3?referralCode=8NonTm">
+    <img src="https://railway.app/button.svg" alt="Deploy on Railway">
+</a> 
 
-    [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/T55Se3?referralCode=8NonTm)
 
 === "Without Redis Database Plugin _(Optional)_"
 
     - Check [Variables](#variable-template) 
     - [What is this ?](#using-without-redis-database-plugin-optional)
-
-    [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/BiOVQM?referralCode=8NonTm)
+<a href="https://railway.app/new/template/BiOVQM?referralCode=8NonTm">
+    <img src="https://railway.app/button.svg" alt="Deploy on Railway">
+</a> 
 
 
 
 
 ### Manual way `(git, railway-cli)`
 1. Install [Railway-CLI](https://docs.railway.app/develop/cli)
-2. Clone [Javinfo-API](https://github.com/iamrony777/javinfo-api)
+2. Clone [Repo](https://github.com/iamrony777/javinfo-api)
     <!-- trunk-ignore(markdownlint/MD046) -->
     ```bash
     git clone https://github.com/iamrony777/javinfo-api
@@ -51,32 +54,35 @@
     _(just copy-paste and edit variables , railway will automatically remove comments)_
     ```bash
     # Requrired
-    PORT='8000' # default starting port
-    API_USER='' # HTTP basicauth : username
-    API_PASS='' # HTTP basicauth : passsword
-    CREATE_REDIS='false' # check #using-without-redis-database-plugin
-    LOG_REQUEST='false' # check #log-requests 
+    PORT="8000" # default starting port
+    API_USER="" # HTTP basicauth : username
+    API_PASS="" # HTTP basicauth : passsword
+    CREATE_REDIS="false" # check #using-without-redis-database-plugin
+    LOG_REQUEST="false" # check #log-requests 
+    PLATFORM="railway"
+
+    # JAVDB Search Related 
+    CAPTCHA_SOLVER_URL="https://captcha-solver-api2.herokuapp.com" 
+    JAVDB_EMAIL="" # Add JAVDB email / Leave empty
+    JAVDB_PASSWORD="" # Add JAVDB password / Leave empty
 
     # OPTIONAL 
-    REMEMBER_ME_TOKEN='' 
-    JDB_SESSION=''
-    IPINFO_TOKEN=''
-    INACTIVITY_TIMEOUT='300' 
-    TIMEZONE='UTC'
-    REDIS_URL=''  # If already got a redis-server , then paste redis connect string here ex. redis://...
+    REMEMBER_ME_TOKEN="" 
+    JDB_SESSION=""
+    IPINFO_TOKEN=""
+    INACTIVITY_TIMEOUT="300" 
+    TIMEZONE="UTC"
+    REDIS_URL=""  # If already got a redis-server , then paste redis connect string here ex. redis://...
+    BASE_URL=${RAILWAY_STATIC_URL:-} 
 
     # HEALTHCHECK (Optional)
-    HEALTHCHECK_PROVIDER='None' # 'uptimekuma' for UptimeKuma Push , 'healthchecksio' for Healthchecks.io
-    UPTIMEKUMA_PUSH_URL='' # https://<uptime-kuma-instance-url>/api/push/<monitor-slug> with or without optional parameters
-    HEALTHCHECKSIO_PING_URL='' # https://<healthchecks-io-instance-url>/<monitor-uuid> or https://<healthchecks-io-instance-url>/<ping-key>/<monitor-name>
+    HEALTHCHECK_PROVIDER="None" # "uptimekuma" for UptimeKuma Push , "healthchecksio" for Healthchecks.io, or just `self`
+    UPTIMEKUMA_PUSH_URL="" # https://<uptime-kuma-instance-url>/api/push/<monitor-slug> with or without optional parameters
+    HEALTHCHECKSIO_PING_URL="" # https://<healthchecks-io-instance-url>/<monitor-uuid> or https://<healthchecks-io-instance-url>/<ping-key>/<monitor-name>
 
     # RAILWAY PROVIDED VARIABLES
-    RAILWAY_STATIC_URL='' # Leave empty for default value
+    RAILWAY_STATIC_URL="" # Leave empty for default value
 
-    # NOT USABLE FOR NOW 
-    CAPTCHA_SOLVER_URL='' 
-    JAVDB_EMAIL='' 
-    JAVDB_PASSWORD=''
     ```
 
     #### Using without Redis Database Plugin _(Optional)_
@@ -114,45 +120,63 @@
         - Set `REDIS_URL=redis://$REDIS_USER:$REDIS_PASSWORD@$REDIS_HOST:$REDIS_PORT` with your redis-server credentials
 
 
-
-    ---
-    #### Log requests _(Optional)_
-    - Set `LOG_REQUEST='true'` to log incoming request headers, query parameters, time, ip address details (from [ipinfo](https://ipinfo.io))
-    - Set `IPINFO_TOKEN` with API token from [ipinfo.io](https://ipinfo.io/account) _(Optional)_
-
-    !!! example "LOG Example"
-        ```json
-        {
-            "query": {
-                "id": "EBOD-391"
-            },
-            "method": "POST",
-            "path": "/search",
-            "headers": {
-                "host": "(API_URL)",
-                "accept-encoding": "gzip, deflate",
-                "accept": "*/*",
-                "content-length": "0",
-                "authorization": "(BASIC AUTH)",
-                "user-agent": "HTTPie/3.2.1",
-                "x-forwarded-for": "(IP ADDRESS)",
-                "x-forwarded-proto": "https",
-                "x-envoy-external-address": "(IP ADDRESS)",
-                "x-request-id": "XXX-XXX-XXX-XXX"
-            },
-            "user": {
-                "ip": "(IP ADDRESS)",
-                "hostname": "XXX",
-                "city": "XXX",
-                "region": "XXX",
-                "country": "XXX",
-                "loc": "XXX, XXX",
-                "org": "XXX",
-                "postal": "XXX",
-                "timezone": "XXX/XXX"
-            },
-            "time": "2022-05-28 03:08:58"
-        }
-        ```
+## Using [Heroku](https://heroku.com)
 
 
+### Automatic way `(One-Click Template  button)`
+
+<a href="https://heroku.com/deploy?template=https://github.com/iamrony777/JavInfo-api" target="_blank">
+    <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
+</a>
+
+### Manual way `(git + Heroku CLI)`
+
+1. Install [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli)
+2. Clone [Repo](https://github.com/iamrony777/javinfo-api)
+    ```bash
+    git clone https://github.com/iamrony777/javinfo-api
+    ```
+3. Login into Railway account, create a new app
+    ```bash
+    cd javinfo-api 
+    heroku login # Finish login process
+    heorku create # You're app name will be shown here
+    heroku git:remote --app $APP_NAME
+    heroku stack:set container --app $APP_NAME
+    ```
+4. Add Database Addon _(Optional if you already using any Online redis service eg. Redislab, Upstash etc)_
+
+    **Using [Upstash-Redis Addon](https://elements.heroku.com/addons/upstash-redis)**
+    ```bash
+    heroku addons:create upstash-redis:free --as REDIS --app $APP_NAME
+    ```
+5. Set Environmental Variables 
+   ```bash
+    heroku config:edit --app $APP_NAME 
+   ```
+
+    #### __Variable template__ 
+
+    _(just copy-paste and edit variables)_
+
+    `API_USER` & `API_PASS` are required to start the server _(..if using upstash-redis addon , otherwise set `REDIS_URL` too)_
+    ```bash
+    API_USER=""
+    API_PASS=""
+    CREATE_REDIS="false"
+    LOG_REQUEST="false"
+    PLATFORM="heroku"
+    CAPTCHA_SOLVER_URL="https://captcha-solver-api2.herokuapp.com" 
+    JAVDB_EMAIL=""
+    JAVDB_PASSWORD=""
+    REMEMBER_ME_TOKEN="" 
+    JDB_SESSION=""
+    IPINFO_TOKEN=""
+    INACTIVITY_TIMEOUT="60" 
+    TIMEZONE="UTC"
+    HEALTHCHECK_PROVIDER="None"
+    UPTIMEKUMA_PUSH_URL=""
+    HEALTHCHECKSIO_PING_URL=""
+    BASE_URL=""
+    APP_NAME
+    ```

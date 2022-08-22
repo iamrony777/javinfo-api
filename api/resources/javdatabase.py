@@ -1,7 +1,7 @@
 """Main srcaper - Javdatabase"""
 import re
 
-from . import AsyncClient, actress_search, html, logger
+from api.resources import AsyncClient, actress_search, html, logger
 
 BASE_URL = "https://www.javdatabase.com"
 
@@ -22,6 +22,11 @@ async def parse_details(
         )
         movie_dictionary["details"] = await parse_additional_details(tree)
         movie_dictionary["actress"] = await parse_actress_details(tree, only_r18)
+        movie_dictionary["screenshots"] = [
+            element.get("href")
+            for element in tree.findall(".//div/a[@rel]")
+            if bool(re.search(r"pics.dmm.co.jp", element.get("href")))
+        ]
         movie_dictionary["tags"] = [
             tags.text.strip()
             for tags in tree.findall('.//td[@class="tablevalue"]/span/a')
@@ -94,3 +99,4 @@ async def main(name: str, only_r18: bool = False) -> dict[str] | None:
                     return details
         except Exception as exception:
             logger.error(exception)
+

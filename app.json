@@ -1,0 +1,117 @@
+{
+    "name": "Javinfo API",
+    "description": "Backend for Javinfo CLI, a tool to fetch JAV data from various sites",
+    "keywords": [
+        "api",
+        "jav",
+        "av",
+        "r18",
+        "javlibrary",
+        "fastapi",
+        "javdb",
+        "javdatabase"
+    ],
+    "website": "",
+    "repository": "https://github.com/iamrony777/JavInfo-api",
+    "logo": "https://github.com/iamrony777/JavInfo-api/raw/main/api/html/images/logo.png",
+    "success_url": "/",
+    "env": {
+        "API_USER": {
+            "description": "USERNAME for access to protected endpoints",
+            "value": "",
+            "required": true
+        },
+        "API_PASS": {
+            "description": "PASSWORD for API_USER",
+            "value": "",
+            "required": true
+        },
+        "APP_NAME": {
+            "description": "Same as current app-name",
+            "value": "",
+            "required": false
+        },
+        "CAPTCHA_SOLVER_URL": {
+            "description": "An API to solve JAVDB captchas during login",
+            "value": "https://captcha-solver-api2.herokuapp.com/javdb",
+            "required": false
+        },
+        "JAVDB_EMAIL": {
+            "description": "Requried for auto-login into JAVDB, usable if only CAPTCHA_SOLVER_URL is set",
+            "value": "",
+            "required": false
+        },
+        "JAVDB_PASSWORD": {
+            "description": "Requried for auto-login into JAVDB, usable if only CAPTCHA_SOLVER_URL is set",
+            "value": "",
+            "required": false
+        },
+        "REMEMBER_ME_TOKEN": {
+            "description": "If not using auto-login for JAVDB, manually paste cookies",
+            "value": "",
+            "required": false
+        },
+        "JDB_SESSION": {
+            "description": "If not using auto-login for JAVDB, manually paste cookies",
+            "value": "",
+            "required": false
+        },
+        "HEALTHCHECK_PROVIDER": {
+            "description": "Self Ping (self) / Healthchecks.io (healthchecksio) / Uptimekuma (uptimekuma)",
+            "value": "",
+            "required": false
+        },
+        "BASE_URL": {
+            "description": "For Self ping (self) , or just visit homepage of app",
+            "value": "",
+            "required": false
+        },
+        "UPTIMEKUMA_PUSH_URL": {
+            "description": "Uptimekuma (uptimekuma)",
+            "value": "",
+            "required": false
+        },
+        "HEALTHCHECKSIO_PING_URL": {
+            "description": "For Healthchecks.io (healthchecksio)",
+            "value": "",
+            "required": false
+        },
+        "LOG_REQUEST": {
+            "description": "Log every request made to this API instance",
+            "value": "false",
+            "required": false
+        },
+        "TIMEZONE": {
+            "description": "TIMEZONE",
+            "value": "UTC",
+            "required": false
+        },
+        "CREATE_REDIS": {
+            "description": "Whether to use an inbuilt redis server [Not a good idea to create one in Heroku]",
+            "value": "false",
+            "required": false
+        },
+        "INACTIVITY_TIMEOUT": {
+            "description": "Auto reloads / restarts after N seconds",
+            "value": "60",
+            "required": true
+        },
+        "PLATFORM": {
+            "value": "heroku",
+            "required": true
+        }
+    },
+    "formation": {
+        "web": {
+            "quantity": 1,
+            "size": "free"
+        }
+    },
+    "stack": "container",
+    "addons": [
+        {
+            "plan": "upstash-redis:free",
+            "as": "REDIS"
+        }
+    ]
+}

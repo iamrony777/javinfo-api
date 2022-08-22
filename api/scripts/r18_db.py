@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Scraps all Actress's name and profile photo from r18's actress section and saves them into database"""
 import asyncio
 import json
@@ -8,37 +9,16 @@ from datetime import datetime
 
 import httpx
 import uvloop
-from loguru import logger
 from lxml import html
-from redis import asyncio as aioredis
+from redis.asyncio import Redis
 
-CONF = {
-    "background": [
-        dict(
-            sink=sys.stdout,
-            format="<b>*</b> <lvl>{message}</lvl> <b>*</b>",
-            enqueue=True,
-            colorize=True,
-            level=20,
-        )
-    ],
-    "cronjob": [
-        dict(
-            sink=sys.stdout,
-            format="<lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
-            enqueue=True,
-            colorize=True,
-            level=20,
-        ),
-    ]
-}
-logger.configure(handlers=CONF[
-    os.getenv('HANDLER', 'cronjob')
-])
+from api import logger
+
 ACTRESS_DICTIONARY = {}
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 start_time = time.perf_counter()
+
 
 async def get_total_pages(client: httpx.AsyncClient) -> int:
     """Get the number of total pages."""
@@ -59,7 +39,7 @@ async def parse_page_content(tree: html.HtmlElement) -> None:
                 lambda char: char.isspace() or char.isalpha(), str(result.get("alt"))
             )
         )
-        ACTRESS_DICTIONARY[name.strip()] = result.get("src")
+        ACTRESS_DICTIONARY["actress/" + name.strip()] = result.get("src")
 
 
 async def parse_snippet(client: httpx.AsyncClient, start: int, end: int) -> None:
@@ -98,14 +78,13 @@ async def main() -> None:
         if start != end:
             await parse_snippet(client, start, end)
 
-    async with aioredis.from_url(
-        os.getenv("REDIS_URL"), db=0, decode_responses=True
+    async with Redis.from_url(
+        os.getenv("REDIS_URL"),
+        decode_responses=True,
     ) as redis:
         await redis.mset(ACTRESS_DICTIONARY)
 
-    async with aioredis.from_url(
-        os.getenv("REDIS_URL"), db=1, decode_responses=True
-    ) as redis:
+    async with Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True) as redis:
         end_time = time.perf_counter()
         log = json.dumps(
             {
@@ -116,8 +95,10 @@ async def main() -> None:
             }
         )
 
-        await redis.rpush("log:r18_db", log)
-        logger.success("[R18_DB] Database Updated")
+        await redis.rpush("log/r18_db", log)
+        logger.success(
+            f"[R18_DB] Database Updated, Actress Count: {len(ACTRESS_DICTIONARY)}"
+        )
         sys.exit(0)
 
 

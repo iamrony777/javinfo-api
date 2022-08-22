@@ -16,7 +16,7 @@ FILE_TO_CHECK = "timeout"
 async def set_timeout(timeout_scheduler: AsyncIOScheduler) -> None:
     """Set inactivity timeout for (master) worker."""
     async with aioredis.Redis.from_url(
-        os.getenv("REDIS_URL"), decode_responses=True, db=3
+        os.getenv("REDIS_URL"), decode_responses=True
     ) as redis:
         await redis.set("active", "true", ex=TIMEOUT)
     await manager(timeout_scheduler)
@@ -47,7 +47,7 @@ async def manager(timeout_scheduler: AsyncIOScheduler) -> None:
 async def check_timeout(timeout_scheduler: AsyncIOScheduler) -> None:
     """Check if worker is still active."""
     async with aioredis.Redis.from_url(
-        os.getenv("REDIS_URL"), decode_responses=True, db=3
+        os.getenv("REDIS_URL"), decode_responses=True
     ) as redis:
         if await redis.get("active") != "true":
             timeout_scheduler.remove_job("check_timeout")

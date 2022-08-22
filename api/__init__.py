@@ -3,6 +3,7 @@
 import asyncio
 import gc
 import json
+import os
 import sys
 from enum import Enum
 
@@ -14,8 +15,7 @@ from redis import asyncio as aioredis
 import api.resources.javdatabase as jdtb
 import api.resources.javdb as jdb
 import api.resources.javlibrary as jlb
-from api.helper.redis_log import logger as request_logger
-from api.helper.redis_log import manage
+from api.helper.redis_log import redis_logger
 from api.helper.string_modify import filter_string
 from api.helper.timeout import FILE_TO_CHECK
 from api.helper.timeout import set_timeout as timeout
@@ -37,7 +37,8 @@ class Tags(Enum):
     """Set tags for each endpoint."""
 
     DEMO = "demo"
-    DOCS = "secured endpoints"
+    API = "secured endpoints"
+    STATS = "info / statictics"
 
 
 # Search function
@@ -67,14 +68,14 @@ async def get_results(name: str, provider: str, only_r18: bool):
 LOGGER_CONFIG = {
     "handlers": [
         dict(
-            format="{time:%Y-%m-%d at %H:%M:%S} [{level}] {file.name} -> {function}#{line} | {message} ",
+            format="{time:%Y-%m-%d at %H:%M:%S} [{level}] {file.name}:{function}#{line} | {message} ",
             sink="javinfo.log",
             enqueue=True,
-            level=20,
+            level=5,
         ),
         dict(
             sink=sys.stdout,
-            format="<lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
+            format="<green>{time:%Y-%m-%d %H:%M:%S}</green> | <level>{level: <8}</level> | <cyan>{file}</cyan>.<blue>{function}</blue>:<cyan>{line}</cyan> - <level>{message}</level>",
             enqueue=True,
             colorize=True,
             level=20,
@@ -83,5 +84,15 @@ LOGGER_CONFIG = {
 }
 logger.configure(**LOGGER_CONFIG)
 
-with open("/app/docs/version", "r", encoding="UTF-8") as ver:
-    version: str = json.loads(ver.read())["message"]
+try:
+    with open("docs/version", "r", encoding="UTF-8") as ver:
+        version: str = json.loads(ver.read())["message"]
+
+except FileNotFoundError:
+    with open("/app/docs/version", "r", encoding="UTF-8") as ver:
+        version: str = json.loads(ver.read())["message"]
+
+
+if os.getenv("PLATFORM") == 'heroku' and os.getenv("APP_NAME") is not None:
+    os.environ["BASE_URL"] = f"https://{os.getenv('APP_NAME')}.herokuapp.com"
+

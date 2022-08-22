@@ -46,12 +46,18 @@ def filter_string(name):
         r"-$",
     ]
 
-    for pattern in patterns:
-        name = re.sub(pattern, "", name)
+    try:
+        # Removes any occureneces created by those patterns
+        for pattern in patterns:
+            name = re.sub(pattern, "", name)
 
-    name = list(name)
-    for char in name:
-        if not char.isalpha() and not char.isdigit() and char != "-":
-            name.remove(char)
+        # idk what this do
+        name = list(name)
+        for char in name:
+            if not char.isalpha() and not char.isdigit() and char != "-":
+                name.remove(char)
 
-    return "".join(name)
+        pattern = r"[a-zA-Z]{1,5}-\d{3,6}(|\-[a-zA-z])"  # JAV code should be like this
+        return (re.match(pattern, "".join(name)).group())
+    except AttributeError:
+        return None

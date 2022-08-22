@@ -1,7 +1,7 @@
 """Main srcaper - R18"""
 import re
 
-from . import AsyncClient, actress_search, html, logger
+from api.resources import AsyncClient, actress_search, html, logger
 
 
 async def fetch(name: str, url: str, client: AsyncClient) -> str | None:
@@ -44,13 +44,13 @@ async def movie_data(
         if temp_actresses is not None:
             for actresses in temp_actresses:
                 if bool(re.search(r"\(", actresses["name"])):
-                    name = str(actresses["name"].replace(" (", ", "))
-                    name = name.replace(")", "")
-                    for name in name.split(", "):
+                    for name in str(actresses["name"].replace(" (", ", ")).replace(")", "").split(", "):
                         actress_list.append(name)
                 actress_list.append(actresses["name"].strip())
 
             base_details["actress"] = await actress_search(actress_list, only_r18)
+        else:
+            base_details["actress"] = [] # Add empty list for avoiding keyError
 
         temp_screenshots = response.get("gallery")
         if temp_screenshots is not None:
@@ -60,8 +60,15 @@ async def movie_data(
                 if screenshot.get(list(screenshot.keys())[0]) is not None
             ]
             base_details["screenshots"] = screenshots
+        else:
+            base_details["screenshots"] = [] # Add empty list for avoiding keyError
+
+        base_details["tags"] = [
+            category["name"] for category in response["categories"]
+        ]
 
         return base_details
+
 
 @logger.catch
 async def main(name: str, only_r18: bool = False) -> dict[str]:
@@ -76,7 +83,3 @@ async def main(name: str, only_r18: bool = False) -> dict[str]:
             return await movie_data(client, contentname, only_r18)
 
 
-if __name__ == "__main__":
-    import asyncio
-
-    print(asyncio.run(main("EBOD-391")))

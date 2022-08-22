@@ -25,7 +25,17 @@ dist/
 .env
 .vscode
 var*
+*.log
+
+# Poetry
+pyproject.toml
+poetry.lock
 
 # Dev
 test*
 old_*
+site
+*.sql
+
+# changelog
+CHANGELOG.md

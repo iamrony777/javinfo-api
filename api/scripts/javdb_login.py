@@ -10,10 +10,11 @@ from shutil import rmtree
 
 import httpx
 import uvloop
-from loguru import logger
 from lxml import html
 from PIL import Image, UnidentifiedImageError
 from redis import asyncio as aioredis
+
+from api import logger
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 start_time = time.perf_counter()
@@ -22,29 +23,6 @@ start_time = time.perf_counter()
 EMAIL = os.getenv("JAVDB_EMAIL")
 PASSWORD = os.getenv("JAVDB_PASSWORD")
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
-CONF = {
-    "background": [
-        dict(
-            sink=sys.stdout,
-            format="<b>*</b> <lvl>{message}</lvl> <b>*</b>",
-            enqueue=True,
-            colorize=True,
-            level=20,
-        )
-    ],
-    "cronjob": [
-        dict(
-            sink=sys.stdout,
-            format="<lvl>{level}</lvl>: <y>{module}</y>.<c>{function}#{line}</c> | <lvl>{message}</lvl>",
-            enqueue=True,
-            colorize=True,
-            level=20,
-        ),
-    ]
-}
-logger.configure(handlers=CONF[
-    os.getenv('HANDLER', 'cronjob')
-])
 
 async def token(client: httpx.AsyncClient):
     """Get session token (csrf-token)."""
@@ -112,14 +90,14 @@ async def login(root_path, client: httpx.AsyncClient):
             logger.info(f"[JAVDB_LOGIN] Username: {profile_id}")
             cookies = dict(client.cookies)
             async with aioredis.Redis.from_url(
-                os.getenv("REDIS_URL"), decode_responses=True, db=2
+                os.getenv("REDIS_URL"), decode_responses=True
             ) as redis:
                 for key, value in cookies.items():
                     if key in ["remember_me_token", "_jdb_session"]:
-                        await redis.set(key, value)
+                        await redis.set("cookie/" + key, value)
                 return True
         except Exception as exception:
-            print(exception)
+            logger.error(exception)
             return False
     else:
         return 403
@@ -146,7 +124,7 @@ async def main(root_path: str):
                         break
                     if response:
                         async with aioredis.from_url(
-                            os.getenv("REDIS_URL"), db=1, decode_responses=True
+                            os.getenv("REDIS_URL"), decode_responses=True
                         ) as redis:
                             end_time = time.perf_counter()
                             log = json.dumps(

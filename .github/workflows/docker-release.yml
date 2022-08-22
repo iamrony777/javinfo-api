@@ -1,6 +1,9 @@
 name: release
 
-on: push
+on:
+  push:
+    branches:
+      - "main"
 
 jobs:
   qemu:
@@ -26,6 +29,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64
+          platforms: linux/amd64, linux/arm/v8
           push: true
           tags: iamrony777/javinfo-api:railway-latest
+          build-args: |
+            PLATFORM=vps

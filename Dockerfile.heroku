@@ -2,32 +2,30 @@
 FROM python:alpine
 WORKDIR /app
 COPY ./ /app/
-
-ARG PORT \
-    API_USER \
-    API_PASS \
-    CAPTCHA_SOLVER_URL \
-    JAVDB_EMAIL \
-    JAVDB_PASSWORD \
-    CREATE_REDIS="false" \
+    
+ENV API_USER="" \
+    API_PASS="" \
+    CAPTCHA_SOLVER_URL="" \
+    JAVDB_EMAIL="" \
+    JAVDB_PASSWORD="" \
     LOG_REQUEST="false" \
-    REMEMBER_ME_TOKEN \
-    JDB_SESSION \
+    REMEMBER_ME_TOKEN="" \
+    JDB_SESSION="" \
     TIMEZONE="UTC" \
-    IPINFO_TOKEN \
-    INACTIVITY_TIMEOUT \
-    REDIS_URL \
-    RAILWAY_STATIC_URL \
+    IPINFO_TOKEN="" \
+    INACTIVITY_TIMEOUT="" \
+    CREATE_REDIS="false" \
+    REDIS_URL="" \
+    RAILWAY_STATIC_URL="" \
     HEALTHCHECK_PROVIDER="None" \
-    UPTIMEKUMA_PUSH_URL \
-    HEALTHCHECKSIO_PING_URL \
-    PLATFORM
+    UPTIMEKUMA_PUSH_URL="" \
+    HEALTHCHECKSIO_PING_URL=""
 
-ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates alpine-conf bash"
-
-ENV BASE_URL="${RAILWAY_STATIC_URL:-}" \
+ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates alpine-conf bash" \
     PYTHONPATH="." \
     OVERMIND_NO_PORT=1
+    
+ARG PLATFORM
 
 # Ref. https://github.com/iamrony777/JavInfo-api/tree/build
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
