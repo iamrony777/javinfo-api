@@ -1,5 +1,4 @@
 """Main srcaper - Javlibrary"""
-import asyncio
 import re
 from typing import Optional
 
@@ -142,10 +141,3 @@ async def main(name: str, only_r18: bool = False) -> dict[str] | None:
                 await get_page_content(client, url=result.replace(".", "")), name
             )
             return await parse_details(result, only_r18)
-
-
-if __name__ == "__main__":
-    from json import dumps
-
-    print(dumps(asyncio.run(main("EBOD-391")), indent=4))
-

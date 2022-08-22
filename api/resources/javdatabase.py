@@ -100,9 +100,3 @@ async def main(name: str, only_r18: bool = False) -> dict[str] | None:
         except Exception as exception:
             logger.error(exception)
 
-
-if __name__ == "__main__":
-    from json import dumps
-    from asyncio import run
-
-    print(dumps(run(main("EBOD-391")), indent=4))

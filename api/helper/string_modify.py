@@ -61,6 +61,3 @@ def filter_string(name):
         return (re.match(pattern, "".join(name)).group())
     except AttributeError:
         return None
-
-if __name__ == '__main__':     
-    print(filter_string('VDD-011-C Kisaki Ema, Haruki Kato JAV CENSORED'))

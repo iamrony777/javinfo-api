@@ -29,12 +29,13 @@ ENV BASE_URL="${RAILWAY_STATIC_URL:-}" \
     PYTHONPATH="." \
     OVERMIND_NO_PORT=1
 
+# Ref. https://github.com/iamrony777/JavInfo-api/tree/build
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
     
 RUN apk add --no-cache $RUNTIME_DEPS && \
     chmod +x install.sh && bash /app/install.sh && \
     pip install --no-cache-dir -U pip setuptools wheel && \
-    pip install --no-cache-dir --no-index --find-links=/app/wheels -r conf/requirements.txt
+    pip install --no-cache-dir /app/wheels/*
 
 # MKDocs Static Site Generator
 RUN mkdocs build -f /app/conf/mkdocs.yml && \

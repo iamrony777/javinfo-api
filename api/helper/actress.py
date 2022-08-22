@@ -214,7 +214,4 @@ async def actress_search(actress_list: list[str], only_r18: bool = False) -> lis
                 ):
                     actress_details.append(result)
         return actress_details
-
-
-if __name__ == "__main__":
-    print(asyncio.run(r18_database("Ema Kisaki")))
+        

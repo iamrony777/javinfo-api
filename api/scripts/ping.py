@@ -45,13 +45,13 @@ async def self_ping():
     """
     Self-Ping , Perfect for PaaS like Heroku
     """
-    if os.getenv("BASE_URL") is None and not os.path.exists("/tmp/hostname"):
+    if os.getenv("BASE_URL") is None and not os.path.exists("/app/hostname"):
         if os.getenv("REDIS_URL") is not None:
             with Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True) as redis:
                 for key in redis.scan_iter(match="user/*", count=10, _type="list"):
                     data = json.loads(redis.lrange(key, 0, redis.llen(key))[0])
                     url: str = data["headers"]["x-forwarded-proto"] + "://" + (data["headers"]["host"])
-                    with open("/tmp/hostname", "w", encoding="utf-8") as output:
+                    with open("/app/hostname", "w", encoding="utf-8") as output:
                         output.write(url)  # "URL/check"
                     break
             async with AsyncClient(base_url=url, timeout=60) as conn:
@@ -80,9 +80,9 @@ async def self_ping():
                     await conn.post("/", json=["LRANGE", user, "0", "0"])
                 ).json()
             result = json.loads(result["result"][0].split("},{")[0]+"}")
-            resp_host, resp_proto =  result["headers"]["host"], result["headers"]["x-forwarded-proto"]
+            resp_host, resp_proto = result["headers"]["host"], result["headers"]["x-forwarded-proto"]
             url = resp_proto + "://" + resp_host
-            with open("/tmp/hostname", "w", encoding="utf-8") as output:
+            with open("/app/hostname", "w", encoding="utf-8") as output:
                 output.write(url)  # "URL/check"
             async with AsyncClient(base_url=url, timeout=60) as conn:
                 status_code = (await conn.head("/check")).status_code
@@ -95,8 +95,8 @@ async def self_ping():
             if status_code != 200:
                 logger.error(f"ERROR {status_code}")
                 sys.exit(status_code)
-    elif os.path.exists("/tmp/hostname"):
-        with open("/tmp/hostname", encoding="utf-8") as data:
+    elif os.path.exists("/app/hostname"):
+        with open("/app/hostname", encoding="utf-8") as data:
             url = data.read()
         async with AsyncClient(base_url=url) as conn:
             status_code = (await conn.head("/check")).status_code

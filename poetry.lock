@@ -190,7 +190,6 @@ redis = "*"
 [package.source]
 type = "url"
 url = "https://github.com/long2ice/fastapi-limiter/archive/1b8265946caa5001cfffe4a636c358029e2c316d.zip"
-
 [[package]]
 name = "ghp-import"
 version = "2.1.0"
@@ -410,7 +409,7 @@ i18n = ["babel (>=2.9.0)"]
 
 [[package]]
 name = "mkdocs-material"
-version = "8.4.0"
+version = "8.4.1"
 description = "Documentation that simply works"
 category = "main"
 optional = false
@@ -728,7 +727,7 @@ test = ["pytest-mock (>=3.3)", "pytest (>=4.3)"]
 
 [[package]]
 name = "urllib3"
-version = "1.26.11"
+version = "1.26.12"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = false
@@ -736,7 +735,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, 
 
 [package.extras]
 brotli = ["brotlicffi (>=0.8.0)", "brotli (>=1.0.9)", "brotlipy (>=0.6.0)"]
-secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
+secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "urllib3-secure-extra", "ipaddress"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
@@ -1122,8 +1121,8 @@ mkdocs = [
     {file = "mkdocs-1.3.1.tar.gz", hash = "sha256:a41a2ff25ce3bbacc953f9844ba07d106233cd76c88bac1f59cb1564ac0d87ed"},
 ]
 mkdocs-material = [
-    {file = "mkdocs-material-8.4.0.tar.gz", hash = "sha256:6c0a6e6cda8b43956e0c562374588160af8110584a1444f422b1cfd91930f9c7"},
-    {file = "mkdocs_material-8.4.0-py2.py3-none-any.whl", hash = "sha256:ef6641e1910d4f217873ac376b4594f3157dca3949901b88b4991ba8e5477577"},
+    {file = "mkdocs-material-8.4.1.tar.gz", hash = "sha256:92c70f94b2e1f8a05d9e05eec1c7af9dffc516802d69222329db89503c97b4f3"},
+    {file = "mkdocs_material-8.4.1-py2.py3-none-any.whl", hash = "sha256:319a6254819ce9d864ff79de48c43842fccfdebb43e4e6820eef75216f8cfb0a"},
 ]
 mkdocs-material-extensions = [
     {file = "mkdocs-material-extensions-1.0.3.tar.gz", hash = "sha256:bfd24dfdef7b41c312ede42648f9eb83476ea168ec163b613f9abd12bbfddba2"},
@@ -1358,8 +1357,8 @@ tzlocal = [
     {file = "tzlocal-4.2.tar.gz", hash = "sha256:ee5842fa3a795f023514ac2d801c4a81d1743bbe642e3940143326b3a00addd7"},
 ]
 urllib3 = [
-    {file = "urllib3-1.26.11-py2.py3-none-any.whl", hash = "sha256:c33ccba33c819596124764c23a97d25f32b28433ba0dedeb77d873a38722c9bc"},
-    {file = "urllib3-1.26.11.tar.gz", hash = "sha256:ea6e8fb210b19d950fab93b60c9009226c63a28808bc8386e05301e25883ac0a"},
+    {file = "urllib3-1.26.12-py2.py3-none-any.whl", hash = "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"},
+    {file = "urllib3-1.26.12.tar.gz", hash = "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e"},
 ]
 uvicorn = [
     {file = "uvicorn-0.18.2-py3-none-any.whl", hash = "sha256:c19a057deb1c5bb060946e2e5c262fc01590c6529c0af2c3d9ce941e89bc30e0"},

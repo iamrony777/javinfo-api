@@ -83,8 +83,3 @@ async def main(name: str, only_r18: bool = False) -> dict[str]:
             return await movie_data(client, contentname, only_r18)
 
 
-if __name__ == "__main__":
-    import asyncio
-    from json import dumps
-
-    print(dumps(asyncio.run(main("EBOD-391")), indent=4))

@@ -136,9 +136,3 @@ async def main(name: str) -> dict[str] | None:
             logger.error(exception)
             return None
 
-
-if __name__ == "__main__":
-    from pprint import pprint
-    from asyncio import run
-
-    pprint(run(main("EBOD-391")))
