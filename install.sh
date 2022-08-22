@@ -86,7 +86,7 @@ case ${arch} in
 		pip install honcho==1.1.0
 		sed -i 's/START/honcho start/g' /app/start.sh
 		;;
-esa
+esac
 
 # Removing packages
 apk del wget curl jq
