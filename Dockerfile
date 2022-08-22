@@ -2,7 +2,7 @@
 FROM python:alpine
 WORKDIR /app
 COPY ./ /app/
-ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates"
+
 ARG PORT \
     API_USER \
     API_PASS \
@@ -21,8 +21,13 @@ ARG PORT \
     HEALTHCHECK_PROVIDER="None" \
     UPTIMEKUMA_PUSH_URL \
     HEALTHCHECKSIO_PING_URL \
-    PYTHONPATH="." \
     PLATFORM
+
+ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates"
+
+ENV BASE_URL="${RAILWAY_STATIC_URL:-}" \
+    PYTHONPATH="." \
+    OVERMIND_NO_PORT=1
 
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
 

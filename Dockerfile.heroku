@@ -2,12 +2,8 @@
 FROM python:alpine
 WORKDIR /app
 COPY ./ /app/
-ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates" \
-    PYTHONPATH="." \
-    OVERMIND_NO_PORT=1
     
-ENV PORT="" \
-    API_USER="" \
+ENV API_USER="" \
     API_PASS="" \
     CAPTCHA_SOLVER_URL="" \
     JAVDB_EMAIL="" \
@@ -25,6 +21,10 @@ ENV PORT="" \
     UPTIMEKUMA_PUSH_URL="" \
     HEALTHCHECKSIO_PING_URL=""
 
+ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates" \
+    PYTHONPATH="." \
+    OVERMIND_NO_PORT=1
+    
 ARG PLATFORM
 
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels

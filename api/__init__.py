@@ -93,10 +93,7 @@ except FileNotFoundError:
         version: str = json.loads(ver.read())["message"]
 
 
-if os.getenv("APP_NAME") is not None:
+if os.getenv("PLATFORM") == 'heroku' and os.getenv("APP_NAME") is not None:
     API_BASE_URL = f"https://{os.getenv('APP_NAME')}.herokuapp.com"
 else:
-    API_BASE_URL = os.getenv(
-        "BASE_URL",
-        default=os.getenv("RAILWAY_STATIC_URL"),
-    )
+    API_BASE_URL = os.getenv("BASE_URL")

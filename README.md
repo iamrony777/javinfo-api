@@ -10,11 +10,11 @@
 
 <p align="center">
     <div align="center">
-        <a href="https://javinfo-api.up.railway.app/docs">
-            <img src="https://img.shields.io/badge/READ-THE%20DOCS-darkviolet?style=for-the-badge&logo=read-the-docs">
+        <a href="https://javinfo-api.herokuapp.com">
+            <img src="https://img.shields.io/website?url=https%3A%2F%2Fjavinfo-api-dev.herokuapp.com%2Fcheck&up_color=c47fd5&up_message=Online&down_color=e57474&down_message=Offline&style=for-the-badge&logo=heroku&label=JAVINFO%20API&labelColor=232a2d" alt="Heroku Server">
         </a>
-        <a href="https://javinfo-api.up.railway.app/demo">
-            <img src="https://img.shields.io/website?down_color=red&down_message=API%20IS%20DOWN&label=JAVINFO-API&logo=railway&style=for-the-badge&up_color=darkviolet&up_message=TRY%20DEMO%20%21&url=https://javinfo-api.up.railway.app%2Fcheck">
+        <a href="https://javinfo-api.up.railway.app">
+            <img src="https://img.shields.io/website?url=http%3A%2F%2Fjavinfo-api.up.railway.app%2Fcheck&up_color=c47fd5&up_message=Online&down_color=e57474&down_message=Offline&style=for-the-badge&logo=railway&label=JAVINFO%20API&labelColor=232a2d">
         </a>
     </div>
     <div align="center">
@@ -27,7 +27,4 @@
     <img alt="AlpineLinux" src="https://img.shields.io/badge/Built%20on-Alpine%20Linux-lightblue?style=for-the-badge&logo=AlpineLinux">
     <img alt="Docker Image Size (tag)" src="https://img.shields.io/docker/image-size/iamrony777/javinfo-api/railway-latest?logo=Docker&style=for-the-badge">
     <br>
-    <a href="https://heroku.com/deploy" target="_blank">
-        <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
-    </a>
 </p>

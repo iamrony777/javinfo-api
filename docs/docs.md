@@ -115,6 +115,46 @@ __only_r18__: *bool* `optional`
         --header "Accept: application/json" \
         --user "${API_USER}:${API_PASS}"
     ```   
+---
+### Log requests _(Optional)_
+- Set `LOG_REQUEST='true'` to log incoming request headers, query parameters, time, ip address details (from [ipinfo](https://ipinfo.io))
+- Set `IPINFO_TOKEN` with API token from [ipinfo.io](https://ipinfo.io/account) _(Optional)_
+
+!!! example "LOG Example"
+    ```json
+    {
+        "query": {
+            "id": "EBOD-391"
+        },
+        "method": "POST",
+        "path": "/search",
+        "headers": {
+            "host": "(API_URL)",
+            "accept-encoding": "gzip, deflate",
+            "accept": "*/*",
+            "content-length": "0",
+            "authorization": "(BASIC AUTH)",
+            "user-agent": "HTTPie/3.2.1",
+            "x-forwarded-for": "(IP ADDRESS)",
+            "x-forwarded-proto": "https",
+            "x-envoy-external-address": "(IP ADDRESS)",
+            "x-request-id": "XXX-XXX-XXX-XXX"
+        },
+        "user": {
+            "ip": "(IP ADDRESS)",
+            "hostname": "XXX",
+            "city": "XXX",
+            "region": "XXX",
+            "country": "XXX",
+            "loc": "XXX, XXX",
+            "org": "XXX",
+            "postal": "XXX",
+            "timezone": "XXX/XXX"
+        },
+        "time": "2022-05-28 03:08:58"
+    }
+    ```
+
 
 ----
 ## Response Examples
