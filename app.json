@@ -47,11 +47,13 @@
             "required": false
         },
         "REMEMBER_ME_TOKEN": {
-            "description": "If not using auto-login for JAVDB, manually paste cookies","value": "",
+            "description": "If not using auto-login for JAVDB, manually paste cookies",
+            "value": "",
             "required": false
         },
         "JDB_SESSION": {
-            "description": "If not using auto-login for JAVDB, manually paste cookies","value": "",
+            "description": "If not using auto-login for JAVDB, manually paste cookies",
+            "value": "",
             "required": false
         },
         "LOG_REQUEST": {
@@ -72,6 +74,12 @@
         "PLATFORM": {
             "value": "heroku",
             "required": true
+        }
+    },
+    "formation": {
+        "web": {
+            "quantity": 1,
+            "size": "free"
         }
     },
     "stack": "container",
