@@ -84,9 +84,9 @@ case ${arch} in
 	*)
 	    echo -e "$INFO Installing Honcho for ${arch}"
 		pip install honcho==1.1.0
-		sed -i 's/START/'"honcho start"'/g' /app/start.sh
+		sed -i 's/START/honcho start/g' /app/start.sh
 		;;
-esac
+esa
 
 # Removing packages
 apk del wget curl jq
