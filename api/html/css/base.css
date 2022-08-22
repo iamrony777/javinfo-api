@@ -25,7 +25,7 @@ h1 {
 .background {
     width: 100%;
     height: 100%;
-    background-image: url(../images/s_background.gif);
+    background-image: url(https://cdn.jsdelivr.net/gh/iamrony777/JavInfo-api@main/api/html/images/s_background.gif);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;

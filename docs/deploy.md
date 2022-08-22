@@ -157,7 +157,9 @@
 
     #### __Variable template__ 
 
-    _(just copy-paste and edit variables , railway will automatically remove comments)_
+    _(just copy-paste and edit variables)_
+
+    `API_USER` & `API_PASS` are required to start the server _(..if using upstash-redis addon , otherwise set `REDIS_URL` too)_
     ```bash
     API_USER=""
     API_PASS=""
@@ -175,4 +177,6 @@
     HEALTHCHECK_PROVIDER="None"
     UPTIMEKUMA_PUSH_URL=""
     HEALTHCHECKSIO_PING_URL=""
+    BASE_URL=""
+    APP_NAME
     ```
