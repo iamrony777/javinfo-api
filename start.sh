@@ -1,19 +1,17 @@
 #!/bin/bash
 
-# source "${0%/*}/api/helper/color.bash"
+source "${0%/*}/api/helper/color.bash"
 
 # Save current time since epoch (for scripts)
 # echo  "{\"startup\":$(date +%s)}" > /tmp/startup
-#if [[ -z $]]
-if [[ ${PLATFORM} == 'railway' || 'vps' ]]; then
 
-	if [[ ${CREATE_REDIS} == 'true' ]]; then
+if [ "${PLATFORM}" == "railway" ] || [ "${PLATFORM}" == "vps" ]; then
+	echo -e "$INFO PLATFORM: $PLATFORM"
+	if [[ "${CREATE_REDIS}" == "true" ]]; then
 		export REDIS_URL="redis://default:$(echo "${API_PASS}" | base64)@127.0.0.1:6379"
-	else
-		echo
 	fi
 
-	if [ -n "${HEALTHCHECK_PROVIDER}" ] && [ "${HEALTHCHECK_PROVIDER}" != 'None' ]; then
+	if [ -n "${HEALTHCHECK_PROVIDER}" ] && [ "${HEALTHCHECK_PROVIDER}" != "None" ]; then
 		# Healthcheck at every 15th minute, ref. https://crontab.guru/#*/15_*_*_*_*
 		crontab -l | {
 			cat
@@ -27,7 +25,7 @@ if [[ ${PLATFORM} == 'railway' || 'vps' ]]; then
 		echo "\"0 0 * * *\" \"$(which python3)\" /app/api/scripts/r18_db.py"
 	} | crontab -
 
-	if [ -n "${CAPTCHA_SOLVER_URL}" ] && [ "${CAPTCHA_SOLVER_URL}" != 'None' ]; then
+	if [ -n "${JAVDB_EMAIL}" ] && [ -n "${JAVDB_PASSWORD}" ]; then
 		# Update javdb cookies at 00:00 on Sunday, ref. https://crontab.guru/every-week
 		crontab -l | {
 			cat
@@ -47,7 +45,7 @@ else
 		) &
 	fi
 
-	if [ -n "${CAPTCHA_SOLVER_URL}" ] && [ "${CAPTCHA_SOLVER_URL}" != 'None' ]; then
+	if [ -n "${JAVDB_EMAIL}" ] && [ -n "${JAVDB_PASSWORD}" ]; then
 		(
 			sleep 5
 			/app/api/scripts/cron "0 0 * * 0" "/app/api/scripts/javdb_login.py"
