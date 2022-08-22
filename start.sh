@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "${0%/*}/api/helper/color.bash"
+source "/app/api/helper/color.bash"
 
 # Save current time since epoch (for scripts)
 # echo  "{\"startup\":$(date +%s)}" > /tmp/startup
@@ -38,7 +38,7 @@ else
 		sleep 5
 		/app/api/scripts/cron "0 0 * * *" "/app/api/scripts/r18_db.py"
 	) &
-	if [ -n "${HEALTHCHECK_PROVIDER}" ] && [ "${HEALTHCHECK_PROVIDER}" != 'None' ]; then
+	if [ -n "${HEALTHCHECK_PROVIDER}" ] && [ "${HEALTHCHECK_PROVIDER}" != "None" ]; then
 		(
 			sleep 5
 			/app/api/scripts/cron "*/15 * * * *" "/app/api/scripts/ping.py"
@@ -65,7 +65,7 @@ if (/app/api/scripts/startup); then
 		sleep 10
 		HANDLER="background" "$(which python3)" /app/api/scripts/r18_db.py
 	) &
-	if [[ -n "${CAPTCHA_SOLVER_URL}" ]]; then # JAVDB LOGIN COOKIES
+	if [ -n "${JAVDB_EMAIL}" ] && [ -n "${JAVDB_PASSWORD}" ]; then # JAVDB LOGIN COOKIES
 		(
 			sleep 10
 			HANDLER="background" "$(which python3)" /app/api/scripts/javdb_login.py
