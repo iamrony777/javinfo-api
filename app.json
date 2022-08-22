@@ -71,6 +71,11 @@
             "value": "false",
             "required": false
         },
+	"INACTIVITY_TIMEOUT":{
+	    "description": "Auto reloads / restarts after X seconds",
+	    "value": "60",
+	    "required": true	
+	},	
         "PLATFORM": {
             "value": "heroku",
             "required": true
