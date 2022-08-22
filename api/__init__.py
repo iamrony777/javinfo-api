@@ -37,7 +37,7 @@ class Tags(Enum):
     """Set tags for each endpoint."""
 
     DEMO = "demo"
-    DOCS = "secured endpoints"
+    API = "secured endpoints"
     STATS = "info / statictics"
 
 
