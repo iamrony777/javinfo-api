@@ -62,7 +62,7 @@
             "required": false
         },
         "BASE_URL": {
-            "description": "For Self ping (self) , or just visit homepage of app",
+            "description": "For Self ping (self) , or make a request to the server",
             "value": "",
             "required": false
         },

@@ -89,7 +89,7 @@ async def main() -> None:
         log = json.dumps(
             {
                 "pages": str(total_pages),
-                "total actress": len(ACTRESS_DICTIONARY),
+                "actresses": len(ACTRESS_DICTIONARY),
                 "finished in": f"{end_time - start_time:.2f}s",
                 "time": datetime.now().strftime("%d/%m/%Y - %H:%M:%S%z"),
             }

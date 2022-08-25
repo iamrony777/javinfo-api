@@ -25,6 +25,7 @@ uvloop = "^0.16.0"
 pyclean = "^2.2.0"
 python-dotenv = "^0.20.0"
 black = "^22.6.0"
+rich = "^12.5.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

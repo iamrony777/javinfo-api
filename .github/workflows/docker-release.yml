@@ -31,6 +31,6 @@ jobs:
           context: .
           platforms: linux/amd64, linux/arm/v8
           push: true
-          tags: iamrony777/javinfo-api:railway-latest
+          tags: iamrony777/javinfo-api:latest
           build-args: |
             PLATFORM=vps

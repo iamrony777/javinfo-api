@@ -1,5 +1,5 @@
 """Redirects"""
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
 
 temp = APIRouter(include_in_schema=False)
@@ -18,12 +18,17 @@ async def redirect_to_demo():
 
 
 @temp.post("/public")
-async def redirect_to_public():
+async def redirect_to_public(request: Request):
     """/public -> /api/public"""
-    return RedirectResponse("/api/public")
-
+    return RedirectResponse(
+        "/api/public" + "?" + str(request.query_params),
+        headers=request.headers
+    )
 
 @temp.post("/search")
-async def redirect_to_search():
+async def redirect_to_search(request: Request):
     """/search -> /api/search"""
-    return RedirectResponse("/api/search")
+    return RedirectResponse(
+        "/api/search" + "?" + str(request.query_params),
+        headers=request.headers
+    )

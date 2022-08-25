@@ -135,7 +135,7 @@ async def main(root_path: str):
                                     ),
                                 }
                             )
-                            await redis.rpush("log:javdb_login", log)
+                            await redis.rpush("log/javdb_login", log)
                         rmtree(f"{root_path}/uploads")
                         sys.exit(0)
                     logger.warning("[JAVDB_LOGIN] Login Failed, retrying in 10 seconds")

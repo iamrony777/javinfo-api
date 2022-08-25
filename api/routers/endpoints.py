@@ -5,14 +5,32 @@ import re
 import secrets
 import time
 
-from fastapi import (BackgroundTasks, Depends, FastAPI, HTTPException, Request,Response, status)
+from fastapi import (
+    BackgroundTasks,
+    Depends,
+    FastAPI,
+    HTTPException,
+    Request,
+    Response,
+    status,
+)
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi_limiter.depends import RateLimiter
 from httpx import AsyncClient
 
-from api import (Tags, aioredis, async_scheduler, filter_string, get_results, logger, redis_logger, timeout, version)
+from api import (
+    Tags,
+    aioredis,
+    async_scheduler,
+    filter_string,
+    get_results,
+    logger,
+    redis_logger,
+    timeout,
+    version,
+)
 
 # SwaggerUI Demo @ /api/demo
 endpoint = FastAPI(root_path="/api", docs_url="/demo")
@@ -26,6 +44,7 @@ endpoint.mount(
     StaticFiles(directory="site", html=True),
     name="Documentation",
 )
+
 
 @logger.catch
 def check_access(credentials: HTTPBasicCredentials = Depends(security)):
@@ -89,6 +108,7 @@ async def demo_search(
                 "error": f"{name} Not Found",
                 "message": f"Possible Movie ID: {filtered_name}",
             },
+            background=background_tasks
         )
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
@@ -96,6 +116,7 @@ async def demo_search(
             "error": f"{name} Not Found",
             "message": "No Movie is found from input string",
         },
+        background=background_tasks
     )
 
 
@@ -107,7 +128,6 @@ async def logs(
     hasaccess: bool = Depends(check_access),
 ):
     """Get a copy of current database (.rdb file) if using non-plugin redis server."""
-    background_tasks.add_task(redis_logger, request)
     async with aioredis.Redis.from_url(
         os.environ["REDIS_URL"], decode_responses=True
     ) as redis:
@@ -118,6 +138,7 @@ async def logs(
                 "/app/database.rdb",
                 media_type="application/octet-stream",
                 filename="database.rdb",
+                background=background_tasks.add_task(redis_logger, request),
             )
 
 
@@ -129,11 +150,11 @@ async def get_logs(
     hasaccess: bool = Depends(check_access),
 ):
     """An endpoint to download saved logs"""
-    background_tasks.add_task(redis_logger, request)
     return FileResponse(
         "/app/javinfo.log",
         media_type="text/plain",
         filename=f"javinfo_{round(time.time())}.log",
+        background=background_tasks.add_task(redis_logger, request),
     )
 
 
@@ -148,9 +169,9 @@ async def search(
     hasaccess: bool = Depends(check_access),
 ):
     """Protected search endpoint."""
-    background_tasks.add_task(redis_logger, request)
-    background_tasks.add_task(timeout, async_scheduler)
     filtered_name = filter_string(name)
+    background_tasks.add_task(timeout, async_scheduler)
+    background_tasks.add_task(redis_logger, request)
     if filtered_name is not None:
         result = await get_results(
             name=filtered_name.upper(), provider=provider, only_r18=only_r18
@@ -163,6 +184,7 @@ async def search(
                 "error": f"{name} Not Found",
                 "message": f"Possible Movie ID: {filtered_name}",
             },
+            background=background_tasks,
         )
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
@@ -170,42 +192,47 @@ async def search(
             "error": f"{name} Not Found",
             "message": "No Movie is found from input string",
         },
+        background=background_tasks,
     )
-
 
 @endpoint.get("/total_users", tags=[Tags.STATS])
 @logger.catch
-async def get_total_users(request: Request, background_tasks: BackgroundTasks) -> str:
+async def get_total_users() -> str:
     """Get number of total users from redis database log"""
 
-    async with aioredis.Redis.from_url(
-        os.getenv("REDIS_URL"), decode_responses=True
-    ) as redis:
-        users = len((await redis.scan(0, "user/*", 10000))[1])
-        if users > 10000:
-            users = "10K+"
-        else:
-            users = str(users)
+    data = {
+        "label": "Total Users",
+        "labelColor": "232a2d",
+        "message": "0",
+        "color": "67b0e8",
+        "style": "for-the-badge",
+    }
+
+    try:
+        async with aioredis.Redis.from_url(
+            os.getenv("REDIS_URL"), decode_responses=True
+        ) as redis:
+            users = len((await redis.scan(0, "user/*", 10000))[1])
+            if users > 10000:
+                data["message"] = "10K+"
+            else:
+                data["message"] = str(users)
+    except Exception as exception:
+        logger.error(exception)
 
     with open("api/html/images/users.png", "rb") as users_png:
         users_base64 = base64.b64encode(users_png.read()).decode("utf-8")
+        data["logo"] = f"data:image/png;base64,{users_base64}"
         async with AsyncClient(timeout=10) as client:
             return Response(
                 content=(
                     await client.get(
                         "https://img.shields.io/static/v1",
-                        params={
-                            "label": "Total Users",
-                            "labelColor": "232a2d",
-                            "message": users,
-                            "logo": f"data:image/png;base64,{users_base64}",
-                            "color": "67b0e8",
-                            "style": "for-the-badge",
-                        },
+                        params=data,
                     )
                 ).text,
-                media_type="image/svg+xml;charset=utf-8",
-                background=background_tasks.add_task(redis_logger, request),
+                media_type="image/svg+xml;charset=utf-8"
+                # background=background_tasks.add_task(redis_logger, request),
             )
 
 
