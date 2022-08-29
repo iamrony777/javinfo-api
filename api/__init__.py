@@ -16,7 +16,7 @@ import api.resources.javdatabase as jdtb
 import api.resources.javdb as jdb
 import api.resources.javlibrary as jlb
 from api.helper.redis_log import redis_logger
-from api.helper.string_modify import filter_string
+from api.helper.string_filter import filter_string
 from api.helper.timeout import FILE_TO_CHECK
 from api.helper.timeout import set_timeout as timeout
 from api.resources import r18

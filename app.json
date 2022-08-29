@@ -95,7 +95,7 @@
             "description": "Auto reloads / restarts after N seconds",
             "value": "60",
             "required": true
-        },
+          },
         "PLATFORM": {
             "value": "heroku",
             "required": true

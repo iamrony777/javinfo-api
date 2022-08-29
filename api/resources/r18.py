@@ -3,7 +3,7 @@ import re
 
 from api.resources import AsyncClient, actress_search, html, logger
 
-
+@logger.catch
 async def fetch(name: str, url: str, client: AsyncClient) -> str | None:
     """Get contentname from search result."""
     response = await client.get(url)
@@ -16,6 +16,7 @@ async def fetch(name: str, url: str, client: AsyncClient) -> str | None:
         return None
 
 
+@logger.catch
 async def movie_data(
     client: AsyncClient, content_id: str, only_r18: bool
 ) -> dict[str] | None:
@@ -34,7 +35,7 @@ async def movie_data(
         base_details["page"] = response.get("detail_url")
 
         extra_details["director"] = response.get("director")
-        extra_details["release_data"] = response.get("release_date").split(" ")[0]
+        extra_details["release_date"] = response.get("release_date").split(" ")[0]
         extra_details["runtime"] = response.get("runtime_minutes")
         extra_details["studio"] = response.get("maker").get("name")
 
@@ -46,11 +47,12 @@ async def movie_data(
                 if bool(re.search(r"\(", actresses["name"])):
                     for name in str(actresses["name"].replace(" (", ", ")).replace(")", "").split(", "):
                         actress_list.append(name)
-                actress_list.append(actresses["name"].strip())
+                else:
+                    actress_list.append(actresses["name"].strip())
 
             base_details["actress"] = await actress_search(actress_list, only_r18)
         else:
-            base_details["actress"] = [] # Add empty list for avoiding keyError
+            base_details["actress"] = [] # Add empty list to avoid keyError
 
         temp_screenshots = response.get("gallery")
         if temp_screenshots is not None:
@@ -61,7 +63,7 @@ async def movie_data(
             ]
             base_details["screenshots"] = screenshots
         else:
-            base_details["screenshots"] = [] # Add empty list for avoiding keyError
+            base_details["screenshots"] = [] # Add empty list to avoid keyError
 
         base_details["tags"] = [
             category["name"] for category in response["categories"]
@@ -74,12 +76,10 @@ async def movie_data(
 async def main(name: str, only_r18: bool = False) -> dict[str]:
     """Main Function to manage rest of the fucntion."""
     async with AsyncClient(
-        base_url="https://www.r18.com", follow_redirects=True, timeout=20, http2=True
+        base_url="https://www.r18.com", follow_redirects=True, timeout=30, http2=True
     ) as client:
         contentname = await fetch(
             name=name, url=f"/common/search/searchword={name}", client=client
         )
         if contentname is not None:
             return await movie_data(client, contentname, only_r18)
-
-
