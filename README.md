@@ -23,7 +23,7 @@
         </a>
         <img src="https://img.shields.io/github/license/iamrony777/javinfo-api?style=for-the-badge&labelColor=232a2d&color=8ccf7e">
     <div>
-        <img alt="version" src="https://img.shields.io/endpoint?color=67b0e8&labelColor=232a2d&style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fiamrony777%2FJavInfo-api%2Fdev%2Fdocs%2Fversion">
+        <img alt="version" src="https://img.shields.io/endpoint?color=67b0e8&labelColor=232a2d&style=for-the-badge&url=https%3A%2F%2Fraw.githubusercontent.com%2Fiamrony777%2FJavInfo-api%2Fmain%2Fdocs%2Fversion">
     <br>
     <br>
     <img alt="Docker Image Size (tag)" src="https://img.shields.io/docker/image-size/iamrony777/javinfo-api/latest?logo=Docker&style=for-the-badge&labelColor=232a2d&color=67b0e8&logoColor=67b0e8">
