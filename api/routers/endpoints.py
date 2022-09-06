@@ -46,7 +46,6 @@ endpoint.mount(
 )
 
 
-@logger.catch
 def check_access(credentials: HTTPBasicCredentials = Depends(security)):
     """Check credentials."""
     correct_username = secrets.compare_digest(
