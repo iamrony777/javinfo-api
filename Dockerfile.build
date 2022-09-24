@@ -5,7 +5,7 @@ VOLUME [ "/data" ]
 
 WORKDIR /app
 
-COPY conf/requirements.txt /app/
+COPY pyproject.toml /app/
 
 # Build deps - alpine
 ENV COMMON_DEPS='libffi-dev git ca-certificates linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev openssl-dev' \
@@ -19,7 +19,10 @@ ENV CARGO_NET_GIT_FETCH_WITH_CLI=true \
 
 # Build deps - python
 RUN apk add --no-cache ${COMMON_DEPS} ${PILLOW_DEPS} ${WATCHFILES_DEPS} && \
-    pip install --no-cache-dir -U pip setuptools wheel
+    pip install --no-cache-dir -U pip setuptools wheel poetry && \
+    poetry config virtualenvs.create false && \
+    poetry update --no-ansi --without=dev && \
+    poetry export --output requirements.txt --without-hashes --without=dev
 RUN MAKEFLAGS="-j$(nproc)" SETUPFLAGS="-j$(nproc)" ; pip wheel --wheel-dir=/app/wheels -r requirements.txt
 
 # Production
@@ -32,43 +35,3 @@ WORKDIR /app
 COPY ./ /app/
 
 COPY --from=build /app/wheels /app/wheels
-
-# Common (Required)
-ARG CREATE_REDIS \
-    PLATFORM=container
-
-ENV RUNTIME_DEPS="curl jq tmux ca-certificates bash libjpeg"
-
-# Optional , Platform based
-ARG APP_NAME \
-    RAILWAY_STATIC_URL \
-    RENDER_EXTERNAL_URL
-
-ENV PYTHONPATH=. \
-    PLATFORM=${PLATFORM} \
-    OVERMIND_NO_PORT=1 \
-    PORT=8000 \
-    API_USER=admin \
-    API_PASS=admin \
-    CREATE_REDIS=${CREATE_REDIS:-false} \
-    LOG_REQUEST=${LOG_REQUEST:-false} \
-    TZ=${TZ:-UTC} \
-    INACTIVITY_TIMEOUT=300
-
-RUN apk add --no-cache ${RUNTIME_DEPS} && \
-    chmod +x install.sh && bash /app/install.sh && \
-    pip install --no-cache-dir /app/wheels/* && \
-    rm -rf /app/wheels && \
-    python -m compileall -q .
-
-RUN mkdocs build -f /app/conf/mkdocs.yml && \
-    pip uninstall mkdocs-material -y
-
-EXPOSE ${PORT}
-
-HEALTHCHECK --interval=5m --timeout=30s --start-period=5s --retries=5 \
-    CMD HEALTHCHECK_PROVIDER=local /app/api/scripts/ping.py
-
-SHELL [ "/bin/bash", "-c" ]
-
-CMD ["./start.sh"]
