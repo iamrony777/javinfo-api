@@ -1,8 +1,6 @@
 # Build
 FROM python:alpine AS build
 
-VOLUME [ "/data" ]
-
 WORKDIR /app
 
 COPY pyproject.toml /app/
@@ -21,17 +19,15 @@ ENV CARGO_NET_GIT_FETCH_WITH_CLI=true \
 RUN apk add --no-cache ${COMMON_DEPS} ${PILLOW_DEPS} ${WATCHFILES_DEPS} && \
     pip install --no-cache-dir -U pip setuptools wheel poetry && \
     poetry config virtualenvs.create false && \
-    poetry update --no-ansi --without=dev && \
     poetry export --output requirements.txt --without-hashes --without=dev
+
 RUN MAKEFLAGS="-j$(nproc)" SETUPFLAGS="-j$(nproc)" ; pip wheel --wheel-dir=/app/wheels -r requirements.txt
 
 # Production
 FROM python:alpine AS prod
 
-VOLUME [ "/data" ]
-
 WORKDIR /app
 
 COPY ./ /app/
-
 COPY --from=build /app/wheels /app/wheels
+COPY --from=build /app/requirements.txt /app/requirements.txt
