@@ -36,6 +36,6 @@ jobs:
           file: Dockerfile.build
           cache-from: type=registry,ref=iamrony777/javinfo-api:${{ github.ref_name }}-cache
           cache-to: type=registry,ref=iamrony777/javinfo-api:${{ github.ref_name }}-cache,mode=max
-          platforms: linux/amd64, linux/arm64
+          platforms: linux/amd64, linux/arm64, linux/arm/v8, linux/arm/v7
           push: true
           tags: iamrony777/javinfo-api:build-layer
