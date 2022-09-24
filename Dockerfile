@@ -1,6 +1,6 @@
 FROM python:alpine AS prod
 
-VOLUME [ "/data" ]
+# VOLUME [ "/data" ]
 
 WORKDIR /app
 
