@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "javinfo-api"
-version = "0.1.4"
+version = "0.1.5-beta"
 description = "An API to fetch JAV data from various sites"
 authors = ["iamrony777 <kingrony777@proton.me>"]
 license = "MIT"
@@ -8,23 +8,22 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.10"
 httpx = {extras = ["http2"], version = "^0.23.0"}
-aiofiles = "^0.8.0"
 APScheduler = "^3.9.1"
 deep-translator = "^1.8.3"
-fastapi = "^0.79.0"
+fastapi = "^0.83.0"
 loguru = "^0.6.0"
 lxml = "^4.9.1"
 Pillow = "^9.2.0"
 mkdocs-material = "^8.3.9"
 redis = "^4.3.4"
 uvicorn = {extras = ["standard"], version = "^0.18.2"}
-fastapi-limiter = {url = "https://github.com/long2ice/fastapi-limiter/archive/1b8265946caa5001cfffe4a636c358029e2c316d.zip"}
 uvloop = "^0.16.0"
+slowapi = "^0.1.6"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pyclean = "^2.2.0"
-python-dotenv = "^0.20.0"
-black = "^22.6.0"
+black = "^22.8.0"
+memory-profiler = "^0.60.0"
 rich = "^12.5.1"
 
 [build-system]

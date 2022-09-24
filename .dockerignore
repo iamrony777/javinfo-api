@@ -22,14 +22,9 @@ dist/
 
 # Custom
 .venv
-.env
 .vscode
 var*
 *.log
-
-# Poetry
-pyproject.toml
-poetry.lock
 
 # Dev
 test*
@@ -39,3 +34,5 @@ site
 
 # changelog
 CHANGELOG.md
+
+thunder-tests

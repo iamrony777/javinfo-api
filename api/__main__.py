@@ -6,9 +6,9 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi_limiter import FastAPILimiter
 from redis.asyncio import Redis
-from api import FILE_TO_CHECK, logger
+from api import logger
+from api.helper.timeout import FILE_TO_CHECK
 from api.routers import endpoints, redirects
 
 app = FastAPI(
@@ -36,7 +36,6 @@ async def startup():
         redis = await Redis.from_url(
             os.environ.get("REDIS_URL"), encoding="utf-8", decode_responses=True
         )
-        await FastAPILimiter.init(redis)
         if await redis.ping():
             logger.success("[REDIS] Connection established")
         else:
@@ -47,19 +46,13 @@ async def startup():
         sys.exit(1)
 
 
-@app.head("/check", include_in_schema=False)
-async def check():
-    """(Uptime) Monitor endpoint."""
-    return
-
-
 app.mount("/", StaticFiles(directory="api/html", html=True), name="root")
 
 if __name__ == "__main__":
     uvicorn.run(
-        "main:app",
+        "api.__main__:app",
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 8000)),
+        port=int(os.getenv("PORT", "8000")),
         http="httptools",
         loop="uvloop",
         proxy_headers=True,

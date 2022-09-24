@@ -1,9 +1,9 @@
 """api/routers/endpoints"""
 import base64
 import os
-import re
 import secrets
 import time
+from typing import Optional
 
 from fastapi import (
     BackgroundTasks,
@@ -17,20 +17,22 @@ from fastapi import (
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
-from fastapi_limiter.depends import RateLimiter
 from httpx import AsyncClient
+from redis import asyncio as aioredis
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
-from api import (
-    Tags,
-    aioredis,
-    async_scheduler,
-    filter_string,
-    get_results,
-    logger,
-    redis_logger,
-    timeout,
-    version,
-)
+from api import Tags, async_scheduler, get_results, logger, version
+from api.helper.redis_log import redis_logger
+from api.helper.string_filter import filter_string
+from api.helper.timeout import set_timeout as timeout
+
+# limit requests
+limiter = Limiter(key_func=get_remote_address, storage_uri=os.environ["REDIS_URL"])
+app = FastAPI(docs_url=None, redoc_url=None)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # SwaggerUI Demo @ /api/demo
 endpoint = FastAPI(root_path="/api", docs_url="/demo")
@@ -44,6 +46,25 @@ endpoint.mount(
     StaticFiles(directory="site", html=True),
     name="Documentation",
 )
+
+
+def get_uptime(seconds: int) -> str:
+    result = ""
+    (days, remainder) = divmod(seconds, 86400)
+    days = int(days)
+    if days != 0:
+        result += f"{days}d"
+    (hours, remainder) = divmod(remainder, 3600)
+    hours = int(hours)
+    if hours != 0:
+        result += f"{hours}h"
+    (minutes, seconds) = divmod(remainder, 60)
+    minutes = int(minutes)
+    if minutes != 0:
+        result += f"{minutes}m"
+    seconds = int(seconds)
+    result += f"{seconds}s"
+    return result
 
 
 def check_access(credentials: HTTPBasicCredentials = Depends(security)):
@@ -66,19 +87,19 @@ def check_access(credentials: HTTPBasicCredentials = Depends(security)):
 @logger.catch
 @endpoint.post(
     "/public",
-    dependencies=[Depends(RateLimiter(times=1, seconds=10))],
     summary="Search for a video by DVD ID / Content ID",
     tags=[Tags.DEMO],
 )
+@limiter.limit("1/20 second")
 async def demo_search(
     request: Request,
     background_tasks: BackgroundTasks,
     name: str,
-    provider: str | None = "all",
-    only_r18: bool | None = False,
+    provider: Optional[str] = "all",
+    only_r18: Optional[bool] = False,
 ):
     """
-    ### [Demo] Limited to (1 requests/10 seconds)
+    ### [Demo] Limited to (1 requests/20 seconds)
 
     Search for a Movie by its ID.
 
@@ -100,22 +121,15 @@ async def demo_search(
             name=filtered_name.upper(), provider=provider, only_r18=only_r18
         )
         if result is not None:
-            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={
-                "error": f"{name} Not Found",
-                "message": f"Possible Movie ID: {filtered_name}",
-            },
-            background=background_tasks
-        )
+            return JSONResponse(
+                content=result,
+                status_code=status.HTTP_200_OK,
+                background=background_tasks,
+            )
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
-        content={
-            "error": f"{name} Not Found",
-            "message": "No Movie is found from input string",
-        },
-        background=background_tasks
+        content={"error": f"{name} Not Found"},
+        background=background_tasks,
     )
 
 
@@ -130,15 +144,17 @@ async def logs(
     async with aioredis.Redis.from_url(
         os.environ["REDIS_URL"], decode_responses=True
     ) as redis:
-        if os.environ.get("CREATE_REDIS") == re.search(
-            r"true", os.getenv("CREATE_REDIS"), re.IGNORECASE
-        ) and (await redis.save()):
+        if os.getenv("CREATE_REDIS") == "true" and (await redis.save()):
             return FileResponse(
-                "/app/database.rdb",
+                "/data/database.rdb",
                 media_type="application/octet-stream",
                 filename="database.rdb",
                 background=background_tasks.add_task(redis_logger, request),
             )
+    return Response(
+        status_code=status.HTTP_204_NO_CONTENT,
+        background=background_tasks.add_task(redis_logger, request),
+    )
 
 
 @logger.catch
@@ -163,8 +179,8 @@ async def search(
     request: Request,
     background_tasks: BackgroundTasks,
     name: str,
-    provider: str | None = "all",
-    only_r18: bool | None = False,
+    provider: Optional[str] = "all",
+    only_r18: Optional[bool] = False,
     hasaccess: bool = Depends(check_access),
 ):
     """Protected search endpoint."""
@@ -176,23 +192,17 @@ async def search(
             name=filtered_name.upper(), provider=provider, only_r18=only_r18
         )
         if result is not None:
-            return JSONResponse(status_code=status.HTTP_200_OK, content=result)
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={
-                "error": f"{name} Not Found",
-                "message": f"Possible Movie ID: {filtered_name}",
-            },
-            background=background_tasks,
-        )
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content=result,
+                background=background_tasks,
+            )
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
-        content={
-            "error": f"{name} Not Found",
-            "message": "No Movie is found from input string",
-        },
+        content={"error": f"{name} Not Found"},
         background=background_tasks,
     )
+
 
 @endpoint.get("/total_users", tags=[Tags.STATS])
 @logger.catch
@@ -230,8 +240,7 @@ async def get_total_users() -> str:
                         params=data,
                     )
                 ).text,
-                media_type="image/svg+xml;charset=utf-8"
-                # background=background_tasks.add_task(redis_logger, request),
+                media_type="image/svg+xml;charset=utf-8",
             )
 
 
@@ -255,3 +264,17 @@ async def get_current_version():
             ).text,
             media_type="image/svg+xml;charset=utf-8",
         )
+
+
+@endpoint.api_route(
+    "/check", methods=["GET", "HEAD"], tags=[Tags.STATS], include_in_schema=False
+)
+async def check(response: Response):
+    """(Uptime) Monitor endpoint."""
+    try:
+        with open("/tmp/startup", "r", encoding="utf-8") as __input__:
+            startup = int(__input__.read())
+    except FileNotFoundError:
+        startup = round(os.path.getctime("/proc/1"))
+    response.headers["X-Uptime"] = get_uptime(time.time() - startup)
+    return response.headers["X-Uptime"]

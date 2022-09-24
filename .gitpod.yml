@@ -1,0 +1,8 @@
+image: iamrony777/gitpod-images:python
+tasks:
+  - before: poetry config virtualenvs.in-project true && poetry install && poetry update
+    command: |
+      if [[ -n "$VIRTUAL_ENV" ]]; then echo "$VIRTUAL_ENV"; else poetry shell && exit 0; fi
+      wget -q -O '/home/gitpod/.local/wait-for-it' 'https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh'
+      chmod 755 '/home/gitpod/.local/wait-for-it' && '/home/gitpod/.local/wait-for-it' -t 0 127.0.0.1:23000
+      for exts in /home/gitpod/extensions/*; do gitpod-code --install-extension "$exts"; done && exit 0

@@ -4,7 +4,7 @@ import os
 import time
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from redis import asyncio as aioredis
+from api.helper import aioredis
 from api import logger
 
 

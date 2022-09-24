@@ -1,9 +1,9 @@
-name: release
+name: docker-dev
 
 on:
   push:
     branches:
-      - "main"
+      - "dev"
 
 jobs:
   build:
@@ -29,8 +29,12 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64, linux/arm/v8
+          file: Dockerfile.build
+          platforms: linux/amd64
           push: true
-          tags: iamrony777/javinfo-api:latest
+          tags: iamrony777/javinfo-api:dev
+          cache-from: type=registry,ref=iamrony777/javinfo-api:${{ github.ref_name }}-cache
+          cache-to: type=registry,ref=iamrony777/javinfo-api:${{ github.ref_name }}-cache,mode=max
           build-args: |
-            PLATFORM=vps
+            PLATFORM=container
+            CREATE_REDIS=false

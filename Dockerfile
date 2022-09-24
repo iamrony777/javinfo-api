@@ -1,46 +1,49 @@
-# Release
-FROM python:alpine
+FROM python:alpine AS prod
+
+# VOLUME [ "/data" ]
+
 WORKDIR /app
+
 COPY ./ /app/
 
-ARG PORT \
-    API_USER \
-    API_PASS \
-    CAPTCHA_SOLVER_URL \
-    JAVDB_EMAIL \
-    JAVDB_PASSWORD \
-    CREATE_REDIS="false" \
-    LOG_REQUEST="false" \
-    REMEMBER_ME_TOKEN \
-    JDB_SESSION \
-    TIMEZONE="UTC" \
-    IPINFO_TOKEN \
-    INACTIVITY_TIMEOUT \
-    REDIS_URL \
-    RAILWAY_STATIC_URL \
-    HEALTHCHECK_PROVIDER="None" \
-    UPTIMEKUMA_PUSH_URL \
-    HEALTHCHECKSIO_PING_URL \
-    PLATFORM
-
-ENV RUNTIME_DEPS="wget curl jq tmux ca-certificates alpine-conf bash"
-
-ENV BASE_URL="${RAILWAY_STATIC_URL:-}" \
-    PYTHONPATH="." \
-    OVERMIND_NO_PORT=1
-
-# Ref. https://github.com/iamrony777/JavInfo-api/tree/build
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
-    
-RUN apk add --no-cache $RUNTIME_DEPS && \
-    chmod +x install.sh && bash /app/install.sh && \
-    pip install --no-cache-dir -U pip setuptools wheel && \
-    pip install --no-cache-dir /app/wheels/*
 
-# MKDocs Static Site Generator
+# Common (Required)
+ARG CREATE_REDIS \
+    PLATFORM=container
+
+ENV RUNTIME_DEPS="curl jq tmux ca-certificates bash libjpeg"
+
+# Optional , Platform based
+ARG APP_NAME \
+    RAILWAY_STATIC_URL \
+    RENDER_EXTERNAL_URL
+
+ENV PYTHONPATH=. \
+    PLATFORM=${PLATFORM} \
+    OVERMIND_NO_PORT=1 \
+    PORT=8000 \
+    API_USER=admin \
+    API_PASS=admin \
+    CREATE_REDIS=${CREATE_REDIS:-false} \
+    LOG_REQUEST=${LOG_REQUEST:-false} \
+    TZ=${TZ:-UTC} \
+    INACTIVITY_TIMEOUT=300
+
+RUN apk add --no-cache ${RUNTIME_DEPS} && \
+    chmod +x install.sh && bash /app/install.sh && \
+    pip install --no-cache-dir /app/wheels/* && \
+    rm -rf /app/wheels && \
+    python -m compileall -q .
+
 RUN mkdocs build -f /app/conf/mkdocs.yml && \
     pip uninstall mkdocs-material -y
 
-RUN python -m compileall .
+EXPOSE ${PORT}
 
-CMD ["bash", "start.sh"] 
+HEALTHCHECK --interval=5m --timeout=30s --start-period=5s --retries=5 \
+    CMD HEALTHCHECK_PROVIDER=local /app/api/scripts/ping.py
+
+SHELL [ "/bin/bash", "-c" ]
+
+CMD ["./start.sh"]

@@ -24,7 +24,7 @@ def execute(path: str) -> None:
 @logger.catch()
 def start(*args, **kwargs):
     """start running"""
-    scheduler = BackgroundScheduler()
+    scheduler = BackgroundScheduler(timezone=os.getenv("TZ"))
     scheduler.add_job(*args, **kwargs)
     scheduler.start()
     while True:

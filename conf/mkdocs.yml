@@ -4,8 +4,19 @@ repo_name: "JavInfo API"
 docs_dir: ../docs
 site_dir: ../site
 edit_uri: ""
+nav:
+  - index.md
+  - docs.md
+  - demo.md
+  - Deploy:
+    - deploy/index.md
+    - deploy/heroku.md
+    - deploy/railway.md
+    - deploy/render.md
+    - deploy/docker.md
+
 theme:
-  favicon: "images/favicon.ico"
+  favicon: "assets/images/favicon.ico"
   icon:
     logo: material/api
     repo: fontawesome/brands/github-alt
@@ -26,10 +37,11 @@ theme:
         name: Switch to dark mode
   name: material
   font:
-    text: Noto Sans
-    code: JetBrains Mono
+    text: "Poppins"
+    code: "Fira Code Mono"
   features:
     - content.code.annotate
+    - toc.integrate
 markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
@@ -38,6 +50,8 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.highlight:
       anchor_linenums: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - attr_list
   - tables
   - admonition

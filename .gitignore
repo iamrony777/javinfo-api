@@ -27,10 +27,6 @@ dist/
 var*
 *.log
 
-# Poetry
-pyproject.toml
-poetry.lock
-
 # Dev
 test*
 old_*
@@ -39,3 +35,10 @@ site
 
 # changelog
 CHANGELOG.md
+
+thunder-tests
+
+# Custom
+api/scripts/clear_env
+docker-compose-convert.yml
+docs/assets/images/*.png
