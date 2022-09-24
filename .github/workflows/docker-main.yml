@@ -32,8 +32,8 @@ jobs:
           platforms: linux/amd64, linux/arm/v8, linux/arm/v7, linux/arm64
           push: true
           tags: iamrony777/javinfo-api:latest, iamrony777/javinfo-api:standalone
-          cache-from: type=registry,ref=iamrony777/javinfo-api:cache
-          cache-to: type=registry,ref=iamrony777/javinfo-api:cache,mode=max
+          cache-from: type=registry,ref=iamrony777/javinfo-api:${{ github.GITHUB_REF_NAME }}-cache
+          cache-to: type=registry,ref=iamrony777/javinfo-api:${{ github.GITHUB_REF_NAME }}-cache,mode=max
           build-args: |
             PLATFORM=container
             CREATE_REDIS=true      
@@ -45,8 +45,8 @@ jobs:
           platforms: linux/amd64, linux/arm/v8, linux/arm/v7, linux/arm64
           push: true
           tags: iamrony777/javinfo-api:server
-          cache-from: type=registry,ref=iamrony777/javinfo-api:cache
-          cache-to: type=registry,ref=iamrony777/javinfo-api:cache,mode=max
+          cache-from: type=registry,ref=iamrony777/javinfo-api:${{ github.GITHUB_REF_NAME }}-cache
+          cache-to: type=registry,ref=iamrony777/javinfo-api:${{ github.GITHUB_REF_NAME }}-cache,mode=max
           build-args: |
             PLATFORM=container
             CREATE_REDIS=false
