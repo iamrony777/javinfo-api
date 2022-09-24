@@ -3,10 +3,10 @@ import asyncio
 import os
 import re
 
+from api import logger
+from api.helper import aioredis
 from httpx import AsyncClient
 from lxml import html
-from redis import asyncio as aioredis
-from api import logger
 
 BASE_URL = "https://www.boobpedia.com"
 
@@ -101,7 +101,10 @@ async def parse_actress_details(tree: html.HtmlElement) -> dict[str] | None:
 
 @logger.catch
 async def r18_database(name: str) -> (str | None):
-    """Search from redis-r18 database."""
+    """
+    Search from redis-r18 database.\n
+    Uses REDIS_REST_API from Upstash if available, otherwise REDIS_URL connection
+    """
     if (
         os.getenv("REDIS_REST_URL") is not None
         and os.getenv("REDIS_REST_TOKEN") is not None
@@ -196,6 +199,7 @@ async def actress_search(actress_list: list[str], only_r18: bool = False) -> lis
     async with AsyncClient(
         base_url=BASE_URL, http2=True, follow_redirects=True, timeout=None
     ) as client:
+        # Create search tasks
         for actress_name in actress_list:
             if not only_r18:
                 boobpedia_search_task.append(
@@ -205,7 +209,7 @@ async def actress_search(actress_list: list[str], only_r18: bool = False) -> lis
                 actress_url = await r18_database(actress_name)
                 if actress_url is not None:
                     actress_details.append({"name": actress_name, "image": actress_url})
-
+        # Gather search results
         if not only_r18:
             results = await asyncio.gather(*boobpedia_search_task)
             for result in results:
@@ -214,4 +218,3 @@ async def actress_search(actress_list: list[str], only_r18: bool = False) -> lis
                 ):
                     actress_details.append(result)
         return actress_details
-        

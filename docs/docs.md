@@ -13,7 +13,8 @@
 
 
 ----
-## Query parameters 
+## Query parameters
+
 
 __name__: *str* `required*`
 
@@ -22,14 +23,17 @@ __provider__: *str* `optional`
 __only_r18__: *bool* `optional`
 
 
-- `name` = `EBOD-391` / `ebod00391` / `ebod-391` / `ebod391` ...
+<br>
+> Example
+
+- `name` = `EBOD-391`  / `ebod-391`
 
 - `provider` = `javdb` / `javlibrary` / `javdatabase` / `r18` / `all` (default)
 
 - `only_r18` = `True` / `true` / `False` / `false` (default)
 
 
-=== " using `all` as provider"
+=== " Using `all` as provider"
     By default api will search in every provider and return a non-empty (non `None`) results.
     It takes a little more time (~1.5sec to 1sec extra) than a search query with specific provider
 
@@ -38,37 +42,6 @@ __only_r18__: *bool* `optional`
     - Searching in redis-database is lot faster than searching and scraping a webpage for actress informantion only if there is lot more query to search (ie. many actresses in same movie.)
     - So for faster results / only image url (if found) add `only_r18`=`true` during api calls
     - Otherwise (default) it will search in both of [Boobpedia](https://boobpedia.com) and Redis-database and return a non-empty result
-    
----
-## Variables / Options Descriptions
-> Required
-
-- `PORT` : Starting port, api will listen on this port only (default port `8000`, host `0.0.0.0`, don't set if using *Heroku*)
-- `API_USER` & `API_PASS` : Using basic http auth to protect core endpoints , use unique password (don't use `admin` & `admin`)
-- `CREATE_REDIS` : Check [here](/deploy/#using-without-redis-database-plugin-optional) 
-- `LOG_REQUESTS` : Check [here](#log-requests-optional)
-
-> Optional
-
-- `INACTIVITY_TIMEOUT` (second): By default the Uvicorn worker will restart (mainly to clear ram) after `300` seconds (default) if there is no request. 
-
-- `IPINFO_TOKEN`: For IP logging purposes
-- `REMEMBER_ME_TOKEN` & `JDB_SESSION` : Some cotent on JAVDB requires account to view (scrape),if any result from JAVDB return `null` then maybe you need to fill up this 
-
-      - These are cookie values, login into javdb and copy values from `_jdb_session` & `remember_me_token`. This cookies will expire after 7days if you checked _Keep me logged in for 7days_ during sign in
-  
-- `JAVDB_EMAIL` & `JAVDB_PASSWORD`: For auto-login into JAVDB account, some query on JAVDB required login , captcha is bypassed via another api, check [repo here](https://github.com/iamrony777/captcha-solver-api)
-
-- `CAPTCHA_SOLVER_URL`: `https://captcha-solver-api2.herokuapp.com/javdb` [Repo](https://github.com/iamrony777/captcha-solver-api)
-
-> Healthcheck (Optional)
-
-- `HEALTHCHECK_PROVIDER` : Set `None` / [`uptimekuma`](https://uptime.kuma.pet/) (push method) / [`healthchecksio`](https://healthchecks.io/) / `self` (self ping, needed `BASE_URL` env or visit homepage once it will set `BASE_URL`) .
-
-- `UPTIMEKUMA_PUSH_URL` : Set this url in this format, ___https://uptime-kuma-instance-url/api/push/monitor-slug___ with or without optional parameters and set `HEALTHCHECK_PROVIDER` to `uptimekuma`.
-
-
-- `HEALTHCHECKSIO_PING_URL`: Set url in this format, ___https://healthchecks-io-instance-url/monitor-uuid___ or ___https://healthchecks-io-instance-url/ping-key/monitor-name___ and set `HEALTHCHECK_PROVIDER` to `healthchecksio`
 
 ----
 ## Request Examples
@@ -121,47 +94,7 @@ __only_r18__: *bool* `optional`
     curl -X "POST" "https://$APP_URL/api/search?name=JAV_ID&provider=PROVIDER&only_r18=BOOLEAN" \
         --header "Accept: application/json" \
         --user "${API_USER}:${API_PASS}"
-    ```   
----
-### Log requests _(Optional)_
-- Set `LOG_REQUEST='true'` to log incoming request headers, query parameters, time, ip address details (from [ipinfo](https://ipinfo.io))
-- Set `IPINFO_TOKEN` with API token from [ipinfo.io](https://ipinfo.io/account) _(Optional)_
-
-!!! example "LOG Example"
-    ```json
-    {
-        "query": {
-            "id": "EBOD-391"
-        },
-        "method": "POST",
-        "path": "/search",
-        "headers": {
-            "host": "(API_URL)",
-            "accept-encoding": "gzip, deflate",
-            "accept": "*/*",
-            "content-length": "0",
-            "authorization": "(BASIC AUTH)",
-            "user-agent": "HTTPie/3.2.1",
-            "x-forwarded-for": "(IP ADDRESS)",
-            "x-forwarded-proto": "https",
-            "x-envoy-external-address": "(IP ADDRESS)",
-            "x-request-id": "XXX-XXX-XXX-XXX"
-        },
-        "user": {
-            "ip": "(IP ADDRESS)",
-            "hostname": "XXX",
-            "city": "XXX",
-            "region": "XXX",
-            "country": "XXX",
-            "loc": "XXX, XXX",
-            "org": "XXX",
-            "postal": "XXX",
-            "timezone": "XXX/XXX"
-        },
-        "time": "2022-05-28 03:08:58"
-    }
-    ```
-
+    ```  
 
 ----
 ## Response Examples

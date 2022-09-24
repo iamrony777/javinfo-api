@@ -1,3 +1,28 @@
+# Build
+FROM python:alpine AS build
+
+VOLUME [ "/data" ]
+
+WORKDIR /app
+
+COPY conf/requirements.txt /app/
+
+# Build deps - alpine
+ENV COMMON_DEPS='libffi-dev git ca-certificates linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev openssl-dev' \
+    PILLOW_DEPS='freetype-dev fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev libimagequant-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev' \
+    WATCHFILES_DEPS='rust cargo'
+
+# https://github.com/rust-lang/cargo/issues/10230#issuecomment-1120018227
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true \
+    CARGO_BUILD_RUSTFLAGS="-O"
+
+
+# Build deps - python
+RUN apk add --no-cache ${COMMON_DEPS} ${PILLOW_DEPS} ${WATCHFILES_DEPS} && \
+    pip install --no-cache-dir -U pip setuptools wheel
+RUN MAKEFLAGS="-j$(nproc)" SETUPFLAGS="-j$(nproc)" ; pip wheel --wheel-dir=/app/wheels -r requirements.txt
+
+# Production
 FROM python:alpine AS prod
 
 VOLUME [ "/data" ]
@@ -6,7 +31,7 @@ WORKDIR /app
 
 COPY ./ /app/
 
-COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
+COPY --from=build /app/wheels /app/wheels
 
 # Common (Required)
 ARG CREATE_REDIS \
