@@ -28,6 +28,5 @@ FROM python:alpine AS prod
 
 WORKDIR /app
 
-COPY ./ /app/
 COPY --from=build /app/wheels /app/wheels
 COPY --from=build /app/requirements.txt /app/requirements.txt
