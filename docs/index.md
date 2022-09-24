@@ -1,9 +1,11 @@
 # Introduction
+<!-- 
+JAVINFO-API is a backend for [JAVINFO-CLI](https://github.com/iamrony777/javinfo-cli) _(Coming Soon)_, a JAV scraper + NFO maker. -->
 
-JAVINFO-API is a backend for [JAVINFO-CLI](https://github.com/iamrony777/javinfo-cli) _(Coming Soon)_, a JAV scraper + NFO maker.
 
-<!-- <div class='logo-container'>
-    <img style='height: 100px' src='images/logo.png' alt='logo.png'>
-</div> -->
+(Coming Soon) <a href="https://github.com/iamrony777/javinfo-cli" target="_blank">**Javinfo CLI**</a> is a tool to organize your JAV library, inspired by <a href="https://github.com/jvlflame/Javinizer" target="_blank">**Javinizer**</a>.
 
-> _JAVINFO-CLI will be a replacement for a tool called [Javinizer](https://github.com/jvlflame/Javinizer)_
+**Javinfo API** is the backend for CLI
+
+> CLI will able to run without externally hosted API  (Standalone - docker compose)
+

@@ -29,60 +29,20 @@
         "APP_NAME": {
             "description": "Same as current app-name",
             "value": "",
-            "required": false
+            "required": true
         },
-        "CAPTCHA_SOLVER_URL": {
-            "description": "An API to solve JAVDB captchas during login",
-            "value": "https://captcha-solver-api2.herokuapp.com/javdb",
-            "required": false
-        },
-        "JAVDB_EMAIL": {
-            "description": "Requried for auto-login into JAVDB, usable if only CAPTCHA_SOLVER_URL is set",
+        "REDIS_URL": {
+            "description": "Redis Connection string",
             "value": "",
-            "required": false
-        },
-        "JAVDB_PASSWORD": {
-            "description": "Requried for auto-login into JAVDB, usable if only CAPTCHA_SOLVER_URL is set",
-            "value": "",
-            "required": false
-        },
-        "REMEMBER_ME_TOKEN": {
-            "description": "If not using auto-login for JAVDB, manually paste cookies",
-            "value": "",
-            "required": false
-        },
-        "JDB_SESSION": {
-            "description": "If not using auto-login for JAVDB, manually paste cookies",
-            "value": "",
-            "required": false
-        },
-        "HEALTHCHECK_PROVIDER": {
-            "description": "Self Ping (self) / Healthchecks.io (healthchecksio) / Uptimekuma (uptimekuma)",
-            "value": "",
-            "required": false
-        },
-        "BASE_URL": {
-            "description": "For Self ping (self) , or make a request to the server",
-            "value": "",
-            "required": false
-        },
-        "UPTIMEKUMA_PUSH_URL": {
-            "description": "Uptimekuma (uptimekuma)",
-            "value": "",
-            "required": false
-        },
-        "HEALTHCHECKSIO_PING_URL": {
-            "description": "For Healthchecks.io (healthchecksio)",
-            "value": "",
-            "required": false
+            "required": true
         },
         "LOG_REQUEST": {
             "description": "Log every request made to this API instance",
             "value": "false",
             "required": false
         },
-        "TIMEZONE": {
-            "description": "TIMEZONE",
+        "TZ": {
+            "description": "Set Timezone",
             "value": "UTC",
             "required": false
         },
@@ -107,11 +67,5 @@
             "size": "free"
         }
     },
-    "stack": "container",
-    "addons": [
-        {
-            "plan": "upstash-redis:free",
-            "as": "REDIS"
-        }
-    ]
+    "stack": "container"
 }

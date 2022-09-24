@@ -10,18 +10,11 @@ from enum import Enum
 import uvloop
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loguru import logger
-from redis import asyncio as aioredis
 
-import api.resources.javdatabase as jdtb
-import api.resources.javdb as jdb
-import api.resources.javlibrary as jlb
-from api.helper.redis_log import redis_logger
-from api.helper.string_filter import filter_string
-from api.helper.timeout import FILE_TO_CHECK
-from api.helper.timeout import set_timeout as timeout
-from api.resources import r18
-from api.scripts.javdb_login import main as login
-from api.scripts.r18_db import main as r18_db
+from api.resources.javdatabase import Javdatabase
+from api.resources.javdb import Javdb
+from api.resources.javlibrary import Javlibrary
+from api.resources.r18 import R18
 
 gc.enable()
 
@@ -30,7 +23,9 @@ gc.enable()
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 # APscheduler Config
-async_scheduler = AsyncIOScheduler(job_defaults={"misfire_grace_time": 5 * 60})
+async_scheduler = AsyncIOScheduler(
+    job_defaults={"misfire_grace_time": 5 * 60}, timezone=os.getenv("TZ")
+)
 
 
 class Tags(Enum):
@@ -41,27 +36,32 @@ class Tags(Enum):
     STATS = "info / statictics"
 
 
+r18 = R18()
+javdatabase = Javdatabase()
+javlibrary = Javlibrary()
+javdb = Javdb()
+
 # Search function
-async def get_results(name: str, provider: str, only_r18: bool):
+async def get_results(name: str, provider: str, only_r18: bool) -> dict[str] | None:
     """Search function."""
     if provider == "all":
         tasks = []
-        tasks.append(asyncio.create_task(r18.main(name, only_r18)))
-        tasks.append(asyncio.create_task(jdtb.main(name, only_r18)))
-        tasks.append(asyncio.create_task(jlb.main(name, only_r18)))
-        tasks.append(asyncio.create_task(jdb.main(name)))
+        tasks.append(asyncio.create_task(r18.search(name, only_r18)))
+        tasks.append(asyncio.create_task(javdatabase.search(name, only_r18)))
+        tasks.append(asyncio.create_task(javlibrary.search(name, only_r18)))
+        tasks.append(asyncio.create_task(javdb.search(name)))
         for result in await asyncio.gather(*tasks):
             if result is not None:
                 return result
 
     elif provider == "javlibrary":
-        return await jlb.main(name, only_r18)
+        return await javlibrary.search(name, only_r18)
     elif provider == "javdb":
-        return await jdb.main(name)
+        return await javdb.search(name)
     elif provider == "javdatabase":
-        return await jdtb.main(name, only_r18)
+        return await javdatabase.search(name, only_r18)
     elif provider == "r18":
-        return await r18.main(name, only_r18)
+        return await r18.search(name, only_r18)
 
 
 # Loguru - Logger config
@@ -75,7 +75,7 @@ LOGGER_CONFIG = {
         ),
         dict(
             sink=sys.stdout,
-            format="<green>{time:%Y-%m-%d %H:%M:%S}</green> | <level>{level: <8}</level> | <cyan>{file}</cyan>.<blue>{function}</blue>:<cyan>{line}</cyan> - <level>{message}</level>",
+            format="<level>{level:<6}</level>:  <cyan>{file}</cyan>.<blue>{function}</blue>:<cyan>{line}</cyan> - <level>{message}</level>",
             enqueue=True,
             colorize=True,
             level=20,
@@ -92,7 +92,4 @@ except FileNotFoundError:
     with open("/app/docs/version", "r", encoding="UTF-8") as ver:
         version: str = json.loads(ver.read())["message"]
 
-
-if os.getenv("PLATFORM") == 'heroku' and os.getenv("APP_NAME") is not None:
-    os.environ["BASE_URL"] = f"https://{os.getenv('APP_NAME')}.herokuapp.com"
 

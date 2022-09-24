@@ -4,11 +4,10 @@ import os
 from datetime import datetime
 
 import httpx
-from fastapi import Request
-from redis import asyncio as aioredis
 from api import logger
-
-TOKEN = os.environ.get("IPINFO_TOKEN")
+from api.helper import aioredis
+from fastapi import Request
+from slowapi.util import get_remote_address
 
 
 @logger.catch()
@@ -16,7 +15,7 @@ async def redis_logger(request: Request):
     """Save request data as logs in redis."""
     if os.environ.get("LOG_REQUEST") == "true":
         request_dict = {}
-        user_ip = request.headers.get("X-Forwarded-For")
+        user_ip = get_remote_address(request)
 
         # adding request parameters / query
         request_dict["query"] = dict(request.query_params)
@@ -31,21 +30,16 @@ async def redis_logger(request: Request):
         request_dict["headers"] = dict(request.headers)
 
         # adding IP address details from ipinfo.io
-        if TOKEN is not None and len(TOKEN) > 4:
-            async with httpx.AsyncClient(
-                base_url="https://ipinfo.io",
-                params={"token": TOKEN},
-                headers={"Accept": "application/json"},
-            ) as client:
-                request_dict["user"] = (await client.get(f"/{user_ip}")).json()
-        else:
-            async with httpx.AsyncClient(
-                base_url="https://ipinfo.io", headers={"Accept": "application/json"}
-            ) as client:
-                ip_data = (await client.get(f"/{user_ip}")).json()
-                ip_data.pop("readme")
-            request_dict["user"] = ip_data
-
+        async with httpx.AsyncClient(
+            base_url="https://ipinfo.io",
+            params={"token": os.getenv("IPINFO_TOKEN")},
+            headers={"Accept": "application/json"},
+        ) as client:
+            resp = await client.get(f"/{user_ip}")
+            if resp.status_code == 200:
+                request_dict["user"] = resp.json()
+            else:
+                request_dict["user"] = user_ip
         # current datetime
         request_dict["time"] = f"{datetime.now():%Y-%m-%d %H:%M:%S%z}"
         async with aioredis.Redis.from_url(

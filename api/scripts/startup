@@ -9,10 +9,10 @@ def check_if_first_time() -> int:
     with Redis.from_url(
         os.getenv("REDIS_URL"),
         decode_responses=True,
-        socket_timeout=60.00,
-        socket_connect_timeout=60.00,
+        socket_timeout=10.00,
+        socket_connect_timeout=10.00,
     ) as redis:
-        if redis.get("fresh") in [None, 0]:
+        if redis.get("fresh") is None:
             redis.set("fresh", "1", ex=84000)
             sys.exit(0)
         if int(redis.get("fresh")) == 1:
