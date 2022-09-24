@@ -5,7 +5,7 @@ VOLUME [ "/data" ]
 
 WORKDIR /app
 
-COPY conf/requirements.txt /app/
+COPY pyproject.toml /app/
 
 # Build deps - alpine
 ENV COMMON_DEPS='libffi-dev git ca-certificates linux-headers musl-dev gcc build-base libxml2-dev libxslt-dev openssl-dev' \
@@ -19,7 +19,10 @@ ENV CARGO_NET_GIT_FETCH_WITH_CLI=true \
 
 # Build deps - python
 RUN apk add --no-cache ${COMMON_DEPS} ${PILLOW_DEPS} ${WATCHFILES_DEPS} && \
-    pip install --no-cache-dir -U pip setuptools wheel
+    pip install --no-cache-dir -U pip setuptools wheel poetry && \
+    poetry config virtualenvs.create false && \
+    poetry export --output requirements.txt --without-hashes --without=dev
+
 RUN MAKEFLAGS="-j$(nproc)" SETUPFLAGS="-j$(nproc)" ; pip wheel --wheel-dir=/app/wheels -r requirements.txt
 
 # Production
@@ -32,6 +35,7 @@ WORKDIR /app
 COPY ./ /app/
 
 COPY --from=build /app/wheels /app/wheels
+COPY --from=build /app/requirements.txt /app/requirements.txt
 
 # Common (Required)
 ARG CREATE_REDIS \
