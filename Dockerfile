@@ -9,15 +9,15 @@ COPY ./ /app/
 COPY --from=iamrony777/javinfo-api:build-layer /app/wheels /app/wheels
 
 # Common (Required)
-ARG CREATE_REDIS \
-    PLATFORM=container
-
-ENV RUNTIME_DEPS="curl jq tmux ca-certificates bash libjpeg"
+ARG CREATE_REDIS
+ARG PLATFORM=container
 
 # Optional , Platform based
-ARG APP_NAME \
-    RAILWAY_STATIC_URL \
-    RENDER_EXTERNAL_URL
+ARG APP_NAME
+ARG RAILWAY_STATIC_URL
+ARG RENDER_EXTERNAL_URL
+
+ENV RUNTIME_DEPS="curl jq tmux ca-certificates bash libjpeg" 
 
 ENV PYTHONPATH=. \
     PLATFORM=${PLATFORM} \
