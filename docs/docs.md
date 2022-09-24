@@ -112,7 +112,7 @@ __only_r18__: *bool* `optional`
             "page": "https://www.r18.com/videos/vod/movies/detail/-/id=ebod00391/",
             "details": {
               "director": "Hao * Minami",
-              "release_data": "2014-08-09",
+              "release_date": "2014-08-09",
               "runtime": "119",
               "studio": "E-BODY"
             },
@@ -154,7 +154,7 @@ __only_r18__: *bool* `optional`
             "page": "https://www.r18.com/videos/vod/movies/detail/-/id=ebod00391/",
             "details": {
               "director": "Hao * Minami",
-              "release_data": "2014-08-09",
+              "release_date": "2014-08-09",
               "runtime": "119",
               "studio": "E-BODY"
             },
@@ -192,7 +192,7 @@ __only_r18__: *bool* `optional`
             "page": "https://www.r18.com/videos/vod/movies/detail/-/id=mkck00274/",
             "details": {
               "director": null,
-              "release_data": "2020-12-12",
+              "release_date": "2020-12-12",
               "runtime": "957",
               "studio": "E-BODY"
             },
@@ -1066,7 +1066,7 @@ __only_r18__: *bool* `optional`
           "page": "https://www.r18.com/videos/vod/movies/detail/-/id=mkck00274/",
           "details": {
             "director": null,
-            "release_data": "2020-12-12",
+            "release_date": "2020-12-12",
             "runtime": "957",
             "studio": "E-BODY"
           },
@@ -1601,7 +1601,7 @@ __only_r18__: *bool* `optional`
           "page": "https://www.r18.com/videos/vod/movies/detail/-/id=doa00017/",
           "details": {
             "director": null,
-            "release_data": "2022-02-26",
+            "release_date": "2022-02-26",
             "runtime": "119",
             "studio": "Black Dog/Daydreamers"
           },
