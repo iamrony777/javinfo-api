@@ -123,8 +123,5 @@ esac
 #     fi
 # done
 
-# 
-env
-
 #Placeholder for processmanager
 exec START
