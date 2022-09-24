@@ -54,7 +54,7 @@ class Javdb:
             return None
 
     @logger.catch
-    def _get_tokens(self, key: str) -> (str | None):
+    def _get_tokens(self, key: str) -> str | None:
         """Returns a token from redis."""
         with Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True) as redis:
             return redis.get(key)
@@ -70,7 +70,7 @@ class Javdb:
                 pass
 
     @logger.catch
-    async def _parse_panel_data(self, tree: html.HtmlElement) -> dict[str, str | None]:
+    async def _parse_panel_data(self, tree: html.HtmlElement) -> dict[str] | None:
         """Extract additional data from the panel."""
         details, sorted_details = {}, {}
         data = tree.findall('.//div[@class="panel-block"]')
@@ -142,10 +142,3 @@ class Javdb:
         except Exception as exception:
             logger.error(exception)
             return None
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    from rich import print
-    print(asyncio.run(Javdb().search("FOW-001")))

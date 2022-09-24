@@ -45,6 +45,7 @@ async def startup():
         logger.critical("[REDIS] Connection failed, no REDIS_URL found in env")
         sys.exit(1)
 
+
 app.mount("/", StaticFiles(directory="api/html", html=True), name="root")
 
 if __name__ == "__main__":

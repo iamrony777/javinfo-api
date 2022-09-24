@@ -1,4 +1,3 @@
-"""Just learned to use regex"""
 import re
 
 
@@ -11,7 +10,3 @@ def filter_string(name: str):
         return re.match(pattern, "".join(name)).group()
     except AttributeError:
         return None
-
-
-if __name__ == "__main__":
-    print(filter_string("vec-5432"))

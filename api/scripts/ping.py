@@ -61,7 +61,7 @@ async def self_ping():
         logger.error("BASE_URL is not set")
 
 
-    #And if extra monitor needed
+    #And if extra monitor needed with self-ping
     if HEALTHCHECK_PROVIDER == "uptimekuma":
         await uptime_kuma(UPTIMEKUMA_PUSH_URL)
     if HEALTHCHECK_PROVIDER == "healthchecksio":
