@@ -42,7 +42,7 @@
     ```
   * Uncomment `build` in **services:api**
 
-  <div align="center"><img src="/assets/images/docker_compose_service:api:build_comment.webp"></img> <img src="/assets/images/docker_compose_service:api:build_uncomment.webp"></img></div>
+  <div align="center"><img src="../..//assets/images/docker_compose_service:api:build_comment.webp"></img> <img src="../../assets/images/docker_compose_service:api:build_uncomment.webp"></img></div>
 
   * Edit .env file
     ```bash

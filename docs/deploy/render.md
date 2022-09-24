@@ -34,11 +34,11 @@
 2. If you have forked this repo and also connected Render with Github account then select your Fork __or__ Scroll down and paste `https://github.com/iamrony777/javinfo-api` or `https://github.com/YOUR_USERNAME/javinfo-api` in __Public Git repository__ section
 
     <div align="center">
-      <img src="/assets/images/render_public_git_repo.webp"></img>
+      <img src="../../assets/images/render_public_git_repo.webp"></img>
     </div>
 
 3. Only required variables to start api are `API_USER` & `API_PASS` , Set and apply
 
     <div align="center">
-      <img src="/assets/images/render_deploy_vars.webp"></img>
+      <img src="../../assets/images/render_deploy_vars.webp"></img>
     </div>
