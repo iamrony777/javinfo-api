@@ -12,21 +12,30 @@ date +%s >/tmp/startup
 case $PLATFORM in 
 railway)
 	export BASE_URL=${BASE_URL:-$RAILWAY_STATIC_URL}
+	echo -e "$INFO PLATFORM: $PLATFORM"
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 render)
 	export BASE_URL=${BASE_URL:-$RENDER_EXTERNAL_URL}
+	echo -e "$INFO PLATFORM: $PLATFORM"	
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 heroku)
 	export BASE_URL=${BASE_URL:-https://$APP_NAME.herokuapp.com}
+	echo -e "$INFO PLATFORM: $PLATFORM"
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 container)
 	export BASE_URL=${BASE_URL:-http://127.0.0.1:$PORT}
+	echo -e "$INFO PLATFORM: $PLATFORM"
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 esac
+
+downloader() {
+	wget -cqS --header "Authorization: Basic $(echo -n "${API_USER}":"${API_PASS}" | base64)" -O "$1" "$2"
+	return $?
+}
 
 background_tasks() {
 	/app/api/scripts/cron "0 0 * * *" "/app/api/scripts/r18_db.py" &
@@ -95,7 +104,6 @@ railway | container) # via crontab
 	;;
 
 render | heroku ) # via custom made python-crontab
-	echo -e "$INFO PLATFORM: $PLATFORM"
 	# Run those crontab apps but with APScheduler
 
 	if [[ "$CREATE_REDIS" == "true" ]]; then
@@ -108,11 +116,6 @@ render | heroku ) # via custom made python-crontab
 	fi
 	;;
 esac
-
-downloader() {
-	wget -cqS --header "Authorization: Basic $(echo -n "${API_USER}":"${API_PASS}" | base64)" -O "$1" "$2"
-	return $?
-}
 
 # Platform dependent configs
 case $PLATFORM in
@@ -129,7 +132,6 @@ case $PLATFORM in
 
 	case "$PLATFORM" in
 	"railway")
-		echo -e "$INFO PLATFORM: $PLATFORM"
 		export BASE_URL=${BASE_URL:-$RAILWAY_STATIC_URL}/api/database
 		echo -e "$INFO Restoring database from ${BASE_URL}"
 
@@ -141,7 +143,6 @@ case $PLATFORM in
 		fi
 		;;
 	"render")
-		echo -e "$INFO PLATFORM: $PLATFORM"
 		if [[ $PLATFORM == "render" ]]; then
 			export BASE_URL=${BASE_URL:-$RENDER_EXTERNAL_URL}/api/database
 			echo -e "$INFO Restoring database from ${BASE_URL}"
@@ -155,7 +156,6 @@ case $PLATFORM in
 		fi
 		;;
 	"container")
-		echo -e "$INFO PLATFORM: $PLATFORM"
 		echo -e "$INFO Local deploy should use persistance storage, not restoring database from url"
 		;;
 	esac
