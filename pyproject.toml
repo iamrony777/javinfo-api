@@ -19,6 +19,7 @@ redis = "^4.3.4"
 uvicorn = {extras = ["standard"], version = "^0.18.2"}
 uvloop = "^0.16.0"
 slowapi = "^0.1.6"
+cloudscrape = "^0.4.2"
 
 [tool.poetry.group.dev.dependencies]
 pyclean = "^2.2.0"

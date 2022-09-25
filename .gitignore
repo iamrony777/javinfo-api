@@ -33,6 +33,9 @@ old_*
 site
 *.sql
 
+#build
+poetry.lock
+
 # changelog
 CHANGELOG.md
 
