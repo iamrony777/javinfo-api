@@ -4,11 +4,13 @@
     env: docker
     region: singapore
     plan: free
-    branch: dev
+    branch: main
     healthCheckPath: /api/check
     envVars:
     - key: PLATFORM
       value: render 
+    - key: PORT
+      value: 8000
     - key: CREATE_REDIS
       value: true
     - key: LOG_REQUEST
