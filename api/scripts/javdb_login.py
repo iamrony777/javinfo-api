@@ -8,12 +8,14 @@ from datetime import datetime
 from io import BytesIO
 from shutil import rmtree
 from builtins import bool, int
+from typing import Optional
+from urllib.parse import urljoin
 
-from httpx import Client
 import uvloop
 from lxml import html
 from PIL import Image, UnidentifiedImageError
 from redis import Redis
+from cloudscraper import create_scraper
 
 from api import logger
 
@@ -21,15 +23,16 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 class JavdbLogin:
-    def __init__(self) -> None:
+    def __init__(self, base_url: Optional[str] = None) -> None:
         self.email: str = os.getenv("JAVDB_EMAIL")
         self.password: str = os.getenv("JAVDB_PASSWORD")
-        self.headers: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
-        self.client: Client = Client(
-            http2=True,
-            follow_redirects=True,
-            base_url="https://javdb.com",
-            headers={"User-Agent": self.headers},
+        self.base_url = self.base_url = [
+            os.getenv("JAVDB_URL", "https://javdb.com/")
+            if base_url is None
+            else base_url
+        ][0]
+        self.client = create_scraper(
+            browser={"browser": "chrome", "platform": "linux", "desktop": True}
         )
         self.start_time = time.perf_counter()
         self.root_path = os.getcwd()
@@ -49,7 +52,9 @@ class JavdbLogin:
             "locale": "en",
             "over18": 1,
         }
-        login_page = self.client.get("/login", params=params)
+        login_page = self.client.get(
+            urljoin(self.base_url, "/login"), params=params, allow_redirects=True
+        )
         tree = html.HtmlElement(html.fromstring(login_page.content))
         try:
             return str(tree.find('.//meta[@name="csrf-token"]').get("content"))
@@ -63,7 +68,7 @@ class JavdbLogin:
     def solved_captcha(self, root_path) -> str | None:
         """Get captcha image -> Solve captcha."""
         image_path = f"{root_path}/uploads/captcha_{int(time.time())}"
-        captcha = self.client.get("/rucaptcha/")
+        captcha = self.client.get(urljoin(self.base_url, "/rucaptcha/"))
         try:
             img = Image.open(BytesIO(captcha.content))
             img.save(f"{image_path}.png", "png", optimize=True)
@@ -94,7 +99,7 @@ class JavdbLogin:
                 "commit": "Sign in",
             }
             tree: html.HtmlElement = html.fromstring(
-                self.client.post(url, data=payload).content
+                self.client.post(urljoin(self.base_url, url), data=payload).content
             )
             try:
                 signin_msg: str = tree.find(
@@ -145,9 +150,7 @@ class JavdbLogin:
                 sys.exit(1)
             else:
                 try_count += 1
-                logger.error(
-                    f"[JAVDB_LOGIN] - login failed - ({try_count}/10)"
-                )
+                logger.error(f"[JAVDB_LOGIN] - login failed - ({try_count}/10)")
                 time.sleep(10)
 
 

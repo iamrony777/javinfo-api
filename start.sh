@@ -12,21 +12,30 @@ date +%s >/tmp/startup
 case $PLATFORM in 
 railway)
 	export BASE_URL=${BASE_URL:-$RAILWAY_STATIC_URL}
+	echo -e "$INFO PLATFORM: $PLATFORM"
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 render)
 	export BASE_URL=${BASE_URL:-$RENDER_EXTERNAL_URL}
+	echo -e "$INFO PLATFORM: $PLATFORM"	
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 heroku)
 	export BASE_URL=${BASE_URL:-https://$APP_NAME.herokuapp.com}
+	echo -e "$INFO PLATFORM: $PLATFORM"
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 container)
-	export BASE_URL=${BASE_URL:-http://127.0.0.1:8080}
+	export BASE_URL=${BASE_URL:-http://127.0.0.1:$PORT}
+	echo -e "$INFO PLATFORM: $PLATFORM"
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 esac
+
+downloader() {
+	wget -cqS --header "Authorization: Basic $(echo -n "${API_USER}":"${API_PASS}" | base64)" -O "$1" "$2"
+	return $?
+}
 
 background_tasks() {
 	/app/api/scripts/cron "0 0 * * *" "/app/api/scripts/r18_db.py" &
@@ -95,7 +104,6 @@ railway | container) # via crontab
 	;;
 
 render | heroku ) # via custom made python-crontab
-	echo -e "$INFO PLATFORM: $PLATFORM"
 	# Run those crontab apps but with APScheduler
 
 	if [[ "$CREATE_REDIS" == "true" ]]; then
@@ -109,6 +117,60 @@ render | heroku ) # via custom made python-crontab
 	;;
 esac
 
+# Platform dependent configs
+case $PLATFORM in
+"railway" | "render" | "container")
+	if [[ ${CREATE_REDIS} == "true" ]]; then
+		echo -e "$INFO Creating redis server, please wait..."
+		apk add --no-cache redis
+		echo -e "$INFO Adding redis-server to Procfile..."
+		sed -i 's|redis_process_placeholder|redis: redis-server \/app\/conf\/redis.conf|g' /app/Procfile
+	else
+		echo -e "$INFO Using redis server from plugins / addons"
+		sed -i 's|redis_process_placeholder||g' /app/Procfile
+	fi
+
+	case "$PLATFORM" in
+	"railway")
+		export BASE_URL=${BASE_URL:-$RAILWAY_STATIC_URL}/api/database
+		echo -e "$INFO Restoring database from ${BASE_URL}"
+
+		if downloader "/data/database.rdb" "${BASE_URL}"; then
+			echo -e "$SUCCESS Database Restored"
+		else
+			echo -e "$WARNING Failed to restore database from $BASE_URL"
+			rm -rf /data/database.rdb
+		fi
+		;;
+	"render")
+		if [[ $PLATFORM == "render" ]]; then
+			export BASE_URL=${BASE_URL:-$RENDER_EXTERNAL_URL}/api/database
+			echo -e "$INFO Restoring database from ${BASE_URL}"
+
+			if downloader "/data/database.rdb" "${BASE_URL}"; then
+				echo -e "$SUCCESS Database Restored"
+			else
+				echo -e "$WARNING Failed to restore database from $BASE_URL"
+				rm -rf /data/database.rdb
+			fi
+		fi
+		;;
+	"container")
+		echo -e "$INFO Local deploy should use persistance storage, not restoring database from url"
+		;;
+	esac
+
+	sed -i "s|api:|api: PORT=$PORT|g" /app/Procfile
+	;;
+"heroku")
+	echo -e "$WARNING Not creating any database!"
+	sed -i 's|redis_process_placeholder||g' /app/Procfile
+
+	# Crontab also doesn't work on heroku
+	sed -i 's|cronjob: crond -f||g' /app/Procfile
+	echo -e "$INFO Port will be set during startup"
+	;;
+esac
 
 # Timezone set
 # setup-timezone -z "$TIMEZONE"

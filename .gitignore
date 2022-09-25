@@ -41,4 +41,5 @@ thunder-tests
 # Custom
 api/scripts/clear_env
 docker-compose-convert.yml
+docker-compose-dev.yml
 docs/assets/images/*.png

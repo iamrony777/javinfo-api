@@ -1,32 +1,39 @@
 """Main srcaper - Javlibrary"""
+import asyncio
 import re
+from os import getenv
 from typing import Optional
+from urllib.parse import urljoin
 
-from httpx import AsyncClient
 from api.resources import actress_search, html, logger
+from cloudscraper import create_scraper
 
 
 class Javlibrary:
-    def __init__(self, base_url: Optional[str] = "https://www.javlibrary.com/en") -> None:
-        self.headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
-            "Accept": "*/*",
-        }
-        self.client = AsyncClient(
-            base_url=base_url,
-            headers=self.headers,
-            cookies={"over18": "18"},
-            http2=True,
-            follow_redirects=True,
-            timeout=20,
+    def __init__(self, base_url: Optional[str] = None) -> None:
+        self.base_url = [
+            getenv("JAVLIBRARY_URL", "https://www.javlibrary.com/en/")
+            if base_url is None
+            else None
+        ][0]
+        self.client = create_scraper(
+            browser={"browser": "chrome", "platform": "linux", "desktop": True}
         )
 
     @logger.catch
-    async def _get_page_content(
+    def _get_page_content(
         self, url: Optional[str] = "vl_searchbyid.php", **kwargs
     ) -> bytes:
         """Get the page content as bytes, takes url as optional argument."""
-        return html.fromstring((await self.client.get(url, **kwargs)).content)
+        return html.fromstring(
+            self.client.get(
+                urljoin(self.base_url, url),
+                cookies={"over18": "18"},
+                allow_redirects=True,
+                timeout=30,
+                **kwargs
+            ).content
+        )
 
     @logger.catch
     async def _filter_results(self, name: str, tree: html.HtmlElement):
@@ -48,6 +55,43 @@ class Javlibrary:
             for result in tree.xpath('//div[@class="videos"]/div/a'):
                 if name == result.get("title").split(" ")[0]:
                     return str(result.get("href"))
+
+    @logger.catch
+    async def _parse_details(
+        self, tree: html.HtmlElement, only_r18: bool
+    ) -> dict[str] | None:
+        """Parse in details from the page."""
+        # get movie code, title and poster
+        movie_dictionary = {}
+        raw_title = str(
+            tree.xpath('//h3[@class="post-title text"]/a/text()')[0].strip()
+        )
+        movie_dictionary["id"] = raw_title.split(" ", maxsplit=1)[0]
+        movie_dictionary["title"] = raw_title.split(movie_dictionary["id"])[1].strip()
+        movie_dictionary["poster"] = "https:" + str(
+            tree.xpath('//div[@id="video_jacket"]/img')[0].get("src")
+        )
+        movie_dictionary["page"] = "https:" + str(
+            tree.find('head/link[@rel="canonical"]').get("href")
+        )
+        # get movie details
+        movie_dictionary["details"] = await self._additional_details(tree)
+
+        # print actress details
+        movie_dictionary["actress"] = await self._parse_actress_details(tree, only_r18)
+
+        # Screenshots
+        movie_dictionary["screenshots"] = [
+            el.get("src")
+            for el in tree.findall('.//div[@class="previewthumbs"]/img')
+            if bool(re.match(r"https", el.get("src")))
+        ]
+
+        # get movie genres / tags
+        for data in tree.xpath('//div[@id="video_genres"]/table/tr'):
+            movie_dictionary["tags"] = data.xpath('td[@class="text"]/span/a/text()')
+
+        return movie_dictionary
 
     @logger.catch
     async def _additional_details(
@@ -91,43 +135,6 @@ class Javlibrary:
         return sorted_details
 
     @logger.catch
-    async def _parse_details(
-        self, tree: html.HtmlElement, only_r18: bool
-    ) -> dict[str] | None:
-        """Parse in details from the page."""
-        # get movie code, title and poster
-        movie_dictionary = {}
-        raw_title = str(
-            tree.xpath('//h3[@class="post-title text"]/a/text()')[0].strip()
-        )
-        movie_dictionary["id"] = raw_title.split(" ", maxsplit=1)[0]
-        movie_dictionary["title"] = raw_title.split(movie_dictionary["id"])[1].strip()
-        movie_dictionary["poster"] = "https:" + str(
-            tree.xpath('//div[@id="video_jacket"]/img')[0].get("src")
-        )
-        movie_dictionary["page"] = "https:" + str(
-            tree.find('head/link[@rel="canonical"]').get("href")
-        )
-        # get movie details
-        movie_dictionary["details"] = await self._additional_details(tree)
-
-        # print actress details
-        movie_dictionary["actress"] = await self._parse_actress_details(tree, only_r18)
-
-        # Screenshots
-        movie_dictionary["screenshots"] = [
-            el.get("src")
-            for el in tree.findall('.//div[@class="previewthumbs"]/img')
-            if bool(re.match(r"https", el.get("src")))
-        ]
-
-        # get movie genres / tags
-        for data in tree.xpath('//div[@id="video_genres"]/table/tr'):
-            movie_dictionary["tags"] = data.xpath('td[@class="text"]/span/a/text()')
-
-        return movie_dictionary
-
-    @logger.catch
     async def _parse_actress_details(
         self, tree: html.HtmlElement, only_r18: bool
     ) -> dict[str]:
@@ -146,12 +153,15 @@ class Javlibrary:
 
         # Fetch html tree, by query and filter the results
         result = await self._filter_results(
-            name, (await self._get_page_content(params={"keyword": name}))
+            name, (self._get_page_content(params={"keyword": name}))
         )
         if result is not None and not isinstance(result, str):
             return await self._parse_details(result, only_r18)
         if result is not None and isinstance(result, str):
             result = await self._filter_results(
-                name, await self._get_page_content(url=result.replace(".", ""))
+                name, self._get_page_content(url=result.replace(".", ""))
             )
             return await self._parse_details(result, only_r18)
+
+if __name__ == "__main__":
+    print(asyncio.run(Javlibrary().search("EBOD-391")))

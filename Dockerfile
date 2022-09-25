@@ -22,7 +22,6 @@ ENV RUNTIME_DEPS="curl jq tmux ca-certificates bash libjpeg"
 ENV PYTHONPATH=. \
     PLATFORM=${PLATFORM} \
     OVERMIND_NO_PORT=1 \
-    PORT=8000 \
     API_USER=admin \
     API_PASS=admin \
     CREATE_REDIS=${CREATE_REDIS:-false} \
