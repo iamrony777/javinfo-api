@@ -1,49 +1,47 @@
 """Main srcaper - Javdb"""
-import os
 import re
+from os import getenv
 from typing import Optional
+from urllib.parse import urljoin
 
-from api.resources import AsyncClient, html, logger
+from api.resources import html, logger
+from cloudscraper import create_scraper
 from deep_translator import GoogleTranslator
 from redis import Redis
 
 
 class Javdb:
-    def __init__(self, base_url: Optional[str] = "https://javdb.com") -> None:
-        self.base_url = base_url
+    def __init__(self, base_url: Optional[str] = None) -> None:
+        self.base_url = self.base_url = [
+            getenv("JAVDB_URL", "https://javdb.com/") if base_url is None else base_url
+        ][0]
         self.cookies = {
             "theme": "auto",
             "locale": "en",
             "over18": "1",
-            "remember_me_token": os.getenv(
+            "remember_me_token": getenv(
                 "REMEMBER_ME_TOKEN",
                 default=(self._get_tokens("cookie/remember_me_token")),
             ),
-            "_jdb_session": os.getenv(
+            "_jdb_session": getenv(
                 "JDB_SESSION", default=(self._get_tokens("cookie/_jdb_session"))
             ),
             "redirect_to": "/",
         }
-        self.headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
-            "Accept": "*/*",
-        }
-        self.client = AsyncClient(
-            base_url=self.base_url,
-            http2=True,
-            follow_redirects=True,
-            timeout=20,
-            headers=self.headers,
-            cookies=self.cookies,
+        self.client = create_scraper(
+            browser={"browser": "chrome", "platform": "linux", "desktop": True}
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
     @logger.catch
-    async def _get_page_url(self, name: str, **kwargs) -> (str | None):
+    def _get_page_url(self, name: str, **kwargs) -> (str | None):
         """Get the page url."""
-        response = await self.client.get(
-            "/search",
+        response = self.client.get(
+            urljoin(self.base_url, "/search"),
             params={"q": name, "f": "all", "locale": "en", "over18": 1},
+            cookies=self.cookies,
+            allow_redirects=True,
+            timeout=30,
             **kwargs,
         )
         try:
@@ -56,7 +54,7 @@ class Javdb:
     @logger.catch
     def _get_tokens(self, key: str) -> str | None:
         """Returns a token from redis."""
-        with Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True) as redis:
+        with Redis.from_url(getenv("REDIS_URL"), decode_responses=True) as redis:
             return redis.get(key)
 
     @logger.catch
@@ -103,11 +101,13 @@ class Javdb:
         """Main function to get video data from javdb.com."""
         try:
 
-            page_url = await self._get_page_url(name)
+            page_url = self._get_page_url(name)
             if page_url is not None:
                 movie_dictionary = {}
                 # Fetch movie page, and start scraping
-                response = await self.client.get(page_url)
+                response = self.client.get(
+                    urljoin(self.base_url, page_url), cookies=self.cookies
+                )
                 tree = html.fromstring(response.content, parser=self.parser)
                 try:
                     movie_code = tree.find('.//a[@title="Copy ID"]').get(
@@ -127,7 +127,7 @@ class Javdb:
                         movie_dictionary["poster"] = tree.find(
                             './/img[@class="video-cover"]'
                         ).get("src")
-                        movie_dictionary["page"] = self.base_url + page_url
+                        movie_dictionary["page"] = urljoin(self.base_url, page_url)
                         movie_dictionary["details"] = await self._parse_panel_data(tree)
                         movie_dictionary["screenshots"] = [
                             el.get("href")
@@ -142,3 +142,4 @@ class Javdb:
         except Exception as exception:
             logger.error(exception)
             return None
+

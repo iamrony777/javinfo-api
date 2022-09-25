@@ -23,7 +23,7 @@ heroku)
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 container)
-	export BASE_URL=${BASE_URL:-http://127.0.0.1:8080}
+	export BASE_URL=${BASE_URL:-http://127.0.0.1:$PORT}
 	echo -e "$INFO BASE_URL: $BASE_URL"
 	;;
 esac

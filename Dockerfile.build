@@ -38,20 +38,19 @@ COPY --from=build /app/wheels /app/wheels
 COPY --from=build /app/requirements.txt /app/requirements.txt
 
 # Common (Required)
-ARG CREATE_REDIS \
-    PLATFORM=container
-
-ENV RUNTIME_DEPS="curl jq tmux ca-certificates bash libjpeg"
+ARG CREATE_REDIS
+ARG PLATFORM=container
 
 # Optional , Platform based
-ARG APP_NAME \
-    RAILWAY_STATIC_URL \
-    RENDER_EXTERNAL_URL
+ARG APP_NAME
+ARG RAILWAY_STATIC_URL
+ARG RENDER_EXTERNAL_URL
+
+ENV RUNTIME_DEPS="curl jq tmux ca-certificates bash libjpeg"                                                                                                              
 
 ENV PYTHONPATH=. \
     PLATFORM=${PLATFORM} \
     OVERMIND_NO_PORT=1 \
-    PORT=8000 \
     API_USER=admin \
     API_PASS=admin \
     CREATE_REDIS=${CREATE_REDIS:-false} \
