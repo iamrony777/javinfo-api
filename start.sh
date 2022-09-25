@@ -109,6 +109,68 @@ render | heroku ) # via custom made python-crontab
 	;;
 esac
 
+downloader() {
+	wget -cqS --header "Authorization: Basic $(echo -n "${API_USER}":"${API_PASS}" | base64)" -O "$1" "$2"
+	return $?
+}
+
+# Platform dependent configs
+case $PLATFORM in
+"railway" | "render" | "container")
+	if [[ ${CREATE_REDIS} == "true" ]]; then
+		echo -e "$INFO Creating redis server, please wait..."
+		apk add --no-cache redis
+		echo -e "$INFO Adding redis-server to Procfile..."
+		sed -i 's|redis_process_placeholder|redis: redis-server \/app\/conf\/redis.conf|g' /app/Procfile
+	else
+		echo -e "$INFO Using redis server from plugins / addons"
+		sed -i 's|redis_process_placeholder||g' /app/Procfile
+	fi
+
+	case "$PLATFORM" in
+	"railway")
+		echo -e "$INFO PLATFORM: $PLATFORM"
+		export BASE_URL=${BASE_URL:-$RAILWAY_STATIC_URL}/api/database
+		echo -e "$INFO Restoring database from ${BASE_URL}"
+
+		if downloader "/data/database.rdb" "${BASE_URL}"; then
+			echo -e "$SUCCESS Database Restored"
+		else
+			echo -e "$WARNING Failed to restore database from $BASE_URL"
+			rm -rf /data/database.rdb
+		fi
+		;;
+	"render")
+		echo -e "$INFO PLATFORM: $PLATFORM"
+		if [[ $PLATFORM == "render" ]]; then
+			export BASE_URL=${BASE_URL:-$RENDER_EXTERNAL_URL}/api/database
+			echo -e "$INFO Restoring database from ${BASE_URL}"
+
+			if downloader "/data/database.rdb" "${BASE_URL}"; then
+				echo -e "$SUCCESS Database Restored"
+			else
+				echo -e "$WARNING Failed to restore database from $BASE_URL"
+				rm -rf /data/database.rdb
+			fi
+		fi
+		;;
+	"container")
+		echo -e "$INFO PLATFORM: $PLATFORM"
+		echo -e "$INFO Local deploy should use persistance storage, not restoring database from url"
+		;;
+	esac
+
+	sed -i "s|api:|api: PORT=$PORT|g" /app/Procfile
+	;;
+"heroku")
+	echo -e "$WARNING Not creating any database!"
+	sed -i 's|redis_process_placeholder||g' /app/Procfile
+
+	# Crontab also doesn't work on heroku
+	sed -i 's|cronjob: crond -f||g' /app/Procfile
+	echo -e "$INFO Port will be set during startup"
+	;;
+esac
 
 # Timezone set
 # setup-timezone -z "$TIMEZONE"

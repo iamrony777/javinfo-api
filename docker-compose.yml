@@ -8,17 +8,17 @@ services:
     #   args:
     #     - CREATE_REDIS
     #     - PLATFORM
-    image: iamrony777/javinfo-api:dev
+    image: iamrony777/javinfo-api:server
     container_name: javinfo-api
     environment:
-      - "BASE_URL=http://127.0.0.1:8000"
+      - "BASE_URL=http://127.0.0.1:${PORT}"
       - "INACTIVITY_TIMEOUT=60"
       - "HEALTHCHECK_PROVIDER=self"
       - "REDIS_URL=redis://default:${API_PASS}@db"
     env_file: 
       - .env
     ports:
-      - "0.0.0.0:8000:8000"
+      - "0.0.0.0:8000:${PORT}"
     depends_on:
       - db
     networks:
