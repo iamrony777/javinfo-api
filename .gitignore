@@ -42,6 +42,6 @@ CHANGELOG.md
 thunder-tests
 
 # Custom
-api/scripts/clear_env
+api
 docker-compose-convert.yml
-docs/assets/images/*.png
+docs/assets/images/*.pngapi
