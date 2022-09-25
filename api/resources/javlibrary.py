@@ -162,6 +162,3 @@ class Javlibrary:
                 name, self._get_page_content(url=result.replace(".", ""))
             )
             return await self._parse_details(result, only_r18)
-
-if __name__ == "__main__":
-    print(asyncio.run(Javlibrary().search("EBOD-391")))

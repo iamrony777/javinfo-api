@@ -46,7 +46,7 @@ ARG APP_NAME
 ARG RAILWAY_STATIC_URL
 ARG RENDER_EXTERNAL_URL
 
-ENV RUNTIME_DEPS="curl jq tmux ca-certificates bash libjpeg"                                                                                                              
+ENV RUNTIME_DEPS="curl jq tmux ca-certificates bash libjpeg redis"  
 
 ENV PYTHONPATH=. \
     PLATFORM=${PLATFORM} \

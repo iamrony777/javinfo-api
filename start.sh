@@ -84,21 +84,21 @@ railway | container) # via crontab
 		# Healthcheck at every 15th minute, ref. https://crontab.guru/#*/15_*_*_*_*
 		crontab -l | {
 			cat
-			echo "\"*/15 * * * *\" \"$(which python3)\" /app/api/scripts/ping.py"
+			echo "*/15 * * * * $(which python3) /app/api/scripts/ping.py"
 		} | crontab -
 	fi
 
 	# Fetch Actress data from r18 everyday, ref. https://crontab.guru/#0_0_*_*_*
 	crontab -l | {
 		cat
-		echo "\"0 0 * * *\" \"$(which python3)\" /app/api/scripts/r18_db.py"
+		echo "0 0 * * * $(which python3) /app/api/scripts/r18_db.py"
 	} | crontab -
 
 	if [ -n "${JAVDB_EMAIL}" ] && [ -n "${JAVDB_PASSWORD}" ]; then
 		# Update javdb cookies at 00:00 on Sunday, ref. https://crontab.guru/every-week
 		crontab -l | {
 			cat
-			echo "\"0 0 * * 0\" \"$(which python3)\" /app/api/scripts/javdb_login.py"
+			echo "0 0 * * 0 $(which python3) /app/api/scripts/javdb_login.py"
 		} | crontab -
 	fi
 	;;
@@ -121,8 +121,6 @@ esac
 case $PLATFORM in
 "railway" | "render" | "container")
 	if [[ ${CREATE_REDIS} == "true" ]]; then
-		echo -e "$INFO Creating redis server, please wait..."
-		apk add --no-cache redis
 		echo -e "$INFO Adding redis-server to Procfile..."
 		sed -i 's|redis_process_placeholder|redis: redis-server \/app\/conf\/redis.conf|g' /app/Procfile
 	else
@@ -143,16 +141,14 @@ case $PLATFORM in
 		fi
 		;;
 	"render")
-		if [[ $PLATFORM == "render" ]]; then
-			export BASE_URL=${BASE_URL:-$RENDER_EXTERNAL_URL}/api/database
-			echo -e "$INFO Restoring database from ${BASE_URL}"
+		export BASE_URL=${BASE_URL:-$RENDER_EXTERNAL_URL}/api/database
+		echo -e "$INFO Restoring database from ${BASE_URL}"
 
-			if downloader "/data/database.rdb" "${BASE_URL}"; then
-				echo -e "$SUCCESS Database Restored"
-			else
-				echo -e "$WARNING Failed to restore database from $BASE_URL"
-				rm -rf /data/database.rdb
-			fi
+		if downloader "/data/database.rdb" "${BASE_URL}"; then
+			echo -e "$SUCCESS Database Restored"
+		else
+			echo -e "$WARNING Failed to restore database from $BASE_URL"
+			rm -rf /data/database.rdb
 		fi
 		;;
 	"container")
