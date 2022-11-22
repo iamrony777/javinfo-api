@@ -1,5 +1,5 @@
 # Build
-FROM python:alpine AS build
+FROM python:3.10.7-alpine AS build
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ RUN apk add --no-cache ${COMMON_DEPS} ${PILLOW_DEPS} ${WATCHFILES_DEPS} && \
 RUN MAKEFLAGS="-j$(nproc)" SETUPFLAGS="-j$(nproc)" ; pip wheel --wheel-dir=/app/wheels -r requirements.txt
 
 # Production
-FROM python:alpine AS prod
+FROM python:3.10.7-alpine AS prod
 
 WORKDIR /app
 
