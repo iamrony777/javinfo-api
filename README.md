@@ -34,4 +34,4 @@
 ## [Deprecating soon] 
 I am rewriting this API in TypeScript from scratch, which will include at least one provider for free (r18.dev) at all times. This repository will receive one final major update by the end of this year. It was almost complete, with all five scrapers working perfectly, but my hard drive got nuked before I could push this repository.
 
-New Repo [javinfo-api-ts](https://github.com/javinfo-api-ts)
+New Repo [javinfo-api-ts](https://github.com/iamrony777/javinfo-api-ts)
