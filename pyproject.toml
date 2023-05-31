@@ -15,7 +15,7 @@ loguru = "^0.6.0"
 lxml = "^4.9.1"
 Pillow = "^9.3.0"
 mkdocs-material = "^8.3.9"
-redis = "^4.3.4"
+redis = "^4.4.4"
 uvicorn = {extras = ["standard"], version = "^0.18.2"}
 uvloop = "^0.16.0"
 slowapi = "^0.1.6"
