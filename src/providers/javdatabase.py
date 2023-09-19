@@ -21,8 +21,11 @@ class Javdatabase:
             timeout=5,
         )
 
-    async def search(code: string):
-        
+    async def search(code: str):
+        """public method: search"""
+        code
+        pass
+
 
 javdatabase = Javdatabase()
 print(javdatabase.base_url)
