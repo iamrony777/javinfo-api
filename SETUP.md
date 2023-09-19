@@ -6,7 +6,7 @@ pip install --user pipenv
 ```
 
 
-# Structure explaination
+# basic structure explaination
 
 ```bash
 src/api -> api related folder (e.g. routers, auths)
