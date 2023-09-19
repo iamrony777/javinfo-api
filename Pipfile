@@ -7,6 +7,10 @@ name = "pypi"
 fastapi = "*"
 uvicorn = "*"
 httpx = {extras = ["http2"], version = "*"}
+cloudscraper = "*"
+logger = "*"
+lxml = "*"
+loguru = "*"
 
 [dev-packages]
 
