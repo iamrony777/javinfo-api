@@ -22,11 +22,18 @@ class Javdatabase:
             timeout=5,
         )
 
-    async def search(code: str):
+    async def search(self, code: str):
         """public method: search"""
-        code = code.lower()
-        pass
+        # code = code.lower()
+        resp = await self.client.get(f"movies/{code.lower()}")
+        if resp.status_code != 200:
+            return {statusCode: statue_code}
+        else:
+            return resp.text
 
 
-javdatabase = Javdatabase()
-print(javdatabase.base_url)
+# javdatabase = Javdatabase()
+# print(javdatabase.search("MKCK-275"))
+
+if __name__ == "__main__":
+    
