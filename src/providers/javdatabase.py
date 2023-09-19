@@ -14,6 +14,7 @@ class Javdatabase:
         }
 
         self.client = AsyncClient(
+            
             base_url=self.base_url,
             headers=self.headers,
             http2=True,
