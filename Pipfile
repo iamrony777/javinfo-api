@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = "*"
+httpx = {extras = ["http2"], version = "*"}
 
 [dev-packages]
 
