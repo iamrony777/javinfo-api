@@ -14,7 +14,7 @@ class Javdatabase:
         }
 
         self.client = AsyncClient(
-            
+
             base_url=self.base_url,
             headers=self.headers,
             http2=True,
@@ -24,7 +24,7 @@ class Javdatabase:
 
     async def search(code: str):
         """public method: search"""
-        code
+        code = code.lower()
         pass
 
 
