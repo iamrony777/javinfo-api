@@ -27,13 +27,12 @@ class Javdatabase:
         # code = code.lower()
         resp = await self.client.get(f"movies/{code.lower()}")
         if resp.status_code != 200:
-            return {statusCode: statue_code}
+            return {"statusCode": resp.status_code}
         else:
             return resp.text
 
 
-# javdatabase = Javdatabase()
-# print(javdatabase.search("MKCK-275"))
-
 if __name__ == "__main__":
-    
+    import asyncio
+
+    print(asyncio.run(Javdatabase().search("MKCK-324")))
