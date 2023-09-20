@@ -5,7 +5,7 @@ Author @github.com/iamrony777
 
 from urllib.parse import urljoin
 from cloudscraper import create_scraper
-
+from lxml import html
 
 class Javdatabase:
     def __init__(self, base_url: str = "https://javdatabase.com/") -> None:
@@ -17,6 +17,8 @@ class Javdatabase:
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True}
         )
+    def getJsonResult(self, page: bytes):
+        
 
     async def search(self, code: str):
         """public method: search"""
@@ -30,7 +32,7 @@ class Javdatabase:
         if not resp.ok:
             return {"statusCode": resp.status_code}
         else:
-            return resp.text
+            return getJsonResult(html.fromstring(html=resp.content, base_url=self.base_url))
 
 
 if __name__ == "__main__":
