@@ -89,6 +89,11 @@ class Javdatabase:
             )[0].text
         except IndexError:
             pass
+
+        ## result.actress
+        
+        ## result.screenshots
+        ## result.tags
         return json.dumps(result, ensure_ascii=False, indent=2)
 
     async def search(self, code: str):
