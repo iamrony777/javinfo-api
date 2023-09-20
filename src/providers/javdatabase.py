@@ -32,7 +32,7 @@ class Javdatabase:
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
-    def getJsonResult(self, code: str, page: html.HtmlElement):
+    def __getJsonResult(self, code: str, page: html.HtmlElement):
         result = {"id": code}
         result["title"] = page.cssselect(".entry-header > h1")[0].text
         result["title_ja"] = None
@@ -141,7 +141,7 @@ class Javdatabase:
         if not resp.ok:
             return {"statusCode": resp.status_code}
         else:
-            return self.getJsonResult(
+            return self.__getJsonResult(
                 code=code,
                 page=html.fromstring(
                     html=resp.content, base_url=self.base_url, parser=self.parser
