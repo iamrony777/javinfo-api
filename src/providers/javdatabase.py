@@ -91,9 +91,28 @@ class Javdatabase:
             pass
 
         ## result.actress
-        
+        result["actress"] = []
+        try:
+            for actr in page.cssselect("div.idol-thumb > a > img"):
+                result["actress"].append(
+                    {"name": actr.attrib["alt"], "image": actr.attrib["data-src"]}
+                )
+        except KeyError:
+            pass
+
         ## result.screenshots
+        result["screenshots"] = []
+        try:
+            for ss in page.cssselect(".entry-content > div:nth-child(3) > a"):
+                result["screenshots"].append(ss.attrib["href"])
+        except KeyError:
+            pass
+
         ## result.tags
+        try:
+            for tags in page.cssselect("")
+        except KeyError:
+            pass
         return json.dumps(result, ensure_ascii=False, indent=2)
 
     async def search(self, code: str):
