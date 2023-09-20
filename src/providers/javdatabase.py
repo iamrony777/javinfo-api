@@ -84,7 +84,9 @@ class Javdatabase:
             pass
         ## result.details.studio
         try:
-            result["details"]["studio"] = page.cssselect('div.movietable > table > tr:nth-child(8) > td:nth-child(2) > span > a')[0].text
+            result["details"]["studio"] = page.cssselect(
+                "div.movietable > table > tbody > tr:nth-child(10) > td:nth-child(2) > span > a"
+            )[0].text
         except IndexError:
             pass
         return json.dumps(result, ensure_ascii=False, indent=2)
