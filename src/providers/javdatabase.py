@@ -80,9 +80,13 @@ class Javdatabase:
                     "div.movietable > table > tr:nth-child(15) > td:nth-child(2)"
                 )[0].text,
             )[0]
-        except:
+        except IndexError:
             pass
-
+        ## result.details.studio
+        try:
+            result["details"]["studio"] = page.cssselect('div.movietable > table > tr:nth-child(8) > td:nth-child(2) > span > a')[0].text
+        except IndexError:
+            pass
         return json.dumps(result, ensure_ascii=False, indent=2)
 
     async def search(self, code: str):
