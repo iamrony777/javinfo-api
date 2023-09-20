@@ -27,8 +27,6 @@ class Javdatabase:
 
     async def search(self, code: str):
         """public method: search"""
-        # code = code.lower()
-        # resp = await self.client.get(f"movies/{code.lower()}")
         resp = self.client.get(
             urljoin(base=self.base_url, url=f"movies/{code.lower()}"),
             allow_redirects=True,
