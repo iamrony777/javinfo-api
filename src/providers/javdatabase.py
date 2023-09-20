@@ -55,8 +55,7 @@ class Javdatabase:
             "studio": None,
         }
         ### result.details.director
-        director = page.cssselect("div.movietable > table > tr:nth-child(9) > td:nth-child(2)")[0]
-        return json.dumps(result, ensure_ascii=False, indent=2)
+        director = page.xpath('//div[@class="movietable"]/table/tbody/tr[11]/td[2]/span/a')[0].text
 
     async def search(self, code: str):
         """public method: search"""
