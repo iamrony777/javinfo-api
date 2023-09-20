@@ -109,8 +109,12 @@ class Javdatabase:
             pass
 
         ## result.tags
+        result["tags"] = []
         try:
-            for tags in page.cssselect("")
+            for tags in page.cssselect("div.movietable > table > tr:nth-child(8) > td:nth-child(2) > span > a"):
+                result["tags"].append(
+                    tags.text.strip()
+                )
         except KeyError:
             pass
         return json.dumps(result, ensure_ascii=False, indent=2)
