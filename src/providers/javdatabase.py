@@ -6,6 +6,7 @@ Author @github.com/iamrony777
 from urllib.parse import urljoin
 from cloudscraper import create_scraper
 from lxml import html
+
 # from lxml.cssselect import CSSSelector
 
 
@@ -24,10 +25,24 @@ class Javdatabase:
         resultObject = {"id": code}
         resultObject["title"] = page.cssselect(".entry-header > h1")[0].text
         resultObject["title_ja"] = None
-        resultObject["page"] = urljoin(base=self.base_url, url=f"movies/{code.lower()}/")
-        #  page.getElementsByTagName('meta')[25].attrs?.content || page.getElementsByTagName('meta')[26].attrs?.content || undefined
-        # page.get_element_by_id
-        resultObject["poster"] = page.xpath('//meta[@property="og:image"]')[0].get('content') | page.xpath('//meta[@name="twitter:image"]')[0].get('content') | None
+        resultObject["page"] = urljoin(
+            base=self.base_url, url=f"movies/{code.lower()}/"
+        )
+
+        ## result.poster
+        try:
+            resultObject["poster"] = page.xpath('//meta[@property="og:image"]')[0].get(
+                "content"
+            )
+        except IndexError:
+            try:
+                resultObject["poster"] = page.xpath('//meta[@name="twitter:image"]')[
+                    0
+                ].get("content")
+            except IndexError:
+                resultObject["poster"] = None
+
+        
         return resultObject
 
     async def search(self, code: str):
