@@ -3,6 +3,7 @@ javdatabase.com scrapper
 Author @github.com/iamrony777
 """
 
+import json
 from urllib.parse import urljoin
 from cloudscraper import create_scraper
 from lxml import html
@@ -22,28 +23,27 @@ class Javdatabase:
         )
 
     def getJsonResult(self, code: str, page: html.HtmlElement):
-        resultObject = {"id": code}
-        resultObject["title"] = page.cssselect(".entry-header > h1")[0].text
-        resultObject["title_ja"] = None
-        resultObject["page"] = urljoin(
-            base=self.base_url, url=f"movies/{code.lower()}/"
-        )
+        result = {"id": code}
+        result["title"] = page.cssselect(".entry-header > h1")[0].text
+        result["title_ja"] = None
+        result["page"] = urljoin(base=self.base_url, url=f"movies/{code.lower()}/")
 
         ## result.poster
         try:
-            resultObject["poster"] = page.xpath('//meta[@property="og:image"]')[0].get(
+            result["poster"] = page.xpath('//meta[@property="og:image"]')[0].get(
                 "content"
             )
         except IndexError:
             try:
-                resultObject["poster"] = page.xpath('//meta[@name="twitter:image"]')[
-                    0
-                ].get("content")
+                result["poster"] = page.xpath('//meta[@name="twitter:image"]')[0].get(
+                    "content"
+                )
             except IndexError:
-                resultObject["poster"] = None
+                result["poster"] = None
 
-        
-        return resultObject
+        ## result.preview
+        result["preview"] = page.xpath('//iframe')
+        return json.dumps(result, ensure_ascii=False, indent=2)
 
     async def search(self, code: str):
         """public method: search"""
