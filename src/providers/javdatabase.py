@@ -11,6 +11,16 @@ from lxml import html
 
 
 class Javdatabase:
+    """
+    Scrapes from javdatabase.com (default url)
+
+    constuctor:
+        base_url: str = "https://javdatabase.com/"
+
+    methods:
+        search(code: str) -> providerResponse
+
+    """
     def __init__(self, base_url: str = "https://javdatabase.com/") -> None:
         self.base_url = base_url
         self.headers = {
