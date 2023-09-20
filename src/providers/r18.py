@@ -1,5 +1,6 @@
-from src.providers import CustomSession
+from src.common.http import CustomSession
 from urllib.parse import urljoin
+
 
 class R18:
     def __init__(self, base_url: str = "https://r18.dev") -> None:
@@ -23,7 +24,6 @@ class R18:
             "runtime": None,
             "studio": None,
         }
-
         result["details"]["director"] = (
             data["directors"][0]["name_romaji"] if data["directors"] else None
         )
@@ -40,6 +40,9 @@ class R18:
             }
             for a in data["actresses"]
         ]
+
+        result["screenshots"] = [ss["image_full"] for ss in data["gallery"]]
+        result["tags"] = [c["name_en"] for c in data["categories"]]
         return result
 
     def search(self, code: str):
@@ -56,4 +59,4 @@ class R18:
 if __name__ == "__main__":
     from json import dumps
 
-    print(dumps(R18().search("EBOD-391"), indent=2))
+    print(dumps(R18().search("EBOD-391"), indent=2, ensure_ascii=False))
