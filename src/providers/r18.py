@@ -10,9 +10,11 @@ class R18:
         result = {"id": data["dvd_id"]}
         result["title"] = data["title_en"]
         result["title_ja"] = data["title_ja"]
-        result["page"] = f"https://r18.dev/videos/vod/movies/detail/-/id={data['content_id']}/"
-        result["poster"] = data["jacket_full_url"]
-        result[""]
+        result[
+            "page"
+        ] = f"https://r18.dev/videos/vod/movies/detail/-/id={data['content_id']}/"
+        result["poster"] = data.get("jacket_full_url", None)
+        result["preview"] = data.get("sample_url", None)
 
         ## result.details
         result["details"] = {
@@ -21,6 +23,15 @@ class R18:
             "runtime": None,
             "studio": None,
         }
+
+        result["details"]["director"] = (
+            data["directors"][0]["name_romaji"] if data["directors"] else None
+        )
+        result["details"]["release_date"] = data.get("release_date", None)
+        result["details"]["runtime"] = data.get("runtime_mins", None)
+        result["details"]["studio"] = data.get("maker_name_en", None)
+
+        
         return result
 
     def search(self, code: str):
