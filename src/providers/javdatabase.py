@@ -27,7 +27,7 @@ class Javdatabase:
         resultObject["page"] = urljoin(base=self.base_url, url=f"movies/{code.lower()}/")
         #  page.getElementsByTagName('meta')[25].attrs?.content || page.getElementsByTagName('meta')[26].attrs?.content || undefined
         # page.get_element_by_id
-        # resultObject["poster"]
+        resultObject["poster"] = page.findall(".//meta[""]")
         return resultObject
 
     async def search(self, code: str):
