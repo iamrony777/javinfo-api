@@ -129,7 +129,7 @@ class Javdatabase:
                 result["tags"].append(tags.text.strip())
         except KeyError:
             pass
-        return json.dumps(result, ensure_ascii=False)
+        return json.dumps(result, ensure_ascii=False, indent=2)
 
     def search(self, code: str):
         """public method: search"""
@@ -150,4 +150,4 @@ class Javdatabase:
 
 
 if __name__ == "__main__":
-    print(Javdatabase().search("MKCK-275"))
+    print(Javdatabase().search("DOA-017"))
