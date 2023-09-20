@@ -57,11 +57,13 @@ class Javdatabase:
         }
         ### result.details.director
         try:
-            result["details"]["director"] = page.xpath(
-                '//div[@class="movietable"]/table/tbody/tr[11]/td[2]/span/a'
-            )[0].text
+            result["details"]["director"] = page.cssselect("div.movietable > table > tr:nth-child(11) > td:nth-child(2) > span > a")[0].text
         except IndexError:
             pass
+
+        ## result.details.release_date
+        try:
+            result["details"]["release_date"] = page.cssselect("")[0].text
 
         return json.dumps(result, ensure_ascii=False, indent=2)
 
