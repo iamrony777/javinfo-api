@@ -11,6 +11,16 @@ class R18:
         result["title"] = data["title_en"]
         result["title_ja"] = data["title_ja"]
         result["page"] = f"https://r18.dev/videos/vod/movies/detail/-/id={data['content_id']}/"
+        result["poster"] = data["jacket_full_url"]
+        result[""]
+
+        ## result.details
+        result["details"] = {
+            "director": None,
+            "release_date": None,
+            "runtime": None,
+            "studio": None,
+        }
         return result
 
     def search(self, code: str):
