@@ -121,7 +121,7 @@ class Javdatabase:
             pass
         return json.dumps(result, ensure_ascii=False, indent=2)
 
-    async def search(self, code: str):
+    def search(self, code: str):
         """public method: search"""
         resp = self.client.get(
             urljoin(base=self.base_url, url=f"movies/{code.lower()}"),
@@ -140,5 +140,4 @@ class Javdatabase:
 
 
 if __name__ == "__main__":
-    import asyncio
-    print(asyncio.run(Javdatabase().search("DOA-017")))
+    print(Javdatabase().search("DOA-017"))
