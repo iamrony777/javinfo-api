@@ -21,11 +21,9 @@ class Javdatabase:
         )
 
     def getJsonResult(self, code: str, page: bytes):
-        resultObject = {
-            id: code
-        }
-        resultObject['title'] = CSSSelector()
-        pass
+        resultObject = {"id": code}
+        resultObject["title"] = CSSSelector(".entry-header > h1")(page)[0].text
+        return resultObject
 
     async def search(self, code: str):
         """public method: search"""
@@ -41,7 +39,7 @@ class Javdatabase:
         else:
             return self.getJsonResult(
                 code=code,
-                page=html.fromstring(html=resp.content, base_url=self.base_url)
+                page=html.fromstring(html=resp.content, base_url=self.base_url),
             )
 
 
