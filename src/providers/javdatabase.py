@@ -9,8 +9,6 @@ from urllib.parse import urljoin
 from cloudscraper import create_scraper
 from lxml import html
 
-# from lxml.cssselect import CSSSelector
-
 
 class Javdatabase:
     def __init__(self, base_url: str = "https://javdatabase.com/") -> None:
@@ -102,8 +100,12 @@ class Javdatabase:
 
         ## result.screenshots
         result["screenshots"] = []
+
+        el = (
+            2 if not len(result["actress"]) else 3
+        )  ## if actress section is not available then screenshot section changes it position
         try:
-            for ss in page.cssselect(".entry-content > div:nth-child(3) > a"):
+            for ss in page.cssselect(f".entry-content > div:nth-child({el}) > a"):
                 result["screenshots"].append(ss.attrib["href"])
         except KeyError:
             pass
@@ -139,5 +141,4 @@ class Javdatabase:
 
 if __name__ == "__main__":
     import asyncio
-
     print(asyncio.run(Javdatabase().search("DOA-017")))
