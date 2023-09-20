@@ -1,6 +1,11 @@
+"""
+fetch data from r18.dev's internal api
+Author @github.com/iamrony777
+"""
+
+
 from src.common.http import CustomSession
 from urllib.parse import urljoin
-
 
 class R18:
     def __init__(self, base_url: str = "https://r18.dev") -> None:
