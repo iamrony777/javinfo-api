@@ -129,7 +129,7 @@ class Javdatabase:
                 result["tags"].append(tags.text.strip())
         except KeyError:
             pass
-        return json.dumps(result, ensure_ascii=False, indent=2)
+        return json.dumps(result, ensure_ascii=False)
 
     def search(self, code: str):
         """public method: search"""
