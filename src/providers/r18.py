@@ -1,5 +1,5 @@
 from src.providers import CustomSession
-
+from urllib.parse import urljoin
 
 class R18:
     def __init__(self, base_url: str = "https://r18.dev") -> None:
@@ -31,7 +31,15 @@ class R18:
         result["details"]["runtime"] = data.get("runtime_mins", None)
         result["details"]["studio"] = data.get("maker_name_en", None)
 
-        
+        result["actress"] = [
+            {
+                "name": a["name_romaji"],
+                "image": urljoin(
+                    "https://pics.dmm.co.jp/mono/actjpgs/", a["image_url"]
+                ),
+            }
+            for a in data["actresses"]
+        ]
         return result
 
     def search(self, code: str):
@@ -46,4 +54,6 @@ class R18:
 
 
 if __name__ == "__main__":
-    print(R18().search("EBOD-391"))
+    from json import dumps
+
+    print(dumps(R18().search("EBOD-391"), indent=2))
