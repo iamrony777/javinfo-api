@@ -42,7 +42,20 @@ class Javdatabase:
                 result["poster"] = None
 
         ## result.preview
-        result["preview"] = page.xpath('//iframe')
+        try:
+            result["preview"] = page.xpath("//iframe")[0].get("src")
+        except IndexError:
+            result["preview"] = None
+
+        ## result.details
+        result["details"] = {
+            "director": None,
+            "release_date": None,
+            "runtime": None,
+            "studio": None,
+        }
+        ### result.details.director
+        director = page.cssselect("div.movietable > table > tr:nth-child(9) > td:nth-child(2)")[0]
         return json.dumps(result, ensure_ascii=False, indent=2)
 
     async def search(self, code: str):
