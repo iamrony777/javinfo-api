@@ -4,6 +4,7 @@ Author @github.com/iamrony777
 """
 
 import json
+import re
 from urllib.parse import urljoin
 from cloudscraper import create_scraper
 from lxml import html
@@ -55,7 +56,14 @@ class Javdatabase:
             "studio": None,
         }
         ### result.details.director
-        director = page.xpath('//div[@class="movietable"]/table/tbody/tr[11]/td[2]/span/a')[0].text
+        try:
+            result["details"]["director"] = page.xpath(
+                '//div[@class="movietable"]/table/tbody/tr[11]/td[2]/span/a'
+            )[0].text
+        except IndexError:
+            pass
+
+        return json.dumps(result, ensure_ascii=False, indent=2)
 
     async def search(self, code: str):
         """public method: search"""
@@ -76,4 +84,4 @@ class Javdatabase:
 if __name__ == "__main__":
     import asyncio
 
-    print(asyncio.run(Javdatabase().search("MKCK-324")))
+    print(asyncio.run(Javdatabase().search("EBOD-391")))
