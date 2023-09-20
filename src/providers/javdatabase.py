@@ -7,7 +7,7 @@ from httpx import AsyncClient
 
 
 class Javdatabase:
-    def __init__(self, base_url: str = "https://www.javlibrary.com/en/") -> None:
+    def __init__(self, base_url: str = "https://jav") -> None:
         self.base_url = base_url
         self.headers = {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
