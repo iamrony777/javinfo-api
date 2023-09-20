@@ -22,6 +22,7 @@ class Javdatabase:
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True}
         )
+        self.parser = html.HTMLParser(encoding="UTF-8")
 
     def getJsonResult(self, code: str, page: html.HtmlElement):
         result = {"id": code}
@@ -57,19 +58,31 @@ class Javdatabase:
         }
         ### result.details.director
         try:
-            result["details"]["director"] = page.cssselect("div.movietable > table > tr:nth-child(11) > td:nth-child(2) > span > a")[0].text
+            result["details"]["director"] = page.cssselect(
+                "div.movietable > table > tr:nth-child(11) > td:nth-child(2) > span > a"
+            )[0].text
         except IndexError:
             pass
 
         ## result.details.release_date
         try:
-            result["details"]["release_date"] = page.cssselect("div.movietable > table > tr:nth-child(14) > td:nth-child(2)")[0].text
+            result["details"]["release_date"] = page.cssselect(
+                "div.movietable > table > tr:nth-child(14) > td:nth-child(2)"
+            )[0].text
         except IndexError:
             pass
 
         ## result.details.runtime
         try:
-            result["details"]["runtime"] = page.cssselect("div.movietable > table > tr:nth-child(15) > td:nth-child(2)")[0].text
+            result["details"]["runtime"] = re.match(
+                r"\d+",
+                page.cssselect(
+                    "div.movietable > table > tr:nth-child(15) > td:nth-child(2)"
+                )[0].text,
+            )[0]
+        except:
+            pass
+
         return json.dumps(result, ensure_ascii=False, indent=2)
 
     async def search(self, code: str):
@@ -84,7 +97,9 @@ class Javdatabase:
         else:
             return self.getJsonResult(
                 code=code,
-                page=html.fromstring(html=resp.content, base_url=self.base_url),
+                page=html.fromstring(
+                    html=resp.content, base_url=self.base_url, parser=self.parser
+                ),
             )
 
 
