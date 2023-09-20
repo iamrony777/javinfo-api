@@ -140,4 +140,4 @@ class Javdatabase:
 
 
 if __name__ == "__main__":
-    print(Javdatabase().search("DOA-017"))
+    print(Javdatabase().search("MKCK-275"))
