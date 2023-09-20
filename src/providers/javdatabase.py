@@ -6,7 +6,7 @@ Author @github.com/iamrony777
 from urllib.parse import urljoin
 from cloudscraper import create_scraper
 from lxml import html
-from lxml.cssselect import CSSSelector
+# from lxml.cssselect import CSSSelector
 
 
 class Javdatabase:
@@ -20,15 +20,14 @@ class Javdatabase:
             browser={"browser": "chrome", "platform": "linux", "desktop": True}
         )
 
-    def getJsonResult(self, code: str, page: HTMLElement):
+    def getJsonResult(self, code: str, page: html.HtmlElement):
         resultObject = {"id": code}
-        resultObject["title"] = CSSSelector(".entry-header > h1")(page)[0].text
+        resultObject["title"] = page.cssselect(".entry-header > h1")[0].text
         resultObject["title_ja"] = None
         resultObject["page"] = urljoin(base=self.base_url, url=f"movies/{code.lower()}/")
         #  page.getElementsByTagName('meta')[25].attrs?.content || page.getElementsByTagName('meta')[26].attrs?.content || undefined
-        page.
-
-        resultObject["poster"]
+        # page.get_element_by_id
+        # resultObject["poster"]
         return resultObject
 
     async def search(self, code: str):
