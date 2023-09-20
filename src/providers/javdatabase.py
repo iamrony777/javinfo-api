@@ -63,8 +63,13 @@ class Javdatabase:
 
         ## result.details.release_date
         try:
-            result["details"]["release_date"] = page.cssselect("")[0].text
+            result["details"]["release_date"] = page.cssselect("div.movietable > table > tr:nth-child(14) > td:nth-child(2)")[0].text
+        except IndexError:
+            pass
 
+        ## result.details.runtime
+        try:
+            result["details"]["runtime"] = page.cssselect("div.movietable > table > tr:nth-child(15) > td:nth-child(2)")[0].text
         return json.dumps(result, ensure_ascii=False, indent=2)
 
     async def search(self, code: str):
