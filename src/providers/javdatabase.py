@@ -111,10 +111,10 @@ class Javdatabase:
         ## result.tags
         result["tags"] = []
         try:
-            for tags in page.cssselect("div.movietable > table > tr:nth-child(8) > td:nth-child(2) > span > a"):
-                result["tags"].append(
-                    tags.text.strip()
-                )
+            for tags in page.cssselect(
+                "div.movietable > table > tr:nth-child(8) > td:nth-child(2) > span > a"
+            ):
+                result["tags"].append(tags.text.strip())
         except KeyError:
             pass
         return json.dumps(result, ensure_ascii=False, indent=2)
@@ -140,4 +140,4 @@ class Javdatabase:
 if __name__ == "__main__":
     import asyncio
 
-    print(asyncio.run(Javdatabase().search("EBOD-391")))
+    print(asyncio.run(Javdatabase().search("DOA-017")))
