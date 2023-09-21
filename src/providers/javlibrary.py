@@ -9,7 +9,7 @@ class Javlibrary:
     def __init__(self, base_url: str = "https://www.javlibrary.com/en/") -> None:
         self.base_url = base_url
         self.sess = Session()
-        self.sess.cookies = {"over18": "18"}
+        self.sess.cookies.update({"over18": "18"})
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
             sess=self.sess,
