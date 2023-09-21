@@ -88,6 +88,13 @@ class Javlibrary:
         except IndexError:
             pass
 
+        try:
+            result["actress"] = []
+            for act in page.xpath('//*/span[@class="star"]'):
+                result["actress"].append(
+                    
+                )
+
         return result
 
     def search(self, code: str):
@@ -117,9 +124,8 @@ class Javlibrary:
                             url=urljoin(
                                 base=self.base_url,
                                 url=each.find("a").get("href"),
-                                cookies={"over18": "18"},
-                                allow_redirects=True,
                             ),
+                            cookies={"over18": "18"},
                             allow_redirects=True,
                         )
                         return self.__getJsonResult(
@@ -145,4 +151,4 @@ class Javlibrary:
 
 
 if __name__ == "__main__":
-    print(json.dumps(Javlibrary().search("EBOD-875"), indent=2, ensure_ascii=False))
+    print(json.dumps(Javlibrary().search("SSIS-001"), indent=2, ensure_ascii=False))
