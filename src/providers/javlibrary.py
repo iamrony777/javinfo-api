@@ -43,7 +43,7 @@ class Javlibrary:
             base=self.base_url,
             url=page.cssselect("#video_title > h3 > a")[0].get("href"),
         )
-        result["poster"] = page.cssselect("#video_jacket_img")
+        result["poster"] = page.cssselect("#video_jacket_img")[0].get('src')
         return result
 
     def search(self, code: str):
