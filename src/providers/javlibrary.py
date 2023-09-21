@@ -7,15 +7,14 @@ from cloudscraper import create_scraper
 class Javlibrary:
     def __init__(self, base_url: str = "https://www.javlibrary.com/en/") -> None:
         self.base_url = base_url
+        self.parser = html.HTMLParser(encoding="UTF-8")
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
-            interpreter='chakracore'
         )
-        self.parser = html.HTMLParser(encoding="UTF-8")
 
     def __getJsonResult(self, page: html.HtmlElement):
-
-        return page.find('head/title').text
+        result = {"id": ""}
+        return page.find("head/title").text
 
     def search(self, code: str):
         # first search for checking availability
@@ -23,6 +22,7 @@ class Javlibrary:
         resp = self.client.get(
             url=urljoin(base=self.base_url, url="vl_searchbyid.php"),
             params={"keyword": code},
+            cookies={"over18": "18"},
             allow_redirects=True,
         )
         if resp.ok and bool(
@@ -41,7 +41,10 @@ class Javlibrary:
                     if code == each.find("a/div").text:
                         resp = self.client.get(
                             url=urljoin(
-                                base=self.base_url, url=each.find("a").get("href")
+                                base=self.base_url,
+                                url=each.find("a").get("href"),
+                                cookies={"over18": "18"},
+                                allow_redirects=True,
                             ),
                             allow_redirects=True,
                         )
