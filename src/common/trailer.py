@@ -20,7 +20,7 @@ def getPreview(code: str):
         html=response.content, base_url="https://www.dmm.co.jp"
     )
     src = re.search(
-        pattern=r'\"src\":\"(.*?)\"', string=page.cssselect("div > script")[0].text
+        pattern=r"\"src\":\"(.*?)\"", string=page.cssselect("div > script")[0].text, flags="gm"
     )
 
     return src
