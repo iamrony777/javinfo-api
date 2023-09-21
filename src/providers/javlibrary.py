@@ -23,11 +23,11 @@ class Javlibrary:
             re.search(pattern=r"\?keyword=[a-zA-Z0-9]+", string=resp.url)
         ):  # duplicate or no results found
             page: html.HtmlElement = html.fromstring(html=resp.content, base_url=self.base_url)
-            page.cssselect("#rightcolumn > p > em").text
+            try: ## No result found
+                return { "statusCode": 404, "error": page.cssselect("#rightcolumn > p > em")[0].text}
+            except IndexError: ## Duplicate/Many results
+                return { "url": resp.url }
 
-
-            return { "url": resp.url }
-            pass
         elif resp.ok and bool(
             re.search(pattern=r"\?v=[a-zA-Z0-9]+", string=resp.url)
         ):  # redirected to actual page
@@ -37,4 +37,4 @@ class Javlibrary:
 
 
 if __name__ == "__main__":
-    print(Javlibrary().search("asdfjbjb[']"))
+    print(Javlibrary().search("SSIS-001"))
