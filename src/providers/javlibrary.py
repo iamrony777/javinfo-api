@@ -13,8 +13,17 @@ class Javlibrary:
         )
 
     def __getJsonResult(self, page: html.HtmlElement):
-        result = {"id": ""}
-        return page.find("head/title").text
+        _id =  page.cssselect("#video_id > table > tr > td.text")[0].text
+        result = {"id": _id}
+        
+
+
+
+
+
+
+
+        return result
 
     def search(self, code: str):
         # first search for checking availability
