@@ -1,15 +1,19 @@
 import re
 from lxml import html
 from urllib.parse import urljoin
-from cloudscraper import create_scraper, session, CloudScraper
+from cloudscraper import create_scraper
+from requests import Session
 
 
 class Javlibrary:
     def __init__(self, base_url: str = "https://www.javlibrary.com/en/") -> None:
         self.base_url = base_url
-        self.client = CloudScraper(
+        self.sess = Session()
+        self.sess.cookies = {"over18": "18"}
+        self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
-            sess
+            sess=self.sess,
+            cookies={}
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
@@ -20,7 +24,7 @@ class Javlibrary:
         # first search for checking availability
         code = code.upper()
         resp = self.client.get(
-            url="vl_searchbyid.php",
+            url=urljoin(base=self.base_url, url="vl_searchbyid.php"),
             params={"keyword": code},
             allow_redirects=True,
         )
