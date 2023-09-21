@@ -1,15 +1,16 @@
 import re
 from lxml import html
 from urllib.parse import urljoin
-from cloudscraper import create_scraper
+from cloudscraper import create_scraper, session
 
 
 class Javlibrary:
     def __init__(self, base_url: str = "https://www.javlibrary.com/en/") -> None:
         self.base_url = base_url
+        self.sess = session()
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
-            
+
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
