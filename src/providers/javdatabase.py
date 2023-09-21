@@ -35,7 +35,9 @@ class Javdatabase:
 
     def __getJsonResult(self, code: str, page: html.HtmlElement):
         result = {"id": code}
-        result["title"] = page.cssselect(".entry-header > h1")[0].text
+        result["title"] = page.cssselect(".entry-header > h1")[0].text.replace(
+            f"{code} - ", ""
+        )
         result["title_ja"] = None
         result["page"] = urljoin(base=self.base_url, url=f"movies/{code.lower()}/")
 
