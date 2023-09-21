@@ -15,7 +15,8 @@ class Javlibrary:
     def __getJsonResult(self, page: html.HtmlElement):
         _id =  page.cssselect("#video_id > table > tr > td.text")[0].text
         result = {"id": _id}
-        
+        reulst["title"] = page.cssselect("#video_title > h3 > a")[0].text.replace(f"{_id} ", "")
+
 
 
 
