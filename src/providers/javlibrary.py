@@ -9,7 +9,7 @@ class Javlibrary:
         self.base_url = base_url
         self.client = CloudScraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
-            source_address=base_url,
+            sess
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
