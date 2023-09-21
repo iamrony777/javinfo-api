@@ -12,17 +12,25 @@ class Javlibrary:
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
         )
 
+    def __getJapanesePage(self, url: str) -> html.HtmlElement:
+        return html.fromstring(
+            html=self.client.get(
+                url=urljoin(base="https://www.javlibrary.com/ja/", url=url),
+                cookies={"over18": "18"},
+                allow_redirects=True,
+            ).content,
+            base_url=urljoin(base="https://www.javlibrary.com/ja/", url=url),
+            parser=self.parser,
+        )
+
     def __getJsonResult(self, page: html.HtmlElement):
-        _id =  page.cssselect("#video_id > table > tr > td.text")[0].text
+        _id = page.cssselect("#video_id > table > tr > td.text")[0].text
+
         result = {"id": _id}
-        reulst["title"] = page.cssselect("#video_title > h3 > a")[0].text.replace(f"{_id} ", "")
-
-
-
-
-
-
-
+        result["title"] = page.cssselect("#video_title > h3 > a")[0].text.replace(
+            f"{_id} ", ""
+        )
+        result["title_ja"] = self.__getJapanesePage(page.cssselect("#video_title > h3 > a")[0].get('href'))
 
         return result
 
