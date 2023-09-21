@@ -18,13 +18,15 @@ class Javlibrary:
             params={"keyword": code},
             allow_redirects=True,
         )
-        if resp.ok and resp.url.endswith(f"keyword={code}"): # duplicate results found
+        if resp.ok and resp.url.endswith(f"keyword={code}"):  # duplicate results found
+            return { "url": resp.url }
             pass
-        else resp.ok and re.search():
+        elif resp.ok and bool(
+            re.search(pattern=r"\?v=[a-zA-Z0-9]+", string=resp.url)
+        ):  # redirected to actual page
             pass
-
-        print({"statusCode": resp.status_code, "url": resp.url})
-        return resp.ok
+        elif not resp.ok:
+            return {"statusCode": resp.status_code, "url": resp.url}
 
 
 if __name__ == "__main__":
