@@ -19,7 +19,9 @@ class Javlibrary:
             params={"keyword": code},
             allow_redirects=True,
         )
-        if resp.ok and resp.url.endswith(f"keyword={code}"):  # duplicate or no results found
+        if resp.ok and bool(
+            re.search(pattern=r"\?keyword=[a-zA-Z0-9]+", string=resp.url)
+        ):  # duplicate or no results found
             page: html.HtmlElement = html.fromstring(html=resp.content, base_url=self.base_url)
             page.cssselect("#rightcolumn > p > em").text
 
