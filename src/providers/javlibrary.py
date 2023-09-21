@@ -35,4 +35,4 @@ class Javlibrary:
 
 
 if __name__ == "__main__":
-    print(Javlibrary().search("SSIS-001"))
+    print(Javlibrary().search("asdfjbjb[']"))
