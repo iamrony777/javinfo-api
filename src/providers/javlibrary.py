@@ -1,3 +1,4 @@
+import re
 from urllib.parse import urljoin
 from cloudscraper import create_scraper
 
@@ -17,9 +18,10 @@ class Javlibrary:
             params={"keyword": code},
             allow_redirects=True,
         )
-        if resp.ok and resp.url.endswith(f"keyword={code}") # duplicate results found
+        if resp.ok and resp.url.endswith(f"keyword={code}"): # duplicate results found
             pass
-        if else resp.ok
+        else resp.ok and re.search():
+            pass
 
         print({"statusCode": resp.status_code, "url": resp.url})
         return resp.ok
