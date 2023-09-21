@@ -60,8 +60,8 @@ class Javlibrary:
 
         try:
             result["details"]["director"] = page.xpath(
-                '//td/span[@class="director"]/a'
-            )[0].text.strip()
+                '//td/span[@class="director"]/a/text()'
+            )[0].strip()
         except IndexError:
             pass
 
@@ -82,9 +82,9 @@ class Javlibrary:
             pass
 
         try:
-            result["details"]["studio"] = page.cssselect(
-                ""
-            )
+            result["details"]["studio"] = page.xpath(
+                '//td/span[@class="maker"]/a/text()'
+            )[0]
         except IndexError:
             pass
 
