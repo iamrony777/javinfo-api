@@ -39,7 +39,7 @@ class Javlibrary:
                             ),
                             allow_redirects=True,
                         )
-                        return
+                        return resp.content
 
         elif resp.ok and bool(
             re.search(pattern=r"\?v=[a-zA-Z0-9]+", string=resp.url)
@@ -50,4 +50,4 @@ class Javlibrary:
 
 
 if __name__ == "__main__":
-    print(Javlibrary().search("SSIS-001"))
+    print(Javlibrary().search("SSIS-100"))
