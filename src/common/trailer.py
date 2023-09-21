@@ -14,10 +14,11 @@ def getPreview(code: str):
     response = session.get(
         f"/=/cid={code}/mtype=AhRVShI_/service=mono/floor=dvd/mode=/"
     )
+    with open("test.html", 'rb') as _
     page: html.HtmlElement = html.fromstring(
         html=response.content, base_url="https://www.dmm.co.jp"
     )
-page.cssselect("#dmmvideo-player > video")    return page.cssselect("#dmmvideo-player > video")[0].get("src")
+    return page.cssselect("#dmmvideo-player > video")[0].get("src")
 
 
 if __name__ == "__main__":
