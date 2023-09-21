@@ -9,4 +9,5 @@ class Javlibrary:
         )
 
     def search(self, code:str):
+        # first search for checking availability
         
