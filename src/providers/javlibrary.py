@@ -2,22 +2,19 @@ import re
 from lxml import html
 from urllib.parse import urljoin
 from cloudscraper import create_scraper
-from requests import Session
 
 
 class Javlibrary:
     def __init__(self, base_url: str = "https://www.javlibrary.com/en/") -> None:
         self.base_url = base_url
-        self.sess = Session()
-        self.sess.cookies.update({"over18": "18"})
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
-            sess=self.sess,
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
     def __getJsonResult(self, page: html.HtmlElement):
-        pass
+
+        return page.find('head/title').text
 
     def search(self, code: str):
         # first search for checking availability
