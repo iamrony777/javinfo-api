@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
+
+    <head>
+        <title>年齢認証 - FANZA</title>
+        <meta name="description" content="成人向けコンテンツを取り扱うアダルト総合サイト。18歳未満の方のアクセスは固くお断りいたします。">
+        <meta name="robots" content="noindex,follow">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta http-equiv="content-style-type" content="text/css">
+        <meta http-equiv="content-script-type" content="text/javascript">
+        <meta name="application-name" content="FANZA">
+        <meta name="msapplication-tooltip" content="動画、DVD通販、ライブチャット等の総合サイト">
+        <meta name="msapplication-starturl" content="/top/">
+        <meta name="msapplication-window" content="width=1280;height=1024">
+        <meta name="msapplication-navbutton-color" content="#c20505">
+        <meta name="msapplication-task"
+            content="name=動画サービス;action-uri=/digital/;icon-uri=//p.dmm.co.jp/p/common/pinned/task.ico">
+        <meta name="msapplication-task"
+            content="name=DVD/CDレンタルサービス;action-uri=/rental/;icon-uri=//p.dmm.co.jp/p/common/pinned/task.ico">
+        <meta name="msapplication-task"
+            content="name=通販サービス;action-uri=/mono/;icon-uri=//p.dmm.co.jp/p/common/pinned/task.ico">
+        <meta name="msapplication-task"
+            content="name=ライブチャットサービス;action-uri=/live/chat/;icon-uri=//p.dmm.co.jp/p/common/pinned/task.ico">
+        <!--[if lt IE 9]><script type="text/javascript" charset="utf-8" src="/js/common/html5shiv.js"></script><![endif]-->
+        <!--[if gte IE 9]> <link href="//p.dmm.co.jp/p/common/pinned/favicon.ico" rel="shortcut icon" ><![endif]-->
+        <link href="//p.dmm.co.jp/p/common/pinned/favicon.ico" rel="shortcut icon">
+        <link href="/css/agecheck.css?1558660624" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/top/pc-top.css?1570691552" media="screen" rel="stylesheet" type="text/css">
+        <link href="/css/www.dmm.co.jp.top.css?1570692025" media="screen" rel="stylesheet" type="text/css">
+        <link href="//p.dmm.co.jp/p/apple-touch-icon.png" rel="apple-touch-icon">
+        <link href="//p.dmm.co.jp/p/apple-touch-icon.png" rel="apple-touch-icon-precomposed">
+        <script type="text/javascript" src="/js/library/jquery_1_8_3/jquery-1.8.3.min.js?1358679782"></script>
+        <script type="text/javascript" src="/js/common/set_tracking.js?1463477665"></script>
+        <style type="text/css" media="screen">
+            <!--
+            .rst * {
+                margin: 0;
+                padding: 0;
+            }
+
+            #page {
+                text-align: center;
+            }
+
+            #content {
+                width: 750px;
+                margin: 30px auto 24px;
+            }
+
+            .capt01 {
+                color: #c00;
+                font-weight: bold;
+                font-size: 20px;
+            }
+
+            .sect01 {
+                margin: 9px 24px 24px;
+                padding: 24px;
+                border-top: 1px #bbb solid;
+                border-bottom: 1px #bbb solid;
+            }
+
+            .capt02 {
+                font-weight: bold;
+                font-size: 16px;
+            }
+
+            .sect01 p {
+                margin-bottom: 18px;
+            }
+
+            .sect01 li {
+                list-style: none;
+                display: inline;
+            }
+
+            .sect01 .first {
+                margin-right: 36px;
+            }
+            -->
+        </style>
+        <script src="/js/s_code_dummy.js"></script>
+        <script src="/js/mbox.js"></script>
+        <script>
+            var _gaq = _gaq || [];
+            _gaq.push(
+                ['_setAccount', 'UA-31336-2'],
+                ['_setDomainName', '.dmm.co.jp'],
+                ['_setSampleRate', '10'],
+                ['_setCampaignCookieTimeout', 2592000000],
+                ['_trackPageview']
+            );
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+
+
+        <link rel="preload"
+            href="https://navismithapis-cdn.com/css/pc/min.css?v=e727ddfb376e5643b5228819ec0213d3e2428c9d" as="style">
+        <link rel="stylesheet"
+            href="https://navismithapis-cdn.com/css/pc/min.css?v=e727ddfb376e5643b5228819ec0213d3e2428c9d">
+        <script src="https://navismithapis-cdn.com/js/is_internal.js?v=e727ddfb376e5643b5228819ec0213d3e2428c9d"
+            crossorigin="anonymous" id="naviapi-is-internal" data-env="prod" data-is-internal="true" defer></script>
+        <script src="https://navismithapis-cdn.com/js/pigeon.js?v=e727ddfb376e5643b5228819ec0213d3e2428c9d"
+            crossorigin="anonymous" id="naviapi-pigeon" data-env="prod" data-version="v2" data-site-type="adult"
+            data-view-type="pc" defer></script>
+        <script type="text/javascript" defer="defer" src="https://cdj.dap.dmm.co.jp/dmm-c-sdk.js"></script>
+
+    </head>
+
+    <body name="dmm_main" class="d-body-mg0">
+        <!--[if IE 7]><div id="d-ie7"><![endif]-->
+
+
+
+
+
+        <div id="tracking_area">
+            <!-- i3 tag -->
+            <input id="i3_opnd" name="i3_opnd" type="hidden" value="">
+            <input id="i3_vwtp" name="i3_vwtp" type="hidden" value="pc">
+            <script>
+                !function(a, b, c, d, e, f, g, h, i, j, k) {
+                    g = "DMMi3Object", h = a[g], a[g] = e, h && (a[e] = a[h]),
+                    a[e] = a[e] || function() {
+                        i = arguments[arguments.length - 1], "function" == typeof i && setTimeout(
+                            function(b, c) { return function() { a[e].q.length > b && c() } }(a[e].q.length, i), f), a[e].q.push(
+                                arguments)
+                    }, a[e].q = a[e].q || [], a[e].t = f, j = b.createElement(c), k = b.getElementsByTagName(c)[0],
+                    j.async = 1, j.src = d, j.charset = "utf-8", k.parentNode.insertBefore(j, k), a[e].s = ~~new Date
+                }(window, document, "script", "//stat.i3.dmm.com/plus/tracking.js", "i3", 2000);
+                i3('init', 'i3_hdvroh');
+                i3('create');
+                i3('send', 'view', 'page');
+            </script><!-- Google Tag Manager DataLayer-->
+
+            <script>
+                /**
+                 * GTM用ユーティリティ関数 (javascript)
+                 *
+                 * [注意]
+                 * 1.下記を厳守しないと、一部環境(フロントエンドでscriptタグをパースしているような環境)で
+                 * エラーが出ます。(コードの改行が反映されず、コードがくっついた状態で解釈されるため)
+                 *
+                 * ・コメントは、// は使わない
+                 * ・関数の行の最後にも、セミコロンを付与する
+                 *
+                 * 2.必ずES5未満のコードを書いてください。(具体的には、GTMのタグのjavascriptでエラーが出ない内容が求められる)
+                 * */
+
+                /**
+                 GA用共通変数
+                 */
+                window.dmm_mkbase_ga_event_params = {
+                    user_id: '', /* ( DMMのオープンな会員ID。非ログイン時はカラ。) */
+                    common_last_login_user_id: '', /* ( cookie(cdp_id) ) */
+                    common_profile_id: '', /*( プロフィールID )*/
+                    common_layout: 'pc', /*( pc or sp ) */
+                    page_type: '' /* (top, floor_top, service_top, detail, etc...) */
+                };
+
+                /**GA用ユーティリティー関数
+                 dataLayerのオブジェクトに、タグAPIからの返却値を追加する関数。
+                 */
+                window.dmm_mkbase_ga_util = {
+                    merge_common_data: function(data) {
+                        /* 強制的にdatalayerをresetする */
+                        window.dataLayer.push({
+                            ecommerce: null,
+                            cloud_retail: null,
+                            via_info: null,
+                            via_option: null,
+                            via_view_rank: null,
+                            via_show_position: null,
+                            via_target_id: null,
+                            misc: null
+                        });
+
+                        /* 明示的なイベント発火か?をtrueにする */
+                        data['manual_fire_event'] = true;
+
+                        /* tracking-tag-api経由イベントを識別する */
+                        data['is_managed_by_tracking_tag_api'] = true;
+
+                        var event_name_prefix = 'mkbase_ga--';
+                        /* イベント名にprefixが含まれていない場合は、付与する */
+                        if (data['event'].indexOf(event_name_prefix) === -1) {
+                            data['event'] = event_name_prefix + data['event'];
+                        }
+
+                        /* via情報の追加 */
+                        if (!(data.via_info || data.via_option || data.via_view_rank || data.via_show_position)) {
+                            var paramsString = window.location.search;
+                            var searchParams = new URLSearchParams(paramsString);
+                            data.via_info = searchParams.get('i3_ref');
+                            data.via_option = searchParams.get('dmmref');
+                            data.via_view_rank = searchParams.get('i3_ord');
+                            data.via_show_position = searchParams.get('i3_pst');
+                        }
+
+                        /* page_typeの更新（SPA対応） */
+                        if (data.page_type) {
+                            window.dmm_mkbase_ga_event_params.page_type = data.page_type
+                        }
+
+                        /* profile_idの更新（SPA対応） */
+                        if (data.common_profile_id) {
+                            window.dmm_mkbase_ga_event_params.common_profile_id = data.common_profile_id
+                        }
+
+                        /* cloud_retail存在しない場合のエラー回避 */
+                        if (data.cloud_retail === undefined || data.cloud_retail.productDetails === undefined) {
+                            return data;
+                        }
+
+                        /* cloud_retail内のecommerceパラメータを移行 */
+                        var items = [];
+                        var sum_price = 0;
+                        for (var i = 0; i < data.cloud_retail.productDetails.length; i++) {
+                            var _t = data.cloud_retail.productDetails[i];
+                            var item = {};
+
+                            if ('item_name' in _t.product) {
+                                item['item_name'] = _t.product.item_name;
+                            }
+                            if ('id' in _t.product) {
+                                var _id_tmp = "" + _t.product.id;
+                                /* 商品idにprefixが含まれていた場合は、GA4に送るIDからはprefixを除く */
+                                if (_id_tmp.indexOf("::::") > -1) {
+                                    var splited = _id_tmp.split("::::");
+                                    if (splited[1] && splited[1].length > 0) {
+                                        _id_tmp = splited[1];
+                                    }
+                                }
+                                item['item_id'] = _id_tmp;
+                            }
+                            if ('item_variant' in _t.product) {
+                                item['item_variant'] = _t.product.item_variant;
+                            }
+                            if ('priceInfo' in _t.product) {
+                                if ('price' in _t.product.priceInfo) {
+                                    item['price'] = _t.product.priceInfo.price;
+                                }
+                                if ('currencyCode' in _t.product.priceInfo) {
+                                    item['currency'] = _t.product.priceInfo.currencyCode;
+                                }
+                            }
+                            if ('affiliation' in _t.product) {
+                                item['affiliation'] = _t.product.affiliation;
+                            }
+                            if ('coupon' in _t.product) {
+                                item['coupon'] = _t.product.coupon;
+                            }
+                            if ('discount' in _t.product) {
+                                item['discount'] = _t.product.discount;
+                            }
+                            if ('index' in _t.product) {
+                                item['index'] = _t.product.index;
+                            }
+                            if ('item_brand' in _t.product) {
+                                item['item_brand'] = _t.product.item_brand;
+                            }
+                            if ('item_category' in _t.product) {
+                                item['item_category'] = _t.product.item_category;
+                            }
+                            if ('item_category2' in _t.product) {
+                                item['item_category2'] = _t.product.item_category2;
+                            }
+                            if ('item_category3' in _t.product) {
+                                item['item_category3'] = _t.product.item_category3;
+                            }
+                            if ('item_category4' in _t.product) {
+                                item['item_category4'] = _t.product.item_category4;
+                            }
+                            if ('item_category5' in _t.product) {
+                                item['item_category5'] = _t.product.item_category5;
+                            }
+                            if ('item_list_id' in _t.product) {
+                                item['item_list_id'] = _t.product.item_list_id;
+                            }
+                            if ('item_list_name' in _t.product) {
+                                item['item_list_name'] = _t.product.item_list_name;
+                            }
+
+                            if ('promotion_id' in _t.product) {
+                                item['promotion_id'] = _t.product.promotion_id;
+                            }
+
+                            if ('quantity' in _t) {
+                                item['quantity'] = _t.quantity;
+                            }
+
+                            items.push(item);
+
+                            /* cloud_retail非対応パラメータの削除 */
+                            delete data.cloud_retail.productDetails[i].product.item_name;
+                            delete data.cloud_retail.productDetails[i].product.item_variant;
+                            delete data.cloud_retail.productDetails[i].product.affiliation;
+                            delete data.cloud_retail.productDetails[i].product.coupon;
+                            delete data.cloud_retail.productDetails[i].product.discount;
+                            delete data.cloud_retail.productDetails[i].product.index;
+                            delete data.cloud_retail.productDetails[i].product.item_brand;
+                            delete data.cloud_retail.productDetails[i].product.item_category;
+                            delete data.cloud_retail.productDetails[i].product.item_category2;
+                            delete data.cloud_retail.productDetails[i].product.item_category3;
+                            delete data.cloud_retail.productDetails[i].product.item_category4;
+                            delete data.cloud_retail.productDetails[i].product.item_category5;
+                            delete data.cloud_retail.productDetails[i].product.item_list_id;
+                            delete data.cloud_retail.productDetails[i].product.item_list_name;
+                            delete data.cloud_retail.productDetails[i].product.promotion_id;
+                        }
+
+                        if (!("ecommerce" in data)) { data.ecommerce = {}; }
+                        data.ecommerce.items = items;
+
+                        /* valueが無ければ追加 */
+                        if (!("value" in data.ecommerce) && items.length > 0) {
+                            data.ecommerce.value = sum_price;
+                        }
+
+                        return data;
+                    }
+                };
+                (function() {
+                    window.dataLayer = window.dataLayer || [];
+
+                    window.dmm_mkbase_ga_util = window.dmm_mkbase_ga_util || {};
+
+                    window.dmm_mkbase_ga_util.merge_common_data = window.dmm_mkbase_ga_util.merge_common_data || function(data) { return data; };
+
+                    /* https://cloud.google.com/retail/docs/user-events?hl=ja */
+
+                    var home_paeg_view = {
+                        "event": "mkbase_retail--home_page_view",
+                        "cloud_retail": {
+                            "eventType": "home-page-view"
+                        }
+                    };
+
+                    /* prefix入れないために、dmm_mkbase_ga_util挟まない */
+                    window.dataLayer.push({ ecommerce: null });
+                    window.dataLayer.push(home_paeg_view);
+
+                    /* 非i3導入ドメインの対応 */
+                    var i3_flag = '';
+                    if (i3_flag === '0') {
+                        var page_view = {
+                            "event": "mkbase_ga--page_view",
+                            "cloud_retail": {
+                                "eventType": "home-page-view"
+                            }
+                        };
+                        window.dataLayer.push(window.dmm_mkbase_ga_util.merge_common_data(page_view));
+                    }
+                })();
+
+            </script>
+
+            <script>
+                (function() {
+                    if (!window["Marketing"]) { window.Marketing = {}; }
+                    var j = { "host": "www.dmm.co.jp", "device": "pc" };
+                    window.Marketing.Gateway = { getParam: function(k) { if (!k) { return j; } return j[k]; } };
+                })();
+                window.dataLayer = window.dataLayer || [];
+                dataLayer.push({ "dtm": { "viewLayout": "pc", "isForeign": 0, "profileId": "" } });
+            </script><!-- Google Tag Manager snippet-->
+            <script>
+                (function(w, d, s, l, i) {
+                    w[l] = w[l] || []; w[l].push({
+                        'gtm.start':
+                            new Date().getTime(), event: 'gtm.js'
+                    }); var f = d.getElementsByTagName(s)[0],
+                        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                            'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+                })(window, document, 'script', 'dataLayer', 'GTM-PLC9LTZ'); // GTM from TagAPI
+            </script><!-- Google Tag Manager snippet(noscript) -->
+            <noscript>
+                <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLC9LTZ" height="0" width="0"
+                    style="display:none;visibility:hidden"></iframe>
+            </noscript>
+            <script type="text/javascript" async src="https://d2ezz24t9nm0vu.cloudfront.net/"></script>
+            <script>
+                var trackingTagApi = trackingTagApi || {};
+                trackingTagApi.environment = 'production';
+            </script>
+
+            <script>
+                /**
+                 * ・コメントは、// は使わない
+                 * ・関数の行の最後にも、セミコロンを付与する
+                 * */
+
+                /**
+                 タグパラメーター
+                 */
+                window.dmm_mkbase_tag_api_params = {
+                    environment: 'production', /* environment */
+                    is_affiliate_owner: '' /* affiliate owner */
+                };
+
+            </script>
+        </div>
+
+
+        <div id="w">
+
+            <div id="dm-content">
+                <main>
+                    <div class="ageCheck">
+                        <h1 class="ageCheck__heading">年齢認証</h1>
+                        <h2 class="ageCheck__subHeading">あなたは18歳以上ですか？</h2>
+                        <p class="ageCheck__desc">ここから先は、アダルト商品を扱うアダルトサイトとなります。<br>18歳未満の方のアクセスは固くお断りします。</p>
+                        <p class="ageCheck__disclaimer">Please be advised that the website you are attempting to visit
+                            contains adult content.
+                            Anybody under the age of 18 is prohibited from accessing the website, and should immediately
+                            leave from this website.
+                            The content of the website is created and managed under the Japanese laws. Depending on the
+                            countries or areas, accessing the website may be illegal, even in the event that you are at
+                            the age of 18 or over.
+                            Accessing the website shall be done at your own judgement and risk, and DMM disclaims
+                            responsibility or liability in the event of your violation of laws by accessing the website.
+                            Do you wish to access the website?
+                        </p>
+                        <div class="ageCheck__btnBox">
+                            <div class="ageCheck__btn">
+                                <a href="https://www.dmm.co.jp/age_check/=/declared=no/rurl=DRVESRUMTh1PEkYWV1sLGQIKGFxAFhdcEBReBVdKGh8AGVNRB1gGVxdYHgdGRAoKCRFCRkMcV3hHUHFDACNARxJPVFQLGAJdVUADfhVSD0UEBkILAQ__/"
+                                    class="ageCheck__link ageCheck__link--com">
+                                    <p class="ageCheck__linkText">Reject</p>
+                                </a>
+                            </div>
+                            <div class="ageCheck__btn">
+                                <a href="https://www.dmm.co.jp/age_check/=/declared=yes/rurl=DRVESRUMTh1PEkYWV1sLGQIKGFxAFhBWEk0_/"
+                                    class="ageCheck__link ageCheck__link--r18">
+                                    <p class="ageCheck__linkText">I Agree</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <footer class="_n4v1-footer">
+            <div class="_n4v1-copyright"><img src="https://navismithapis-cdn.com/img/copyright.svg"></div>
+        </footer>
+        <!--[if IE 7]></div><![endif]-->
+    </body>
+
+</html>

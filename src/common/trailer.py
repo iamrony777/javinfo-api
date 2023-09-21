@@ -14,7 +14,8 @@ def getPreview(code: str):
     response = session.get(
         f"/=/cid={code}/mtype=AhRVShI_/service=mono/floor=dvd/mode=/"
     )
-    with open("test.html", 'rb') as _
+    with open("test.html", 'wb') as _f:
+        _f.write(response.content)
     page: html.HtmlElement = html.fromstring(
         html=response.content, base_url="https://www.dmm.co.jp"
     )
