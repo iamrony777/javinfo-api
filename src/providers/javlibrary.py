@@ -9,6 +9,7 @@ class Javlibrary:
         self.base_url = base_url
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
+            interpreter='chakracore'
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
