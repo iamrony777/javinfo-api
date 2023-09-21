@@ -88,12 +88,22 @@ class Javlibrary:
         except IndexError:
             pass
 
+        result["actress"] = []
         try:
-            result["actress"] = []
             for act in page.xpath('//*/span[@class="star"]'):
-                result["actress"].append(
-                    
-                )
+                result["actress"].append({"name": act.find("a").text, "image": None})
+        except TypeError:
+            pass
+
+        result["screenshots"] = []
+        try:
+            for ss in page.cssselect("div.previewthumbs > a"):
+                if ss.get("href") != "#":
+                    result["screenshots"].append(ss.get("href"))
+        except:
+            pass
+
+        result["tags"] = []
 
         return result
 
