@@ -66,19 +66,27 @@ class Javlibrary:
             pass
 
         try:
-            result["details"]["runtime"] = page.cssselect(
-                "#video_length > table > tr > td:nth-child(2) > span"
-            )[0].text.to
+            result["details"]["runtime"] = int(
+                page.cssselect("#video_length > table > tr > td:nth-child(2) > span")[
+                    0
+                ].text
+            )
         except IndexError:
             pass
 
         try:
-             result["details"]["release_date"] = page.cssselect(
+            result["details"]["release_date"] = page.cssselect(
                 "#video_date > table > tr > td.text"
-             )[0].text.strip()
+            )[0].text.strip()
         except IndexError:
-                pass
+            pass
 
+        try:
+            result["details"]["studio"] = page.cssselect(
+                ""
+            )
+        except IndexError:
+            pass
 
         return result
 
