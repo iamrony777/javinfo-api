@@ -11,11 +11,16 @@ class Javlibrary:
 
     def search(self, code: str):
         # first search for checking availability
+        code = code.upper()
         resp = self.client.get(
             url=urljoin(base=self.base_url, url="vl_searchbyid.php"),
-            params={"keyword": code.upper()},
+            params={"keyword": code},
             allow_redirects=True,
         )
+        if resp.ok and resp.url.endswith(f"keyword={code}") # duplicate results found
+            pass
+        if else resp.ok
+
         print({"statusCode": resp.status_code, "url": resp.url})
         return resp.ok
 
