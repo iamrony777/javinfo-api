@@ -1,3 +1,4 @@
+import json
 import re
 from lxml import html
 from urllib.parse import urljoin
@@ -65,10 +66,10 @@ class Javlibrary:
             pass
 
         try:
-            result["details"]["release_date"] = page.xpath(
-                
-            )
-        except IndexErro:
+            result["details"]["release_date"] = page.cssselect(
+                "#video_length > table > tbody > tr > td:nth-child(2) > span"
+            )[0].text.strip()
+        except IndexError:
             pass
 
         return result
@@ -128,4 +129,4 @@ class Javlibrary:
 
 
 if __name__ == "__main__":
-    print(Javlibrary().search("EBOD-875"))
+    print(json.dumps(Javlibrary().search("EBOD-875"), indent=2, ensure_ascii=False))
