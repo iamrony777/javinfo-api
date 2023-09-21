@@ -3,6 +3,7 @@ fetch trailer/preview from https://www.dmm.co.jp/service/-/html5_player/
 """
 
 from urllib.parse import urljoin
+from pyjsparser import parse
 from lxml import html
 import requests
 
@@ -17,7 +18,9 @@ def getPreview(code: str):
     page: html.HtmlElement = html.fromstring(
         html=response.content, base_url="https://www.dmm.co.jp"
     )
-    return page.cssselect("#dmmvideo-player > video")[0].get("src")
+
+
+    return page.cssselect("div > script")[0].text
 
 
 if __name__ == "__main__":
