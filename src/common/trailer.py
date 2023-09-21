@@ -18,9 +18,8 @@ def getPreview(code: str):
     page: html.HtmlElement = html.fromstring(
         html=response.content, base_url="https://www.dmm.co.jp"
     )
-    js = parse(page.cssselect("div > script")[0].text)
+    return page.cssselect("div > script")[0].text
 
-    return json.dumps(js, indent=2)
 
 if __name__ == "__main__":
     print(getPreview("mkck275"))
