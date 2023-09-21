@@ -151,4 +151,4 @@ class Javdatabase:
 
 
 if __name__ == "__main__":
-    print(json.dumps(Javdatabase().search("DOA-017"), ensure_ascii=False, indent=2))
+    print(json.dumps(Javdatabase().search("EBOD-875"), ensure_ascii=False, indent=2))

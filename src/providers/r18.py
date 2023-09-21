@@ -63,4 +63,4 @@ class R18:
 
 if __name__ == "__main__":
     from json import dumps
-    print(dumps(R18().search("EBOD-391"), indent=2, ensure_ascii=False))
+    print(dumps(R18().search("EBOD-875"), indent=2, ensure_ascii=False))

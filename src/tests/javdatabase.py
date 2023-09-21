@@ -1,4 +1,5 @@
 import pytest
+import json
 from src.providers import Javdatabase
 
 # Define the codes to test
@@ -13,7 +14,7 @@ def test_javdatabase(code:str):
         expected_result: str = f.read().strip()
 
     # Run the search function and get the result
-    result = provider.search(code.upper()).strip()
+    result = json.dumps(provider.search(code.upper()), indent=2, ensure_ascii=False)
 
     # Compare the result with the expected result
     assert (
@@ -21,4 +22,4 @@ def test_javdatabase(code:str):
     ), f"For code: {code}, expected: {expected_result}, but got: {result}"
 
 
-pytest.main(["-x", __file__])
+# pytest.main(["-x", __file__])
