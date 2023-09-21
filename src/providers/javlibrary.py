@@ -21,6 +21,7 @@ class Javlibrary:
         )
         if resp.ok and resp.url.endswith(f"keyword={code}"):  # duplicate or no results found
             page: html.HtmlElement = html.fromstring(html=resp.content, base_url=self.base_url)
+            page.cssselect("#rightcolumn > p > em").text
 
 
             return { "url": resp.url }
