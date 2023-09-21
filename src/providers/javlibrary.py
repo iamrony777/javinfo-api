@@ -8,8 +8,13 @@ class Javlibrary:
     def __init__(self, base_url: str = "https://www.javlibrary.com/en/") -> None:
         self.base_url = base_url
         self.client = create_scraper(
-            browser={"browser": "chrome", "platform": "linux", "desktop": True}
+            browser={"browser": "chrome", "platform": "linux", "desktop": True},
+            
         )
+        self.parser = html.HTMLParser(encoding="UTF-8")
+
+    def __getJsonResult(self, page: html.HtmlElement):
+        pass
 
     def search(self, code: str):
         # first search for checking availability
@@ -39,12 +44,24 @@ class Javlibrary:
                             ),
                             allow_redirects=True,
                         )
-                        return resp.content
+                        return self.__getJsonResult(
+                            page=html.fromstring(
+                                html=resp.content,
+                                base_url=self.base_url,
+                                parser=self.parser,
+                            )
+                        )
 
         elif resp.ok and bool(
             re.search(pattern=r"\?v=[a-zA-Z0-9]+", string=resp.url)
         ):  # redirected to actual page
-            pass
+            return self.__getJsonResult(
+                page=html.fromstring(
+                    html=resp.content,
+                    base_url=self.base_url,
+                    parser=self.parser,
+                )
+            )
         elif not resp.ok:
             return {"statusCode": resp.status_code, "url": resp.url}
 
