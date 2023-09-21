@@ -1,4 +1,5 @@
 import re
+from lxml import html
 from urllib.parse import urljoin
 from cloudscraper import create_scraper
 
@@ -18,7 +19,10 @@ class Javlibrary:
             params={"keyword": code},
             allow_redirects=True,
         )
-        if resp.ok and resp.url.endswith(f"keyword={code}"):  # duplicate results found
+        if resp.ok and resp.url.endswith(f"keyword={code}"):  # duplicate or no results found
+            page: html.HtmlElement = html.fromstring(html=resp.content, base_url=self.base_url)
+
+
             return { "url": resp.url }
             pass
         elif resp.ok and bool(
