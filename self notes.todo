@@ -5,3 +5,6 @@ starting with providers. r18.dev first
 using `cloudscraper` as main http module to bypass cloudflare 403 error, and its working.
 finished javdatabase scrapper, starting r18.dev and javlibrary. will finish by tonight 12AM , now its 12PM
 following a common schema for responses from proviers
+
+@21/09/2023
+write tests for r18, init javlibrary

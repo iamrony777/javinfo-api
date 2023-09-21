@@ -21,6 +21,7 @@ class Javdatabase:
         search(code: str) -> providerResponse
 
     """
+
     def __init__(self, base_url: str = "https://javdatabase.com/") -> None:
         self.base_url = base_url
         self.headers = {
@@ -129,7 +130,7 @@ class Javdatabase:
                 result["tags"].append(tags.text.strip())
         except KeyError:
             pass
-        return json.dumps(result, ensure_ascii=False, indent=2)
+        return result
 
     def search(self, code: str):
         """public method: search"""
@@ -150,4 +151,4 @@ class Javdatabase:
 
 
 if __name__ == "__main__":
-    print(Javdatabase().search("DOA-017"))
+    print(json.dumps(Javdatabase().search("DOA-017"), ensure_ascii=False, indent=2))
