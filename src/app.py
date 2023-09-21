@@ -7,4 +7,8 @@ app = FastAPI()
 @app.get("/")
 async def root(request: Request):
     print(request.headers)
-    return {"hello": request.headers.get("x-real-ip", "x-forwarded-for")}
+    return {
+        "hello": request.headers.get(
+            "x-real-ip", request.headers.get("x-forwarded-for", None)
+        )
+    }
