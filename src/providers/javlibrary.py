@@ -165,4 +165,4 @@ class Javlibrary:
 
 
 if __name__ == "__main__":
-    print(json.dumps(Javlibrary().search("SSIS-001"), indent=2, ensure_ascii=False))
+    print(json.dumps(Javlibrary().search("EBOD-391"), indent=2, ensure_ascii=False))
