@@ -9,6 +9,7 @@ from lxml import html
 import requests
 import json
 
+
 def getPreview(code: str):
     response = requests.get(
         f"https://www.dmm.co.jp/service/-/html5_player/=/cid={code}/mtype=AhRVShI_/service=mono/floor=dvd/mode=/",
@@ -18,9 +19,11 @@ def getPreview(code: str):
     page: html.HtmlElement = html.fromstring(
         html=response.content, base_url="https://www.dmm.co.jp"
     )
-    js_script = page.cssselect("div > script")[0].text
-    re.
+    src = re.search(
+        pattern=r'\"src\":\"(.*?)\"', string=page.cssselect("div > script")[0].text
+    )
 
+    return src
 
 if __name__ == "__main__":
     print(getPreview("mkck275"))
