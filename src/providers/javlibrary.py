@@ -32,12 +32,18 @@ class Javlibrary:
         )
         result["title_ja"] = (
             self.__getJapanesePage(
-                 page.cssselect("#video_title > h3 > a")[0].get("href").replace("/en/", "./")
+                page.cssselect("#video_title > h3 > a")[0]
+                .get("href")
+                .replace("/en/", "./")
             )
             .cssselect("#video_title > h3 > a")[0]
             .text.replace(f"{_id} ", "")
         )
-
+        result["page"] = urljoin(
+            base=self.base_url,
+            url=page.cssselect("#video_title > h3 > a")[0].get("href"),
+        )
+        result["poster"] = page.cssselect("#video_jacket_img")
         return result
 
     def search(self, code: str):
