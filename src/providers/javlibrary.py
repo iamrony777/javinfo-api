@@ -13,7 +13,6 @@ class Javlibrary:
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
             sess=self.sess,
-            cookies={}
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
