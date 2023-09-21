@@ -104,7 +104,11 @@ class Javlibrary:
             pass
 
         result["tags"] = []
-
+        try:
+            for t in page.cssselect("#video_genres > table > tr > td.text > span > a"):
+                result["tags"].append(t.text)
+        except:
+            pass
         return result
 
     def search(self, code: str):
