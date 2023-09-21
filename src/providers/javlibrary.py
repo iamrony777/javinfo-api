@@ -1,4 +1,8 @@
-import json
+"""
+Javlibrary.com/en/ scrapper
+Author @github.com/iamrony777
+"""
+
 import re
 from lxml import html
 from urllib.parse import urljoin
@@ -171,4 +175,6 @@ class Javlibrary:
 
 
 if __name__ == "__main__":
+    import json
+
     print(json.dumps(Javlibrary().search("SSIS-001"), indent=2, ensure_ascii=False))
