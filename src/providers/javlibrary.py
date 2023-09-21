@@ -24,7 +24,6 @@ class Javlibrary:
             parser=self.parser,
         )
 
-
     def __getJsonResult(self, page: html.HtmlElement):
         _id = page.cssselect("#video_id > table > tr > td.text")[0].text
 
@@ -45,10 +44,12 @@ class Javlibrary:
             base=self.base_url,
             url=page.cssselect("#video_title > h3 > a")[0].get("href"),
         )
-        result["poster"] = page.cssselect("#video_jacket_img")[0].get('src')
-        result["preview"] = getPreview(page.cssselect("div.previewthumbs > a.btn_videoplayer")[0].get("attr-data"))
+        result["poster"] = page.cssselect("#video_jacket_img")[0].get("src")
+        result["preview"] = getPreview(
+            page.cssselect("div.previewthumbs > a.btn_videoplayer")[0].get("attr-data")
+        )
 
-                ## result.details
+        ## result.details
         result["details"] = {
             "director": None,
             "release_date": None,
@@ -57,8 +58,18 @@ class Javlibrary:
         }
 
         try:
-        result[""]
+            result["details"]["director"] = page.xpath(
+                '//td/span[@class="director"]/a'
+            )[0].text.strip()
+        except IndexError:
+            pass
 
+        try:
+            result["details"]["release_date"] = page.xpath(
+                
+            )
+        except IndexErro:
+            pass
 
         return result
 
