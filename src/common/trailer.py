@@ -3,11 +3,8 @@ fetch trailer/preview from https://www.dmm.co.jp/service/-/html5_player/
 """
 
 import re
-from urllib.parse import urljoin
-from pyjsparser import parse
 from lxml import html
 import requests
-import json
 
 
 def getPreview(code: str):
@@ -19,11 +16,18 @@ def getPreview(code: str):
     page: html.HtmlElement = html.fromstring(
         html=response.content, base_url="https://www.dmm.co.jp"
     )
-    src = re.search(
-        pattern=r"\"src\":\"(.*?)\"", string=page.cssselect("div > script")[0].text, flags="gm"
+    src = re.findall(
+        pattern=r"\"src\":\"(.*?)\"",
+        string=page.cssselect("div > script")[0].text,
+        flags=re.MULTILINE,
     )
 
-    return src
+    return (
+        "https:" + src[0].replace("\\", "")
+        if len(src) > 0 and src[0].endswith(".mp4")
+        else None
+    )
+
 
 if __name__ == "__main__":
     print(getPreview("mkck275"))
