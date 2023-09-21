@@ -23,6 +23,7 @@ class Javlibrary:
             parser=self.parser,
         )
 
+
     def __getJsonResult(self, page: html.HtmlElement):
         _id = page.cssselect("#video_id > table > tr > td.text")[0].text
 
