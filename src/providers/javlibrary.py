@@ -7,3 +7,6 @@ class Javlibrary:
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True}
         )
+
+    def search(self, code:str):
+        
