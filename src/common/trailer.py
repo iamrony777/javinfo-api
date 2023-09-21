@@ -2,6 +2,7 @@
 fetch trailer/preview from https://www.dmm.co.jp/service/-/html5_player/
 """
 
+import re
 from urllib.parse import urljoin
 from pyjsparser import parse
 from lxml import html
@@ -13,12 +14,12 @@ def getPreview(code: str):
         f"https://www.dmm.co.jp/service/-/html5_player/=/cid={code}/mtype=AhRVShI_/service=mono/floor=dvd/mode=/",
         allow_redirects=True,
     )
-    with open("test.html", "wb") as _f:
-        _f.write(response.content)
+
     page: html.HtmlElement = html.fromstring(
         html=response.content, base_url="https://www.dmm.co.jp"
     )
-    return page.cssselect("div > script")[0].text
+    js_script = page.cssselect("div > script")[0].text
+    re.
 
 
 if __name__ == "__main__":
