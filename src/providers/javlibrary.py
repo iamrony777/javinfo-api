@@ -26,6 +26,8 @@ class Javlibrary:
             try: ## No result found
                 return { "statusCode": 404, "error": page.cssselect("#rightcolumn > p > em")[0].text}
             except IndexError: ## Duplicate/Many results
+                for each in page.cssselect("div.videothumblist > div.videos > div"):
+                    each.find('a/div[id=""]')
                 return { "url": resp.url }
 
         elif resp.ok and bool(
