@@ -30,7 +30,13 @@ class Javlibrary:
         result["title"] = page.cssselect("#video_title > h3 > a")[0].text.replace(
             f"{_id} ", ""
         )
-        result["title_ja"] = self.__getJapanesePage(page.cssselect("#video_title > h3 > a")[0].get('href'))
+        result["title_ja"] = (
+            self.__getJapanesePage(
+                page.cssselect("#video_title > h3 > a")[0].get("href")
+            )
+            .cssselect("#video_title > h3 > a")[0]
+            .text.replace(f"{_id} ", "")
+        )
 
         return result
 
