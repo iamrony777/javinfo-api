@@ -22,4 +22,4 @@ def test_javdatabase(code:str):
     ), f"For code: {code}, expected: {expected_result}, but got: {result}"
 
 
-pytest.main(["-x", __file__])
+# pytest.main(["-x", __file__])
