@@ -1,6 +1,7 @@
 import re
 from lxml import html
 from urllib.parse import urljoin
+from src.common.trailer import getPreview
 from cloudscraper import create_scraper
 
 
@@ -45,6 +46,20 @@ class Javlibrary:
             url=page.cssselect("#video_title > h3 > a")[0].get("href"),
         )
         result["poster"] = page.cssselect("#video_jacket_img")[0].get('src')
+        result["preview"] = getPreview(page.cssselect("div.previewthumbs > a.btn_videoplayer")[0].get("attr-data"))
+
+                ## result.details
+        result["details"] = {
+            "director": None,
+            "release_date": None,
+            "runtime": None,
+            "studio": None,
+        }
+
+        try:
+        result[""]
+
+
         return result
 
     def search(self, code: str):
