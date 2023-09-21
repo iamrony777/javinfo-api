@@ -3,7 +3,7 @@ import json
 from src.providers import Javdatabase
 
 # Define the codes to test
-codes = ["ebod-391", "mkck-275", "doa-017"]
+codes = ["ebod-391", "mkck-275", "doa-017", "ebod-875"]
 provider = Javdatabase()
 
 
