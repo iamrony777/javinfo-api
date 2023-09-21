@@ -4,17 +4,15 @@ fetch trailer/preview from https://www.dmm.co.jp/service/-/html5_player/
 
 from urllib.parse import urljoin
 from lxml import html
-from src.common._http import CustomSession
+import requests
 
 
 def getPreview(code: str):
-    session = CustomSession(
-        base_url="https://www.dmm.co.jp/service/-/html5_player",
+    response = requests.get(
+        f"https://www.dmm.co.jp/service/-/html5_player/=/cid={code}/mtype=AhRVShI_/service=mono/floor=dvd/mode=/",
+        allow_redirects=True,
     )
-    response = session.get(
-        f"/=/cid={code}/mtype=AhRVShI_/service=mono/floor=dvd/mode=/"
-    )
-    with open("test.html", 'wb') as _f:
+    with open("test.html", "wb") as _f:
         _f.write(response.content)
     page: html.HtmlElement = html.fromstring(
         html=response.content, base_url="https://www.dmm.co.jp"
