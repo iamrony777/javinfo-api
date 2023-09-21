@@ -10,6 +10,7 @@ cloudscraper = "*"
 lxml = "*"
 loguru = "*"
 cssselect = "*"
+pyjsparser = "*"
 
 [dev-packages]
 pytest = "*"
