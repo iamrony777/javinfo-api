@@ -46,8 +46,14 @@ class Javlibrary:
             url=page.cssselect("#video_title > h3 > a")[0].get("href"),
         )
         result["poster"] = page.cssselect("#video_jacket_img")[0].get("src")
-        result["preview"] = getPreview(
-            page.cssselect("div.previewthumbs > a.btn_videoplayer")[0].get("attr-data")
+        result["preview"] = (
+            getPreview(
+                page.cssselect("div.previewthumbs > a.btn_videoplayer")[0].get(
+                    "attr-data"
+                )
+            )
+            if page.cssselect("div.previewthumbs > a.btn_videoplayer")
+            else None
         )
 
         ## result.details
@@ -165,4 +171,4 @@ class Javlibrary:
 
 
 if __name__ == "__main__":
-    print(json.dumps(Javlibrary().search("EBOD-391"), indent=2, ensure_ascii=False))
+    print(json.dumps(Javlibrary().search("DOA-017"), indent=2, ensure_ascii=False))
