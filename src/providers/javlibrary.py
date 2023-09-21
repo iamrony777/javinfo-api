@@ -7,7 +7,6 @@ from cloudscraper import create_scraper, session, CloudScraper
 class Javlibrary:
     def __init__(self, base_url: str = "https://www.javlibrary.com/en/") -> None:
         self.base_url = base_url
-        self.sess = session()
         self.client = CloudScraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
             source_address=base_url,
