@@ -22,7 +22,11 @@ def search_all_providers(code: str):
 
         # Get the result from the completed task
         for task in completed:
-            return task.result()
+            result = task.result()
+            if result.get("statusCode"):
+                continue
+
+            return result
 
 # Call the function to perform the search
 result = search_all_providers(code="EBOD-391")
