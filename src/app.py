@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.requests import Request
-
+from src import search_all_providers
 app = FastAPI()
 
 
@@ -12,3 +12,7 @@ async def root(request: Request):
             "x-real-ip", request.headers.get("x-forwarded-for", None)
         )
     }
+
+@app.get("/search")
+async def search(code: str, reqest: Request):
+    return search_all_providers(code)

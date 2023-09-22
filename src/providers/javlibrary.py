@@ -6,7 +6,7 @@ Author @github.com/iamrony777
 import re
 from lxml import html
 from urllib.parse import urljoin
-from common.trailer import getPreview
+from src.common.trailer import getPreview
 from cloudscraper import create_scraper
 
 

@@ -1,4 +1,4 @@
-from providers import Javdatabase, R18, Javlibrary
+from src.providers import Javdatabase, R18, Javlibrary
 import concurrent.futures
 
 r18Provider = R18()
@@ -13,7 +13,7 @@ def search_all_providers(code: str):
 
         completed, _ = concurrent.futures.wait(
             [r18_search, jvdtbs_search, jvlib_search],
-            return_when=concurrent.futures.ALL_COMPLETED
+            return_when=concurrent.futures.FIRST_COMPLETED
         )
 
         for task in completed:
