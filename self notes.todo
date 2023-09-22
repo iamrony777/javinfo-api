@@ -9,3 +9,6 @@ following a common schema for responses from proviers
 @21/09/2023
 write tests for r18, init javlibrary
 added ebod-875 to tests. providers complete -> r18,javdatabase
+
+@22/09/2023
+deployed and tested on cyclic.sh (serverless) [success]
