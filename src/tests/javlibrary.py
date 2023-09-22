@@ -8,7 +8,7 @@ provider = Javlibrary()
 
 
 @pytest.mark.parametrize("code", codes)
-def test_javlibrary(code:str):
+def test_javlibrary(code: str):
     # Load the expected result from the json file
     with open(f"data/javlibrary.{code}.json", "r") as f:
         expected_result: str = f.read().strip()

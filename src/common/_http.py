@@ -1,6 +1,7 @@
 from requests import Session
 from urllib.parse import urljoin
 
+
 class CustomSession(Session):
     def __init__(self, base_url=None):
         super().__init__()

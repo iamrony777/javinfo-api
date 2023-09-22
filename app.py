@@ -1,8 +1,11 @@
+from json import dumps
 import os
 from fastapi import FastAPI
 from fastapi.requests import Request
+from fastapi.responses import JSONResponse
 from src import search_all_providers
 import uvicorn
+
 app = FastAPI()
 
 
@@ -15,13 +18,13 @@ async def root(request: Request):
         )
     }
 
+
 @app.get("/search")
 async def search(code: str, reqest: Request):
-    return search_all_providers(code)
+    return JSONResponse(
+        content=dumps(search_all_providers(code), indent=2, ensure_ascii=False)
+    )
+
 
 if __name__ == "__main__":
-    uvicorn.run(
-        app=app,
-        port=int(os.environ.get("PORT", "3000")),
-        use_colors=True
-    )
+    uvicorn.run(app=app, port=int(os.environ.get("PORT", "3000")), use_colors=False)

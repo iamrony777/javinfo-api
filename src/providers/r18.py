@@ -7,6 +7,7 @@ Author @github.com/iamrony777
 from src.common._http import CustomSession
 from urllib.parse import urljoin
 
+
 class R18:
     def __init__(self, base_url: str = "https://r18.dev") -> None:
         self.base_url = base_url
@@ -63,4 +64,5 @@ class R18:
 
 if __name__ == "__main__":
     from json import dumps
+
     print(dumps(R18().search("EBOD-875"), indent=2, ensure_ascii=False))

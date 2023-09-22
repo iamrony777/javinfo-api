@@ -8,7 +8,7 @@ provider = R18()
 
 
 @pytest.mark.parametrize("code", codes)
-def test_r18(code:str):
+def test_r18(code: str):
     # Load the expected result from the json file
     with open(f"data/r18.{code}.json", "r") as f:
         expected_result: str = f.read().strip()
