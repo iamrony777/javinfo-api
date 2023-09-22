@@ -1,3 +1,4 @@
+import json
 from providers import Javdatabase, R18, Javlibrary
 import concurrent.futures
 
@@ -24,7 +25,8 @@ def search_all_providers(code: str):
         for task in completed:
             result = task.result()
             if result.get("statusCode"):
-                continue
+                print("error:" + json.dumps(result, indent=1) )
+                pass
 
             return result
 
