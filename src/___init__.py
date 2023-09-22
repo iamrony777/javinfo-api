@@ -25,12 +25,10 @@ def search_all_providers(code: str):
         for task in completed:
             result = task.result()
             if result.get("statusCode"):
-                print("error:" + json.dumps(result, indent=1) )
-                pass
+                continue
 
             return result
 
 # Call the function to perform the search
 result = search_all_providers(code="WBOO-4321")
-
 print(result)
