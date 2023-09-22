@@ -1,6 +1,8 @@
+import os
 from fastapi import FastAPI
 from fastapi.requests import Request
 from src import search_all_providers
+import uvicorn
 app = FastAPI()
 
 
@@ -16,3 +18,10 @@ async def root(request: Request):
 @app.get("/search")
 async def search(code: str, reqest: Request):
     return search_all_providers(code)
+
+if __name__ == "__main__":
+    uvicorn.run(
+        app=app,
+        port=int(os.environ.get("PORT", "3000")),
+        use_colors=True
+    )
