@@ -7,12 +7,12 @@ jvlibProvideer = Javlibrary()
 
 #TODO: all of these providers has a common method `search`. Now create a function which searches all of them using python's `concurrent.futures`. and make the logic like this, whichever provider returns the result first, then return it. dont wait for other providers to finish. if this is not possible with `concurrent.futures` then you're free to use other libraries.
 
-def search_all_providers():
+def search_all_providers(code: str):
     with concurrent.futures.ThreadPoolExecutor() as executor:
         # Submit the search tasks to the executor
-        r18_search = executor.submit(r18Provider.search)
-        jvdtbs_search = executor.submit(jvdtbsProvider.search)
-        jvlib_search = executor.submit(jvlibProvideer.search)
+        r18_search = executor.submit(r18Provider.search, code)
+        jvdtbs_search = executor.submit(jvdtbsProvider.search, code)
+        jvlib_search = executor.submit(jvlibProvideer.search, code)
 
         # Wait for any of the tasks to complete
         completed, _ = concurrent.futures.wait(
@@ -25,4 +25,6 @@ def search_all_providers():
             return task.result()
 
 # Call the function to perform the search
-result = search_all_providers()
+result = search_all_providers(code="EBOD-391")
+
+print(result)
