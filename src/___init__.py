@@ -18,17 +18,17 @@ def search_all_providers(code: str):
         # Wait for any of the tasks to complete
         completed, _ = concurrent.futures.wait(
             [r18_search, jvdtbs_search, jvlib_search],
-            return_when=concurrent.futures.FIRST_COMPLETED
+            return_when=concurrent.futures.ALL_COMPLETED
         )
 
         # Get the result from the completed task
         for task in completed:
             result = task.result()
-            if result.get("statusCode"):
+            if "statusCode" in result:
                 continue
-
             return result
 
-# Call the function to perform the search
-result = search_all_providers(code="WBOO-4321")
-print(result)
+if __name__ == "__main__":
+    # Call the function to perform the search
+    result = search_all_providers(code="EBOD-875")
+    print(result)
