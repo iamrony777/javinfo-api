@@ -1,4 +1,4 @@
-from src.providers import Javdatabase, R18, Javlibrary
+from providers import Javdatabase, R18, Javlibrary
 import concurrent.futures
 
 r18Provider = R18()

@@ -4,7 +4,7 @@ Author @github.com/iamrony777
 """
 
 
-from src.common._http import CustomSession
+from common._http import CustomSession
 from urllib.parse import urljoin
 
 class R18:
