@@ -1,4 +1,3 @@
-from json import dumps
 import os
 from fastapi import FastAPI
 from fastapi.requests import Request
@@ -20,9 +19,9 @@ async def root(request: Request):
 
 
 @app.get("/search")
-async def search(code: str, reqest: Request):
+async def search(code: str, req: Request):
     return JSONResponse(
-        content=dumps(search_all_providers(code), indent=2, ensure_ascii=False)
+        content=search_all_providers(code)
     )
 
 
