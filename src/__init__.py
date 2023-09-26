@@ -6,14 +6,18 @@ jvdtbsProvider = Javdatabase()
 jvlibProvideer = Javlibrary()
 
 
-def search_all_providers(code: str):
+def search_all_providers(code: str, includeActressUrl: bool = False):
+    executors_list = []
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-        r18_search = executor.submit(r18Provider.search, code)
-        jvdtbs_search = executor.submit(jvdtbsProvider.search, code)
-        jvlib_search = executor.submit(jvlibProvideer.search, code)
+        executors_list.append(executor.submit(r18Provider.search, code))
+        executors_list.append(executor.submit(jvdtbsProvider.search, code))
+
+        if not includeActressUrl:
+            executors_list.append(executor.submit(jvlibProvideer.search, code))
 
         completed, _ = concurrent.futures.wait(
-            [r18_search, jvdtbs_search, jvlib_search],
+            executors_list,
             return_when=concurrent.futures.FIRST_COMPLETED,
         )
 
