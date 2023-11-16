@@ -1,8 +1,22 @@
+from enum import Enum
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 from src import search_all_providers
+
+
+class Providers(str, Enum):
+    """
+    Enumeration of providers for the API.
+
+    This class represents the available providers for the API. Each provider has a unique value
+    that can be used to identify it.
+    """
+    r18 = "r18"
+    jvdtbs = "jvdtbs"
+    jvlib = "jvlib"
+    all = "all"
 
 
 class Details(BaseModel):
@@ -47,10 +61,10 @@ router = APIRouter(
 
 
 @router.get("/search")
-async def search(req: Request, code: str, includeActressUrl: bool = True):
-    response = search_all_providers(code, includeActressUrl)
-    # print(response)
+async def search(
+    req: Request, code: str, provider: Providers = Providers.all, includeActressUrl: bool = True
+):
+    response = search_all_providers(code, provider, includeActressUrl)
     if response:
         return JSONResponse(content=response)
-    else:
-        return Response(status_code=404)
+    return Response(status_code=404)
