@@ -1,12 +1,14 @@
 import os
 from fastapi import FastAPI
 from fastapi.requests import Request
-from fastapi.responses import JSONResponse, RedirectResponse, Response
-from src import search_all_providers
+from fastapi.responses import RedirectResponse
+from src.routes import jav, nsfw
 import uvicorn
 
 app = FastAPI()
 
+app.include_router(jav.router)
+app.include_router(nsfw.router)
 
 @app.get("/")
 async def root(request: Request):
@@ -17,20 +19,7 @@ async def root(request: Request):
     #         "x-real-ip", request.headers.get("x-forwarded-for", None)
     #     )
     # }
-    return RedirectResponse('/docs')
-
-@app.get("/search")
-async def search(req: Request, code: str, includeActressUrl: bool = True):
-    response = search_all_providers(code, includeActressUrl)
-    # print(response)
-    if response:
-        return JSONResponse( content=response )
-    else:
-       return Response(
-            status_code=404
-        )
-
-
+    return RedirectResponse("/docs")
 
 
 if __name__ == "__main__":

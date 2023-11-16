@@ -10,7 +10,7 @@ provider = Javdatabase()
 @pytest.mark.parametrize("code", codes)
 def test_javdatabase(code: str):
     # Load the expected result from the json file
-    with open(f"data/javdatabase.{code}.json", "r") as f:
+    with open(f"src/tests/data/r18.{code}.json", "r") as f:
         expected_result: str = f.read().strip()
 
     # Run the search function and get the result
