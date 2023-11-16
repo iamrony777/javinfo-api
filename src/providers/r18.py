@@ -55,7 +55,8 @@ class R18:
         resp = self.client.get(url=f"/videos/vod/movies/detail/-/dvd_id={code}/json")
         if resp.ok:
             resp = self.client.get(
-                url=f"/videos/vod/movies/detail/-/combined={resp.json()['content_id']}/json"
+                url=f"/videos/vod/movies/detail/-/combined={resp.json()['content_id']}/json",
+                timeout=5
             )
             return self.__getJsonResult(resp.json())
         else:

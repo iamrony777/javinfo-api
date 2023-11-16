@@ -29,7 +29,8 @@ class Javdatabase:
             "Accept": "*/*",
         }
         self.client = create_scraper(
-            browser={"browser": "chrome", "platform": "linux", "desktop": True}
+            browser={"browser": "chrome", "platform": "linux", "desktop": True},
+
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
@@ -143,14 +144,13 @@ class Javdatabase:
         )
         if not resp.ok:
             return {"statusCode": resp.status_code}
-        else:
-            return self.__getJsonResult(
-                code=code,
-                page=html.fromstring(
-                    html=resp.content, base_url=self.base_url, parser=self.parser
-                ),
-            )
+        return self.__getJsonResult(
+            code=code,
+            page=html.fromstring(
+                html=resp.content, base_url=self.base_url, parser=self.parser
+            ),
+        )
 
 
 if __name__ == "__main__":
-    print(json.dumps(Javdatabase().search("EBOD-875"), ensure_ascii=False, indent=2))
+    print(json.dumps(Javdatabase().search("VRKM-01163"), ensure_ascii=False, indent=2))

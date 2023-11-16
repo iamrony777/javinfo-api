@@ -33,7 +33,7 @@ class Boobpedia:
             url=f'/boobs/Category:{curr.strftime("%B")}_{curr.day}_birthdays',
         )
 
-        response = self.client.get(url)
+        response = self.client.get(url, timeout=5)
         response: html.HtmlElement = html.fromstring(
             html=response.content, base_url=self.base_url, parser=self.parser
         )

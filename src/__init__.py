@@ -26,7 +26,7 @@ def search_all_providers(code: str, provider: str = "all", includeActressUrl: bo
 
         completed, _ = concurrent.futures.wait(
             executors_list,
-            return_when=concurrent.futures.FIRST_COMPLETED,
+            return_when=concurrent.futures.ALL_COMPLETED,
         )
 
         for task in completed:

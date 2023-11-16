@@ -151,6 +151,7 @@ class Javlibrary:
                             ),
                             cookies={"over18": "18"},
                             allow_redirects=True,
+                            timeout=5
                         )
                         return self.__getJsonResult(
                             page=html.fromstring(
