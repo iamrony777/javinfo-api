@@ -16,6 +16,7 @@ class Providers(str, Enum):
     r18 = "r18"
     jvdtbs = "jvdtbs"
     jvlib = "jvlib"
+    javdb = "javdb"
     all = "all"
 
 

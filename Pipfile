@@ -10,8 +10,9 @@ cloudscraper = "*"
 lxml = "*"
 loguru = "*"
 cssselect = "*"
-parcel = "*"
 parsel = "*"
+python-dotenv = "*"
+googletrans = "==3.1.0a0"
 
 [dev-packages]
 pytest = "*"

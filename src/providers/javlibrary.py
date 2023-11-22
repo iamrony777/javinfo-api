@@ -11,7 +11,23 @@ from cloudscraper import create_scraper
 
 
 class Javlibrary:
+    """
+    Simple Javlibrary API client.
+
+    It provides methods to interact with the Javlibrary API and retrieve data.
+
+    """
+
     def __init__(self, base_url: str = "https://www.javlibrary.com/en/") -> None:
+        """
+        Initializes the class with the given base URL.
+
+        Parameters:
+            base_url (str): The base URL to be used for the API requests. Defaults to "https://www.javlibrary.com/en/".
+
+        Returns:
+            None
+        """
         self.base_url = base_url
         self.parser = html.HTMLParser(encoding="UTF-8")
         self.client = create_scraper(
@@ -110,18 +126,34 @@ class Javlibrary:
             for ss in page.cssselect("div.previewthumbs > a"):
                 if ss.get("href") != "#":
                     result["screenshots"].append(ss.get("href"))
-        except:
+        except [IndexError, TypeError, KeyError]:
             pass
 
         result["tags"] = []
         try:
             for t in page.cssselect("#video_genres > table > tr > td.text > span > a"):
                 result["tags"].append(t.text)
-        except:
+        except [IndexError, TypeError, KeyError]:
             pass
         return result
 
     def search(self, code: str):
+        """
+        Searches by Movie Code
+
+        Args:
+            code (str): The code to search for. (Format: XXX-000)
+
+        Returns:
+            dict: A dictionary containing the search result. If the code is not found,
+            the dictionary contains the following keys:
+                - "statusCode": The status code of the search request (404).
+                - "error": The error message indicating that no result was found.
+            If the code is found, the dictionary contains the search result in JSON format.
+
+        Raises:
+            None
+        """
         # first search for checking availability
         code = code.upper()
         resp = self.client.get(
@@ -151,7 +183,7 @@ class Javlibrary:
                             ),
                             cookies={"over18": "18"},
                             allow_redirects=True,
-                            timeout=5
+                            timeout=5,
                         )
                         return self.__getJsonResult(
                             page=html.fromstring(
@@ -160,7 +192,7 @@ class Javlibrary:
                                 parser=self.parser,
                             )
                         )
-
+                    continue
         elif resp.ok and bool(
             re.search(pattern=r"\?v=[a-zA-Z0-9]+", string=resp.url)
         ):  # redirected to actual page
@@ -175,7 +207,7 @@ class Javlibrary:
             return {"statusCode": resp.status_code, "url": resp.url}
 
 
-if __name__ == "__main__":
-    import json
+# if __name__ == "__main__":
+#     import json
 
-    print(json.dumps(Javlibrary().search("SSIS-001"), indent=2, ensure_ascii=False))
+#     print(json.dumps(Javlibrary().search("SSIS-001"), indent=2, ensure_ascii=False))

@@ -49,9 +49,8 @@ class Boobpedia:
         return result
 
 
-if __name__ == "__main__":
-    import asyncio
-    from rich import print
+# if __name__ == "__main__":
+#     import asyncio
 
-    boobpedia = Boobpedia()
-    print(boobpedia.todaysBirthdays())
+#     boobpedia = Boobpedia()
+#     print(boobpedia.todaysBirthdays())

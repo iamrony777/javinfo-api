@@ -30,7 +30,6 @@ class Javdatabase:
         }
         self.client = create_scraper(
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
-
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
 
@@ -116,7 +115,7 @@ class Javdatabase:
         result["screenshots"] = []
 
         el = (
-            2 if not len(result["actress"]) else 3
+            2 if not result["actress"] else 3
         )  ## if actress section is not available then screenshot section changes it position
         try:
             for ss in page.cssselect(f".entry-content > div:nth-child({el}) > a"):

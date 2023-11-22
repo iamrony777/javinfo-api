@@ -14,3 +14,18 @@ src/providers -> basically websracpers
 src/common -> commonly used modules
 sr/app.py
 ```
+
+# javdb.com cookies
+
+1. Login into javdb.com
+2. Open developer tools (Right click -> Inspect / Ctrl + Shift + I )
+3. Navigate to Storage -> Cookies -> `https://javdb.com`
+4. Now copy `_jdb_session` and `remember_me_token` key's values save in corresponding environment variables
+
+```env
+JDB_SESSION=""
+REMEMBER_ME_TOKEN=""
+```
+
+* Remeber to copy decoded values
+![show url decoded](./images/show-url-decoded.png)

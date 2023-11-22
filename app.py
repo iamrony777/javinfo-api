@@ -1,10 +1,10 @@
-from enum import Enum
 import os
 from fastapi import FastAPI
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse
-from src.routes import jav, non_jav
 import uvicorn
+
+from src.routes import jav, non_jav
 
 app = FastAPI()
 app.include_router(jav.router)
