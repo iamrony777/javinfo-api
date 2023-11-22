@@ -1,8 +1,12 @@
 from src.providers import Javdatabase, R18, Javlibrary, Javdb
 import concurrent.futures
 
-from dotenv import load_dotenv
-load_dotenv('.env')
+import os
+
+if os.path.isfile('.env'):
+    from dotenv import load_dotenv
+    load_dotenv('.env')
+    
 r18Provider = R18()
 jvdtbsProvider = Javdatabase()
 jvlibProvideer = Javlibrary()
