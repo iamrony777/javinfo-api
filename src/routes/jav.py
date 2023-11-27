@@ -33,6 +33,7 @@ class Actress(BaseModel):
 
 
 class SuccessfulResponse(BaseModel):
+
     id: str
     title: str
     title_ja: str | None
@@ -43,11 +44,13 @@ class SuccessfulResponse(BaseModel):
     actress: list[Actress]
     screenshots: list[str]
     tags: list[str]
+    screenshots: list[str]
+    tags: list[str]
 
 
 class UnSucessfulResponse(BaseModel):
     statuCode: int
-
+    message: str | None
 
 router = APIRouter(
     prefix="/jav",

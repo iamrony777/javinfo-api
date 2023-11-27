@@ -137,7 +137,7 @@ class Javlibrary:
             pass
         return result
 
-    def search(self, code: str):
+    def search(self, code: str) -> dict:
         """
         Searches by Movie Code
 

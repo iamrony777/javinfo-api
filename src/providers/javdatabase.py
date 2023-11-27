@@ -4,10 +4,12 @@ Author @github.com/iamrony777
 """
 
 import json
+import logging
 import re
 from urllib.parse import urljoin
 from cloudscraper import create_scraper
 from lxml import html
+from os.path import basename, splitext
 
 
 class Javdatabase:
@@ -23,6 +25,11 @@ class Javdatabase:
     """
 
     def __init__(self, base_url: str = "https://javdatabase.com/") -> None:
+        __handler = logging.StreamHandler()
+        __handler.setLevel(logging.DEBUG)
+        __handler.setFormatter(
+            logging.Formatter("%(name)s - %(levelname)s - %(message)s")
+        )
         self.base_url = base_url
         self.headers = {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
@@ -32,6 +39,9 @@ class Javdatabase:
             browser={"browser": "chrome", "platform": "linux", "desktop": True},
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
+        self.logger = logging.getLogger(splitext(basename(__file__))[0])
+        self.logger.addHandler(__handler)
+        self.logger.setLevel(logging.DEBUG)
 
     def __getJsonResult(self, code: str, page: html.HtmlElement):
         result = {"id": code}
@@ -126,15 +136,21 @@ class Javdatabase:
         ## result.tags
         result["tags"] = []
         try:
-            for tags in page.cssselect(
-                "div.movietable > table > tr:nth-child(8) > td:nth-child(2) > span > a"
-            ):
-                result["tags"].append(tags.text.strip())
+            _ = 7
+            while True:
+                for tags in page.cssselect(
+                    f"div.movietable > table > tr:nth-child({_}) > td:nth-child(2) > span > a"  # change value of tr:nth-child() if tags arent available
+                ):
+                    result["tags"].append(tags.text.strip())
+
+                if result["tags"]:
+                    break
+                _ += 1
         except KeyError:
-            pass
+            self.logger.debug("keyerror:tags")
         return result
 
-    def search(self, code: str):
+    def search(self, code: str) -> dict:
         """public method: search"""
         resp = self.client.get(
             urljoin(base=self.base_url, url=f"movies/{code.lower()}"),
@@ -142,7 +158,10 @@ class Javdatabase:
             timeout=5,
         )
         if not resp.ok:
+            self.logger.debug("search:code:status: %s", resp.status_code)
             return {"statusCode": resp.status_code}
+
+        self.logger.debug("search:code: scraped")
         return self.__getJsonResult(
             code=code,
             page=html.fromstring(
@@ -152,4 +171,4 @@ class Javdatabase:
 
 
 if __name__ == "__main__":
-    print(json.dumps(Javdatabase().search("VRKM-01163"), ensure_ascii=False, indent=2))
+    print(json.dumps(Javdatabase().search("VRKM-01164"), ensure_ascii=False, indent=2))

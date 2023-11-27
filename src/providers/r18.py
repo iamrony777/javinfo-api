@@ -51,7 +51,7 @@ class R18:
         result["tags"] = [c["name_en"] for c in data["categories"]]
         return result
 
-    def search(self, code: str):
+    def search(self, code: str) -> dict:
         resp = self.client.get(url=f"/videos/vod/movies/detail/-/dvd_id={code}/json")
         if resp.ok:
             resp = self.client.get(

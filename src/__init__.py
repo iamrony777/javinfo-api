@@ -1,21 +1,21 @@
 from src.providers import Javdatabase, R18, Javlibrary, Javdb
 import concurrent.futures
-
 import os
 
-if os.path.isfile('.env'):
+if os.path.isfile(".env"):
     from dotenv import load_dotenv
-    load_dotenv('.env')
-    
+    load_dotenv(".env")
+
 r18Provider = R18()
 jvdtbsProvider = Javdatabase()
 jvlibProvideer = Javlibrary()
 javdbProvider = Javdb()
 
 
-def search_all_providers(code: str, provider: str = "all", includeActressUrl: bool = False):
+def search_all_providers(
+    code: str, provider: str = "all", includeActressUrl: bool = False
+):
     executors_list = []
-
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
         if provider == "r18":
@@ -39,9 +39,8 @@ def search_all_providers(code: str, provider: str = "all", includeActressUrl: bo
             return_when=concurrent.futures.ALL_COMPLETED,
         )
 
-        for task in completed:
-            result = task.result()
-            if "statusCode" in result:
-                continue
-
-            return result
+        results = [
+            task.result() for task in completed if "statusCode" not in task.result()
+        ]
+        if results:
+            return results[0]

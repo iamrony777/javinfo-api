@@ -13,6 +13,7 @@ cssselect = "*"
 parsel = "*"
 python-dotenv = "*"
 googletrans = "==3.1.0a0"
+httpx = {extras = ["http2"], version = "*"}
 
 [dev-packages]
 pytest = "*"
