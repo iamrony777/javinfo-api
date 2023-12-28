@@ -4,12 +4,12 @@ from fastapi.requests import Request
 from fastapi.responses import RedirectResponse
 import uvicorn
 
-from src.routes import jav, non_jav
+from src.routes import jav, non_jav, rss
 
 app = FastAPI()
 app.include_router(jav.router)
 app.include_router(non_jav.router)
-
+app.include_router(rss.router)
 
 @app.get("/")
 async def root(request: Request):
