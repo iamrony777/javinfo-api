@@ -71,4 +71,4 @@ async def search(
     response = search_all_providers(code, provider, includeActressUrl)
     if response:
         return JSONResponse(content=response)
-    return Response(status_code=404)
+    return Response(status_code=response.statusCode)

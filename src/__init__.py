@@ -40,7 +40,12 @@ def search_all_providers(
         )
 
         results = [
-            task.result() for task in completed if "statusCode" not in task.result()
+            # task.result() for task in completed if "statusCode" not in task.result()
+            task.result() for task in completed
+
         ]
         if results:
+            for result in results:
+                if "statusCode" not in result:
+                    return result
             return results[0]

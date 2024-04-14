@@ -4,11 +4,13 @@ Author @github.com/iamrony777
 """
 
 import re
+import os
 from lxml import html
 from urllib.parse import urljoin
-from src.common.trailer import getPreview
-from cloudscraper import create_scraper
 
+# from cloudscraper import create_scraper
+from httpx import Client
+from src.common.trailer import getPreview
 
 class Javlibrary:
     """
@@ -30,9 +32,31 @@ class Javlibrary:
         """
         self.base_url = base_url
         self.parser = html.HTMLParser(encoding="UTF-8")
-        self.client = create_scraper(
-            browser={"browser": "chrome", "platform": "linux", "desktop": True},
+        # self.client = create_scraper(
+        #     browser={"browser": "chrome", "platform": "linux", "desktop": True},
+        # )
+        self.client = Client(
+            verify=False,
+            timeout=60,
+            http2=True,
+            headers={
+                "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+            },
         )
+
+        if os.getenv("HTTP_PROXY"):
+            self.client.proxies.update(
+                {
+                    "http://": os.getenv("HTTP_PROXY"),
+                }
+            )
+
+        if os.getenv("HTTPS_PROXY"):
+            self.client.proxies.update(
+                {
+                    "https://": os.getenv("HTTPS_PROXY"),
+                }
+            )
 
     def __getJapanesePage(self, url: str) -> html.HtmlElement:
         return html.fromstring(
@@ -162,7 +186,7 @@ class Javlibrary:
             cookies={"over18": "18"},
             allow_redirects=True,
         )
-        if resp.ok and bool(
+        if resp.status_code == 200 and bool(
             re.search(pattern=r"\?keyword=[a-zA-Z0-9]+", string=resp.url)
         ):  # duplicate or no results found
             page: html.HtmlElement = html.fromstring(
@@ -193,7 +217,7 @@ class Javlibrary:
                             )
                         )
                     continue
-        elif resp.ok and bool(
+        elif resp.status_code == 200 and bool(
             re.search(pattern=r"\?v=[a-zA-Z0-9]+", string=resp.url)
         ):  # redirected to actual page
             return self.__getJsonResult(
@@ -203,11 +227,9 @@ class Javlibrary:
                     parser=self.parser,
                 )
             )
-        elif not resp.ok:
-            return {"statusCode": resp.status_code, "url": resp.url}
+        elif not resp.status_code == 200:
+            return {"statusCode": resp.status_code, "url": str(resp.url)}
 
 
-# if __name__ == "__main__":
-#     import json
-
-#     print(json.dumps(Javlibrary().search("SSIS-001"), indent=2, ensure_ascii=False))
+if __name__ == "__main__":
+    print(Javlibrary().search("SSIS-001"))
