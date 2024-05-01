@@ -69,9 +69,9 @@ async def search(
     req: Request,
     code: str,
     provider: Providers = Providers.all,
-    includeActressUrl: bool = True,
+    # includeActressUrl: bool = True,
 ):
-    response = search_all_providers(code, provider, includeActressUrl)
+    response = search_all_providers(code, provider)
     if "statusCode" in response:
         return Response(status_code=response['statusCode'])
     return JSONResponse(content=response)

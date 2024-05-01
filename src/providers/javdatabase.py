@@ -25,11 +25,11 @@ class Javdatabase:
     """
 
     def __init__(self, base_url: str = "https://javdatabase.com/") -> None:
-        __handler = logging.StreamHandler()
-        __handler.setLevel(logging.DEBUG)
-        __handler.setFormatter(
-            logging.Formatter("%(name)s - %(levelname)s - %(message)s")
-        )
+        # __handler = logging.StreamHandler()
+        # __handler.setLevel(logging.DEBUG)
+        # __handler.setFormatter(
+        #     logging.Formatter("%(name)s - %(levelname)s - %(message)s")
+        # )
         self.base_url = base_url
         self.headers = {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
@@ -40,7 +40,7 @@ class Javdatabase:
         )
         self.parser = html.HTMLParser(encoding="UTF-8")
         self.logger = logging.getLogger(splitext(basename(__file__))[0])
-        self.logger.addHandler(__handler)
+        # self.logger.addHandler(__handler)
         self.logger.setLevel(logging.DEBUG)
 
     def __getJsonResult(self, code: str, page: html.HtmlElement):
@@ -157,17 +157,17 @@ class Javdatabase:
             allow_redirects=True,
             timeout=5,
         )
-        if not resp.ok:
-            self.logger.debug("search:code:status: %s", resp.status_code)
-            return {"statusCode": resp.status_code}
+        self.logger.debug("search:status_code: %s", resp.status_code)
 
-        self.logger.debug("search:code: scraped")
-        return self.__getJsonResult(
-            code=code,
-            page=html.fromstring(
-                html=resp.content, base_url=self.base_url, parser=self.parser
-            ),
-        )
+        if not resp.ok:
+            return {"statusCode": resp.status_code}
+        else:
+            return self.__getJsonResult(
+                code=code,
+                page=html.fromstring(
+                    html=resp.content, base_url=self.base_url, parser=self.parser
+                ),
+            )
 
 
 if __name__ == "__main__":

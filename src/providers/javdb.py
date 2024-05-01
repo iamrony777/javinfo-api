@@ -2,6 +2,7 @@
 Javdb.com scrapper
 Author @github.com/iamrony777
 """
+
 import difflib
 import re
 from os import getenv
@@ -31,9 +32,9 @@ class Javdb:
         Returns:
             None
         """
-        __handler = logging.StreamHandler()
-        __handler.setLevel(logging.DEBUG)
-        __handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
+        # __handler = logging.StreamHandler()
+        # __handler.setLevel(logging.DEBUG)
+        # __handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
 
         self.base_url = base_url
         self.cookies = {
@@ -51,7 +52,7 @@ class Javdb:
         self.translator = Translator()
 
         self.logger = logging.getLogger(splitext(basename(__file__))[0])
-        self.logger.addHandler(__handler)
+        # self.logger.addHandler(__handler)
         self.logger.setLevel(logging.DEBUG)
 
     def __fixPreivewUrl(self, url: str | None):
@@ -61,6 +62,8 @@ class Javdb:
             return url
 
     def __getJsonResult(self, page: html.HtmlElement):
+        if bool(re.search(r"Sign in", page.text_content())):
+            return {"statusCode": 403, "message": "Unauthorized, Sign in required"}
         _id = page.xpath('//a[@title="Copy ID"]')[0].get("data-clipboard-text")
 
         result = {"id": _id}
@@ -109,7 +112,7 @@ class Javdb:
                 if item.find("strong").text == "Actor(s):":
                     for actress in item.findall("span/a"):
                         # result["actress"].append(actress.find('a').text)
-                        result["actress"].append({ "name": actress.text, "image": None})
+                        result["actress"].append({"name": actress.text, "image": None})
 
                 if item.find("strong").text == "Tags:":
                     for tag in item.findall("span/a"):
@@ -135,11 +138,10 @@ class Javdb:
             timeout=5,
         )
 
-
         resultObj = []
+        self.logger.debug(f"search:status_code: {resp.status_code}")
 
         if resp.status_code == 200:
-            self.logger.debug('search:status_code: 200')
             page: html.HtmlElement = html.fromstring(
                 html=resp.content, base_url=self.base_url, parser=self.parser
             )
@@ -155,14 +157,14 @@ class Javdb:
                 if (
                     code == eachItem.find('a/div[@class="video-title"]/strong').text
                 ):  # when the code is found
-                    self.logger.debug('search:code: found')
+                    # self.logger.debug("search:code: found")
                     resp = self.client.get(
                         urljoin(base=self.base_url, url=eachItem.find("a").get("href")),
                         cookies=self.cookies,
                         allow_redirects=True,
                         timeout=5,
                     )
-                    self.logger.debug('search:code: scraped')
+                    # self.logger.debug("search:code: scraped")
                     return self.__getJsonResult(
                         page=html.fromstring(
                             html=resp.content,
@@ -176,29 +178,29 @@ class Javdb:
                 code, [i["id"] for i in resultObj], n=1, cutoff=0.6
             )
             if most_similar:
-
-                self.logger.debug('search:most_similar: found %s', most_similar[0])
+                self.logger.debug("search:most_similar: found %s", most_similar[0])
                 resp = self.client.get(
                     urljoin(
                         base=self.base_url,
-                        url=next(obj['url'] for obj in resultObj if obj['id'] == most_similar[0]),
+                        url=next(
+                            obj["url"]
+                            for obj in resultObj
+                            if obj["id"] == most_similar[0]
+                        ),
                     ),
                     cookies=self.cookies,
                     allow_redirects=True,
                     timeout=5,
                 )
 
-                if bool(
-                    re.search(pattern=r"plans", string=resp.url)
-                ):
-
-                    self.logger.error('search:most_similar: vip required')
+                if bool(re.search(pattern=r"plans", string=resp.url)):
+                    self.logger.error("search:most_similar: vip required")
                     return {
                         "statusCode": 402,
                         "message": "VIP permission is required to watch the movie",
                     }
 
-                self.logger.debug('search:most_similar: scraped')
+                self.logger.debug("search:most_similar: scraped")
                 return self.__getJsonResult(
                     page=html.fromstring(
                         html=resp.content,
@@ -207,11 +209,11 @@ class Javdb:
                     ),
                 )
 
-            self.logger.debug('search:code: not found')
+            self.logger.debug("search:code: not found")
             return {"statusCode": 404, "message": "Not Found"}
 
         if not resp or resp.status_code != 200:
-            self.logger.debug('search:code:status: %s', resp.status_code)
+            self.logger.debug("search:code:status: %s", resp.status_code)
             return {"statusCode": resp.status_code}
 
 
