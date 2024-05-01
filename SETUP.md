@@ -15,6 +15,16 @@ src/common -> commonly used modules
 sr/app.py
 ```
 
+# misc
+file: `.env`
+
+```env
+PRIORITY_LIST="['r18', 'jvdtbs', 'jvlib', 'javdb']"
+
+# proxy config (currently only javlibrary uses proxy)
+HTTP_PROXY=""
+HTTPS_PROXY=""
+```
 # javdb.com cookies
 
 1. Login into javdb.com
