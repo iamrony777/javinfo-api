@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+uvicorn = "*"
+cloudscraper = "*"
+lxml = "*"
+loguru = "*"
+cssselect = "*"
+parsel = "*"
+python-dotenv = "*"
+googletrans = "==3.1.0a0"
+httpx = {extras = ["http2"], version = "*"}
+
+[dev-packages]
+pytest = "*"
+rich = "*"
+
+[requires]
+python_version = "3.11"
+python_full_version = "3.11.4"
+
+[scripts]
+test = "pytest src/tests/"
+start = "uvicorn app:app"

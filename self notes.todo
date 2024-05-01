@@ -1,0 +1,14 @@
+@19/09/2023
+starting with providers. r18.dev first
+
+@20/09/2023
+using `cloudscraper` as main http module to bypass cloudflare 403 error, and its working.
+finished javdatabase scrapper, starting r18.dev and javlibrary. will finish by tonight 12AM , now its 12PM
+following a common schema for responses from proviers
+
+@21/09/2023
+write tests for r18, init javlibrary
+added ebod-875 to tests. providers complete -> r18,javdatabase
+
+@22/09/2023
+deployed and tested on cyclic.sh (serverless) [success]
