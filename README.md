@@ -1,10 +1,25 @@
-# Work in progress
-~check latest [deployment](../../deployments/cyclic:dev) for testing/preview or [click here](https://javinfo-api.cyclic.cloud)~
+# javinfo-api
 
-for testing/preview [clicl here](https://api.javinfo.eu.org/docs)
+> **This project has moved.** `javinfo-api` has been handed over to the **[JAVINFO](https://github.com/javinfo)** organization, where it is being rebuilt and actively developed.
 
-check [SETUP](./SETUP.md) for local development
+The original code that lived here (the pre-2024 Python/FastAPI version) has been archived. Development now continues under the JAVINFO org as a new, faster, rewritten service.
 
-~currently testing on [Cyclic.sh](https://app.cyclic.sh/#/join/iamrony777) serverless infrastructure. v1 required a server but i want to make v3 fully serverless. Cloudflare blocks requests made from vercel's serverless instances~
+## 👉 Use the new service: **[javinfo.eu.org](https://javinfo.eu.org)**
 
-[Cyclic.sh](https://app.cyclic.sh/#/join/iamrony777) Use my referral link to earn $10 in credit
+**javinfo** is metadata and magnet search for JAV releases. Send a DVD ID (e.g. `SSIS-001`, `CAWD-001`) and get back one clean JSON object — title, cast, maker, series, cover art, runtime, and (on paid plans) download / magnet links. Results are cached server-side, so repeated lookups are fast.
+
+- 🌐 **Web app:** [javinfo.eu.org](https://javinfo.eu.org)
+- 🧩 **Org / new repos:** [github.com/javinfo](https://github.com/javinfo)
+- ⚡ **API:** single `POST /search` endpoint, available on RapidAPI
+
+```bash
+curl -X POST 'https://javinfo-search.p.rapidapi.com/search' \
+  -H 'Content-Type: application/json' \
+  -H 'X-RapidAPI-Key: YOUR_RAPIDAPI_KEY' \
+  -H 'X-RapidAPI-Host: javinfo-search.p.rapidapi.com' \
+  -d '{ "q": "SSIS-001" }'
+```
+
+---
+
+Thanks to everyone who starred and used the original `javinfo-api`. The new build at **[javinfo.eu.org](https://javinfo.eu.org)** carries it forward. 🙏
