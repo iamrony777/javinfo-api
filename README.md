@@ -4,11 +4,11 @@
 
 The original code that lived here (the pre-2024 Python/FastAPI version) has been archived. Development now continues under the JAVINFO org as a new, faster, rewritten service.
 
-## 👉 Use the new service: **[javinfo.eu.org](https://javinfo.eu.org)**
+## 👉 Use the new service: **[javinfo.dev](https://javinfo.dev)**
 
 **javinfo** is metadata and magnet search for JAV releases. Send a DVD ID (e.g. `SSIS-001`, `CAWD-001`) and get back one clean JSON object — title, cast, maker, series, cover art, runtime, and (on paid plans) download / magnet links. Results are cached server-side, so repeated lookups are fast.
 
-- 🌐 **Web app:** [javinfo.eu.org](https://javinfo.eu.org)
+- 🌐 **Web app:** [javinfo.dev](https://javinfo.dev)
 - 🧩 **Org / new repos:** [github.com/javinfo](https://github.com/javinfo)
 - ⚡ **API:** single `POST /search` endpoint, available on RapidAPI
 
@@ -22,4 +22,4 @@ curl -X POST 'https://javinfo-search.p.rapidapi.com/search' \
 
 ---
 
-Thanks to everyone who starred and used the original `javinfo-api`. The new build at **[javinfo.eu.org](https://javinfo.eu.org)** carries it forward. 🙏
+Thanks to everyone who starred and used the original `javinfo-api`. The new build at **[javinfo.dev](https://javinfo.dev)** carries it forward. 🙏
